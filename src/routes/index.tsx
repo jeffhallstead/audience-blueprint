@@ -1,24 +1,122 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, ShieldCheck, LineChart, Layers } from "lucide-react";
+import { Logo } from "@/components/brand/logo";
+import { Button } from "@/components/ui/button";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Owned Audience Blueprint — Executive Readiness Platform" },
+      {
+        name: "description",
+        content:
+          "Assess your organization's readiness to build an owned audience through branded entertainment, and receive a personalized 90-day strategic roadmap.",
+      },
+      { property: "og:title", content: "Owned Audience Blueprint — Executive Readiness Platform" },
+      {
+        property: "og:description",
+        content:
+          "A premium executive assessment that turns owned-audience ambition into a sequenced, accountable roadmap.",
+      },
+    ],
+  }),
+  component: Landing,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+const PILLARS = [
+  {
+    icon: Layers,
+    title: "Seven-dimension diagnostic",
+    body: "Company, audience, content, distribution, operations, goals, and constraints assessed in one structured pass.",
+  },
+  {
+    icon: LineChart,
+    title: "Publisher maturity score",
+    body: "A defensible readiness score and maturity level you can present to the executive committee.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Sequenced 90-day roadmap",
+    body: "Named owners, month-by-month initiatives, and the risks worth escalating now.",
+  },
+];
+
+function Landing() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen bg-background">
+      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+        <Logo />
+        <div className="flex items-center gap-2">
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/auth">Sign in</Link>
+          </Button>
+          <Button asChild size="sm">
+            <Link to="/auth" search={{ mode: "signup" }}>
+              Create account
+            </Link>
+          </Button>
+        </div>
+      </header>
+
+      <main>
+        <section className="mx-auto max-w-6xl px-6 pb-24 pt-16 sm:pt-24">
+          <p className="text-eyebrow">Owned Audience Blueprint™</p>
+          <h1 className="text-display mt-6 max-w-3xl text-5xl leading-[1.05] sm:text-6xl">
+            Stop renting attention. <span className="italic">Build an audience you own.</span>
+          </h1>
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground">
+            A structured executive assessment that measures your organization's readiness to build an owned
+            audience through branded entertainment — and returns a personalized strategic roadmap.
+          </p>
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <Button asChild size="lg">
+              <Link to="/auth" search={{ mode: "signup" }}>
+                Begin your blueprint <ArrowRight className="size-4" />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <Link to="/auth">I already have an account</Link>
+            </Button>
+          </div>
+          <p className="mt-6 text-xs text-muted-foreground">Approximately 12 minutes · Seven sections · Confidential</p>
+        </section>
+
+        <section className="border-y border-border bg-surface">
+          <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 sm:grid-cols-3">
+            {PILLARS.map((pillar) => (
+              <div key={pillar.title} className="space-y-3">
+                <pillar.icon className="size-5 text-brass" />
+                <h2 className="text-sm font-semibold tracking-tight text-foreground">{pillar.title}</h2>
+                <p className="text-sm leading-relaxed text-muted-foreground">{pillar.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-6 py-24">
+          <div className="surface-panel flex flex-col items-start justify-between gap-6 p-10 sm:flex-row sm:items-center">
+            <div className="max-w-xl space-y-2">
+              <h2 className="text-display text-3xl">Your blueprint takes one sitting.</h2>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Answer seven sections and receive a scored executive dashboard, prioritized recommendations, and a
+                sequenced 90-day roadmap.
+              </p>
+            </div>
+            <Button asChild size="lg">
+              <Link to="/auth" search={{ mode: "signup" }}>
+                Start now <ArrowRight className="size-4" />
+              </Link>
+            </Button>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-border">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-xs text-muted-foreground sm:flex-row sm:justify-between">
+          <span>© {new Date().getFullYear()} Owned Audience Blueprint™</span>
+          <span>Executive strategy platform</span>
+        </div>
+      </footer>
     </div>
   );
 }
