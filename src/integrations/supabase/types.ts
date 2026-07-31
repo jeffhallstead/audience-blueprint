@@ -55,6 +55,106 @@ export type Database = {
           },
         ]
       }
+      assessment_events: {
+        Row: {
+          assessment_id: string | null
+          created_at: string
+          event_name: string
+          id: string
+          metadata: Json
+          section: string | null
+          user_id: string
+        }
+        Insert: {
+          assessment_id?: string | null
+          created_at?: string
+          event_name: string
+          id?: string
+          metadata?: Json
+          section?: string | null
+          user_id: string
+        }
+        Update: {
+          assessment_id?: string | null
+          created_at?: string
+          event_name?: string
+          id?: string
+          metadata?: Json
+          section?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_events_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assessment_scores: {
+        Row: {
+          alignment_score: number
+          assessment_id: string
+          audience_score: number
+          config_version: string
+          content_score: number
+          created_at: string
+          distribution_score: number
+          id: string
+          maturity_level: number
+          maturity_title: string
+          operations_score: number
+          overall_score: number
+          strategy_score: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alignment_score?: number
+          assessment_id: string
+          audience_score?: number
+          config_version?: string
+          content_score?: number
+          created_at?: string
+          distribution_score?: number
+          id?: string
+          maturity_level?: number
+          maturity_title?: string
+          operations_score?: number
+          overall_score?: number
+          strategy_score?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alignment_score?: number
+          assessment_id?: string
+          audience_score?: number
+          config_version?: string
+          content_score?: number
+          created_at?: string
+          distribution_score?: number
+          id?: string
+          maturity_level?: number
+          maturity_title?: string
+          operations_score?: number
+          overall_score?: number
+          strategy_score?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_scores_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: true
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessments: {
         Row: {
           completed_at: string | null
@@ -62,9 +162,11 @@ export type Database = {
           current_step: number
           id: string
           organization_id: string | null
+          started_at: string
           status: Database["public"]["Enums"]["assessment_status"]
           updated_at: string
           user_id: string
+          version: string
         }
         Insert: {
           completed_at?: string | null
@@ -72,9 +174,11 @@ export type Database = {
           current_step?: number
           id?: string
           organization_id?: string | null
+          started_at?: string
           status?: Database["public"]["Enums"]["assessment_status"]
           updated_at?: string
           user_id: string
+          version?: string
         }
         Update: {
           completed_at?: string | null
@@ -82,9 +186,11 @@ export type Database = {
           current_step?: number
           id?: string
           organization_id?: string | null
+          started_at?: string
           status?: Database["public"]["Enums"]["assessment_status"]
           updated_at?: string
           user_id?: string
+          version?: string
         }
         Relationships: [
           {
