@@ -15,9 +15,9 @@ import { PLACEHOLDER_BLUEPRINT, PUBLISHER_LEVELS } from "@/lib/placeholder-bluep
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Executive Dashboard — Owned Audience Blueprint" },
+      { title: "Executive Dashboard — Publisher Blueprint" },
       { name: "description", content: "Your owned-audience readiness score, opportunities, risks, and priorities." },
-      { property: "og:title", content: "Executive Dashboard — Owned Audience Blueprint" },
+      { property: "og:title", content: "Executive Dashboard — Publisher Blueprint" },
       { property: "og:description", content: "Your owned-audience readiness score and strategic priorities." },
     ],
   }),

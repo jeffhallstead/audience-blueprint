@@ -7,9 +7,9 @@ import { RESOURCE_PLACEHOLDERS } from "@/lib/placeholder-blueprint";
 export const Route = createFileRoute("/_authenticated/resources")({
   head: () => ({
     meta: [
-      { title: "Resources — Owned Audience Blueprint" },
+      { title: "Resources — Publisher Blueprint" },
       { name: "description", content: "Frameworks, templates, and playbooks for building an owned audience." },
-      { property: "og:title", content: "Resources — Owned Audience Blueprint" },
+      { property: "og:title", content: "Resources — Publisher Blueprint" },
       { property: "og:description", content: "Frameworks, templates, and playbooks for owned audience building." },
     ],
   }),

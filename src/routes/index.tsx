@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Owned Audience Blueprint — Executive Readiness Platform" },
+      { title: "Publisher Blueprint — Executive Readiness Platform" },
       {
         name: "description",
         content:
           "Assess your organization's readiness to build an owned audience through branded entertainment, and receive a personalized 90-day strategic roadmap.",
       },
-      { property: "og:title", content: "Owned Audience Blueprint — Executive Readiness Platform" },
+      { property: "og:title", content: "Publisher Blueprint — Executive Readiness Platform" },
       {
         property: "og:description",
         content:
@@ -60,7 +60,7 @@ function Landing() {
 
       <main>
         <section className="mx-auto max-w-6xl px-6 pb-24 pt-16 sm:pt-24">
-          <p className="text-eyebrow">Owned Audience Blueprint™</p>
+          <p className="text-eyebrow">Publisher Blueprint™</p>
           <h1 className="text-display mt-6 max-w-3xl text-5xl leading-[1.05] sm:text-6xl">
             Stop renting attention. <span className="italic">Build an audience you own.</span>
           </h1>
@@ -113,7 +113,7 @@ function Landing() {
 
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-xs text-muted-foreground sm:flex-row sm:justify-between">
-          <span>© {new Date().getFullYear()} Owned Audience Blueprint™</span>
+          <span>© {new Date().getFullYear()} Publisher Blueprint™</span>
           <span>Executive strategy platform</span>
         </div>
       </footer>

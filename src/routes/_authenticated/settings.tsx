@@ -14,9 +14,9 @@ import { useAuth } from "@/hooks/use-auth";
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — Owned Audience Blueprint" },
+      { title: "Settings — Publisher Blueprint" },
       { name: "description", content: "Manage your profile details and account preferences." },
-      { property: "og:title", content: "Settings — Owned Audience Blueprint" },
+      { property: "og:title", content: "Settings — Publisher Blueprint" },
       { property: "og:description", content: "Manage your profile details and account preferences." },
     ],
   }),

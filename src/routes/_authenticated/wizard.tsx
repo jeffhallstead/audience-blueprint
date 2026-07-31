@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/wizard")({
   head: () => ({
     meta: [
-      { title: "Blueprint Assessment — Owned Audience Blueprint" },
+      { title: "Blueprint Assessment — Publisher Blueprint" },
       { name: "description", content: "Complete the seven-section owned-audience readiness assessment." },
       { property: "og:title", content: "Blueprint Assessment" },
       { property: "og:description", content: "Complete the seven-section owned-audience readiness assessment." },
