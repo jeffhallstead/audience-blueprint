@@ -10,34 +10,58 @@ import { ProgressBar } from "@/components/blueprint/progress-bar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchLatestBlueprint } from "@/lib/assessments";
-import { PLACEHOLDER_BLUEPRINT, PUBLISHER_LEVELS } from "@/lib/placeholder-blueprint";
+import { PLACEHOLDER_BLUEPRINT } from "@/lib/placeholder-blueprint";
+import { CATEGORIES, MATURITY_LEVELS } from "@/lib/assessment/config";
+import { fetchLatestScores } from "@/lib/assessment/persistence";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
       { title: "Executive Dashboard — Publisher Blueprint" },
-      { name: "description", content: "Your owned-audience readiness score, opportunities, risks, and priorities." },
+      { name: "description", content: "Your Publisher Index™ score, category breakdown, opportunities, and priorities." },
       { property: "og:title", content: "Executive Dashboard — Publisher Blueprint" },
-      { property: "og:description", content: "Your owned-audience readiness score and strategic priorities." },
+      { property: "og:description", content: "Your Publisher Index™ score and strategic priorities." },
     ],
   }),
   component: Dashboard,
 });
 
+const SAMPLE_CATEGORY_SCORES: Record<string, number> = {
+  audience: 58,
+  content: 71,
+  distribution: 54,
+  operations: 49,
+  strategy: 66,
+  alignment: 61,
+};
+
 function Dashboard() {
-  const { data, isLoading } = useQuery({ queryKey: ["blueprint", "latest"], queryFn: fetchLatestBlueprint });
+  const { data: scores, isLoading } = useQuery({
+    queryKey: ["assessment", "scores"],
+    queryFn: fetchLatestScores,
+  });
+  const { data } = useQuery({ queryKey: ["blueprint", "latest"], queryFn: fetchLatestBlueprint });
 
   const blueprint = {
     ...PLACEHOLDER_BLUEPRINT,
-    publisherLevel: data?.publisher_level ?? PLACEHOLDER_BLUEPRINT.publisherLevel,
-    overallScore: data?.overall_score ?? PLACEHOLDER_BLUEPRINT.overallScore,
     topOpportunity: data?.top_opportunity ?? PLACEHOLDER_BLUEPRINT.topOpportunity,
     topRisk: data?.top_risk ?? PLACEHOLDER_BLUEPRINT.topRisk,
     recommendedPriority: data?.recommended_priority ?? PLACEHOLDER_BLUEPRINT.recommendedPriority,
     next90Days: data?.next_90_days ?? PLACEHOLDER_BLUEPRINT.next90Days,
   };
 
-  const levelIndex = Math.max(0, PUBLISHER_LEVELS.indexOf(blueprint.publisherLevel));
+  const overallScore = scores?.overall ?? 62;
+  const maturity =
+    MATURITY_LEVELS.find((level) => level.level === scores?.maturityLevel) ??
+    MATURITY_LEVELS.find((level) => level.title === "Studio")!;
+  const levelTitle = maturity.title;
+  const levelIndex = maturity.level - 1;
+  const categoryScores = CATEGORIES.map((category) => ({
+    id: category.id,
+    label: category.label,
+    score: scores?.categories[category.id] ?? SAMPLE_CATEGORY_SCORES[category.id] ?? 0,
+  }));
+
 
   return (
     <div className="space-y-10">
