@@ -12,7 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedProcessingRouteImport } from './routes/_authenticated/processing'
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
+import { Route as AuthenticatedWizardRouteImport } from './routes/_authenticated/wizard'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +31,68 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProcessingRoute = AuthenticatedProcessingRouteImport.update({
+  id: '/processing',
+  path: '/processing',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedWelcomeRoute = AuthenticatedWelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedWizardRoute = AuthenticatedWizardRouteImport.update({
+  id: '/wizard',
+  path: '/wizard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/processing': typeof AuthenticatedProcessingRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
+  '/wizard': typeof AuthenticatedWizardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/processing': typeof AuthenticatedProcessingRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
+  '/wizard': typeof AuthenticatedWizardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/processing': typeof AuthenticatedProcessingRoute
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
+  '/_authenticated/wizard': typeof AuthenticatedWizardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/welcome'
+  fullPaths:
+    '/' | '/auth' | '/dashboard' | '/processing' | '/welcome' | '/wizard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/welcome'
-  id: '__root__' | '/' | '/_authenticated' | '/auth' | '/_authenticated/welcome'
+  to: '/' | '/auth' | '/dashboard' | '/processing' | '/welcome' | '/wizard'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/processing'
+    | '/_authenticated/welcome'
+    | '/_authenticated/wizard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -88,6 +124,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/processing': {
+      id: '/_authenticated/processing'
+      path: '/processing'
+      fullPath: '/processing'
+      preLoaderRoute: typeof AuthenticatedProcessingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/welcome': {
       id: '/_authenticated/welcome'
       path: '/welcome'
@@ -95,15 +145,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWelcomeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/wizard': {
+      id: '/_authenticated/wizard'
+      path: '/wizard'
+      fullPath: '/wizard'
+      preLoaderRoute: typeof AuthenticatedWizardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedProcessingRoute: typeof AuthenticatedProcessingRoute
   AuthenticatedWelcomeRoute: typeof AuthenticatedWelcomeRoute
+  AuthenticatedWizardRoute: typeof AuthenticatedWizardRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedProcessingRoute: AuthenticatedProcessingRoute,
   AuthenticatedWelcomeRoute: AuthenticatedWelcomeRoute,
+  AuthenticatedWizardRoute: AuthenticatedWizardRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
