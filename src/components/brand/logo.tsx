@@ -6,7 +6,7 @@ export function Logo({ className, inverted = false }: { className?: string; inve
     <span className={cn("flex flex-col leading-none", className)}>
       <span
         className={cn(
-          "text-wordmark text-[15px]",
+          "font-[family-name:var(--font-wordmark)] text-[16px] font-bold uppercase tracking-[0.18em]",
           inverted ? "text-sidebar-accent-foreground" : "text-foreground",
         )}
       >
