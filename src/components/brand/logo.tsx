@@ -22,7 +22,7 @@ export function Logo({ className, inverted = false }: { className?: string; inve
             inverted ? "text-sidebar-foreground" : "text-foreground",
           )}
         >
-          Owned Audience
+          Publisher
         </span>
         <span className="text-eyebrow mt-1 text-[9px]">Blueprint</span>
       </span>
