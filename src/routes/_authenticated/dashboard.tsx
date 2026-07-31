@@ -96,13 +96,18 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-        <DashboardCard eyebrow="Dimension scores" title="Where you stand">
+        <DashboardCard
+          eyebrow="Publisher Index™ categories"
+          title="Where you stand"
+          footer={scores ? undefined : "Sample data — complete the assessment for your own scores."}
+        >
           <div className="space-y-4">
-            {PLACEHOLDER_BLUEPRINT.sectionScores.map((item) => (
-              <ProgressBar key={item.label} label={item.label} value={item.score} />
+            {categoryScores.map((item) => (
+              <ProgressBar key={item.id} label={item.label} value={item.score} />
             ))}
           </div>
         </DashboardCard>
+
 
         <DashboardCard eyebrow="Next 90 days" title="Immediate mandate" footer="Full sequencing lives in Roadmap.">
           <p className="text-sm leading-relaxed text-foreground">{blueprint.next90Days}</p>
