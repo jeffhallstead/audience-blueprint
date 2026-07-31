@@ -21,9 +21,9 @@ export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Sign in — Owned Audience Blueprint" },
+      { title: "Sign in — Publisher Blueprint" },
       { name: "description", content: "Access your executive owned-audience readiness blueprint and roadmap." },
-      { property: "og:title", content: "Sign in — Owned Audience Blueprint" },
+      { property: "og:title", content: "Sign in — Publisher Blueprint" },
       { property: "og:description", content: "Access your executive owned-audience readiness blueprint." },
     ],
   }),

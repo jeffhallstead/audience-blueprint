@@ -5,7 +5,7 @@ import { ProgressBar } from "@/components/blueprint/progress-bar";
 export const Route = createFileRoute("/_authenticated/processing")({
   head: () => ({
     meta: [
-      { title: "Generating your blueprint — Owned Audience Blueprint" },
+      { title: "Generating your blueprint — Publisher Blueprint" },
       { name: "description", content: "Compiling your executive owned-audience readiness blueprint." },
       { property: "og:title", content: "Generating your blueprint" },
       { property: "og:description", content: "Compiling your executive readiness blueprint." },

@@ -7,9 +7,9 @@ import { WIZARD_SECTIONS } from "@/lib/wizard-config";
 export const Route = createFileRoute("/_authenticated/welcome")({
   head: () => ({
     meta: [
-      { title: "Welcome — Owned Audience Blueprint" },
+      { title: "Welcome — Publisher Blueprint" },
       { name: "description", content: "Start your owned-audience readiness assessment in seven guided sections." },
-      { property: "og:title", content: "Welcome — Owned Audience Blueprint" },
+      { property: "og:title", content: "Welcome — Publisher Blueprint" },
       { property: "og:description", content: "Start your owned-audience readiness assessment." },
     ],
   }),

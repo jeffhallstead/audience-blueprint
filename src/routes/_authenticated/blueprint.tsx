@@ -13,9 +13,9 @@ import { PLACEHOLDER_BLUEPRINT, PLACEHOLDER_RECOMMENDATIONS } from "@/lib/placeh
 export const Route = createFileRoute("/_authenticated/blueprint")({
   head: () => ({
     meta: [
-      { title: "My Blueprint — Owned Audience Blueprint" },
+      { title: "My Blueprint — Publisher Blueprint" },
       { name: "description", content: "Your full owned-audience strategy blueprint and prioritized recommendations." },
-      { property: "og:title", content: "My Blueprint — Owned Audience Blueprint" },
+      { property: "og:title", content: "My Blueprint — Publisher Blueprint" },
       { property: "og:description", content: "Your full owned-audience strategy blueprint." },
     ],
   }),
@@ -30,7 +30,7 @@ function BlueprintPage() {
     <div className="space-y-10">
       <PageHeader
         eyebrow="My blueprint"
-        title={organization ? `${organization} · Owned Audience Blueprint` : "Owned Audience Blueprint"}
+        title={organization ? `${organization} · Publisher Blueprint` : "Publisher Blueprint"}
         description="The full strategic reading of your assessment: maturity, thesis, and the prioritized moves behind your roadmap."
         actions={
           <Button variant="outline" onClick={() => toast.info("PDF export arrives in the next release.")}>

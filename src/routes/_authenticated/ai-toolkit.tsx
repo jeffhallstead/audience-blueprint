@@ -7,9 +7,9 @@ import { Badge } from "@/components/ui/badge";
 export const Route = createFileRoute("/_authenticated/ai-toolkit")({
   head: () => ({
     meta: [
-      { title: "AI Toolkit — Owned Audience Blueprint" },
+      { title: "AI Toolkit — Publisher Blueprint" },
       { name: "description", content: "Upcoming AI capabilities for format ideation, briefs, and competitive scans." },
-      { property: "og:title", content: "AI Toolkit — Owned Audience Blueprint" },
+      { property: "og:title", content: "AI Toolkit — Publisher Blueprint" },
       { property: "og:description", content: "Upcoming AI capabilities for your owned-audience program." },
     ],
   }),

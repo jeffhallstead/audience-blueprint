@@ -1,6 +1,6 @@
 # Architecture
 
-Owned Audience Blueprint™ — executive readiness assessment and roadmap platform.
+Publisher Blueprint™ — executive readiness assessment and roadmap platform.
 
 ## Stack
 

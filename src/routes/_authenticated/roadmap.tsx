@@ -11,9 +11,9 @@ import { PLACEHOLDER_ROADMAP, type RoadmapItem } from "@/lib/placeholder-bluepri
 export const Route = createFileRoute("/_authenticated/roadmap")({
   head: () => ({
     meta: [
-      { title: "90-Day Roadmap — Owned Audience Blueprint" },
+      { title: "90-Day Roadmap — Publisher Blueprint" },
       { name: "description", content: "A sequenced three-month roadmap with owners for your owned-audience build." },
-      { property: "og:title", content: "90-Day Roadmap — Owned Audience Blueprint" },
+      { property: "og:title", content: "90-Day Roadmap — Publisher Blueprint" },
       { property: "og:description", content: "A sequenced three-month roadmap with named owners." },
     ],
   }),
