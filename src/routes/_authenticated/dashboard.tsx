@@ -10,34 +10,58 @@ import { ProgressBar } from "@/components/blueprint/progress-bar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchLatestBlueprint } from "@/lib/assessments";
-import { PLACEHOLDER_BLUEPRINT, PUBLISHER_LEVELS } from "@/lib/placeholder-blueprint";
+import { PLACEHOLDER_BLUEPRINT } from "@/lib/placeholder-blueprint";
+import { CATEGORIES, MATURITY_LEVELS } from "@/lib/assessment/config";
+import { fetchLatestScores } from "@/lib/assessment/persistence";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
       { title: "Executive Dashboard — Publisher Blueprint" },
-      { name: "description", content: "Your owned-audience readiness score, opportunities, risks, and priorities." },
+      { name: "description", content: "Your Publisher Index™ score, category breakdown, opportunities, and priorities." },
       { property: "og:title", content: "Executive Dashboard — Publisher Blueprint" },
-      { property: "og:description", content: "Your owned-audience readiness score and strategic priorities." },
+      { property: "og:description", content: "Your Publisher Index™ score and strategic priorities." },
     ],
   }),
   component: Dashboard,
 });
 
+const SAMPLE_CATEGORY_SCORES: Record<string, number> = {
+  audience: 58,
+  content: 71,
+  distribution: 54,
+  operations: 49,
+  strategy: 66,
+  alignment: 61,
+};
+
 function Dashboard() {
-  const { data, isLoading } = useQuery({ queryKey: ["blueprint", "latest"], queryFn: fetchLatestBlueprint });
+  const { data: scores, isLoading } = useQuery({
+    queryKey: ["assessment", "scores"],
+    queryFn: fetchLatestScores,
+  });
+  const { data } = useQuery({ queryKey: ["blueprint", "latest"], queryFn: fetchLatestBlueprint });
 
   const blueprint = {
     ...PLACEHOLDER_BLUEPRINT,
-    publisherLevel: data?.publisher_level ?? PLACEHOLDER_BLUEPRINT.publisherLevel,
-    overallScore: data?.overall_score ?? PLACEHOLDER_BLUEPRINT.overallScore,
     topOpportunity: data?.top_opportunity ?? PLACEHOLDER_BLUEPRINT.topOpportunity,
     topRisk: data?.top_risk ?? PLACEHOLDER_BLUEPRINT.topRisk,
     recommendedPriority: data?.recommended_priority ?? PLACEHOLDER_BLUEPRINT.recommendedPriority,
     next90Days: data?.next_90_days ?? PLACEHOLDER_BLUEPRINT.next90Days,
   };
 
-  const levelIndex = Math.max(0, PUBLISHER_LEVELS.indexOf(blueprint.publisherLevel));
+  const overallScore = scores?.overall ?? 62;
+  const maturity =
+    MATURITY_LEVELS.find((level) => level.level === scores?.maturityLevel) ??
+    MATURITY_LEVELS.find((level) => level.title === "Studio")!;
+  const levelTitle = maturity.title;
+  const levelIndex = maturity.level - 1;
+  const categoryScores = CATEGORIES.map((category) => ({
+    id: category.id,
+    label: category.label,
+    score: scores?.categories[category.id] ?? SAMPLE_CATEGORY_SCORES[category.id] ?? 0,
+  }));
+
 
   return (
     <div className="space-y-10">
@@ -61,10 +85,10 @@ function Dashboard() {
         <Skeleton className="h-56 w-full rounded-xl" />
       ) : (
         <>
-          {!data ? (
-            <div className="surface-panel flex flex-wrap items-center justify-between gap-4 border-brass/40 p-5">
+          {!scores ? (
+            <div className="surface-panel flex flex-wrap items-center justify-between gap-4 border-primary/40 p-5">
               <p className="text-sm text-muted-foreground">
-                You're viewing sample data. Complete the assessment to generate your own blueprint.
+                You're viewing sample data. Complete the Publisher Index™ assessment to generate your own scores.
               </p>
               <Button asChild size="sm">
                 <Link to="/wizard">
@@ -72,16 +96,28 @@ function Dashboard() {
                 </Link>
               </Button>
             </div>
-          ) : null}
+          ) : (
+            <div className="surface-panel flex flex-wrap items-center justify-between gap-4 p-5">
+              <p className="text-sm text-muted-foreground">
+                Your latest Publisher Index™ assessment is complete.
+              </p>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/results">
+                  View full results <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+            </div>
+          )}
 
           <ScoreCard
-            score={blueprint.overallScore}
-            level={blueprint.publisherLevel}
-            levels={PUBLISHER_LEVELS}
+            score={overallScore}
+            level={levelTitle}
+            levels={MATURITY_LEVELS.map((level) => level.title)}
             levelIndex={levelIndex}
           />
         </>
       )}
+
 
       <div className="grid gap-5 lg:grid-cols-3">
         <DashboardCard eyebrow="Top opportunity" accent>
@@ -96,13 +132,18 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-        <DashboardCard eyebrow="Dimension scores" title="Where you stand">
+        <DashboardCard
+          eyebrow="Publisher Index™ categories"
+          title="Where you stand"
+          footer={scores ? undefined : "Sample data — complete the assessment for your own scores."}
+        >
           <div className="space-y-4">
-            {PLACEHOLDER_BLUEPRINT.sectionScores.map((item) => (
-              <ProgressBar key={item.label} label={item.label} value={item.score} />
+            {categoryScores.map((item) => (
+              <ProgressBar key={item.id} label={item.label} value={item.score} />
             ))}
           </div>
         </DashboardCard>
+
 
         <DashboardCard eyebrow="Next 90 days" title="Immediate mandate" footer="Full sequencing lives in Roadmap.">
           <p className="text-sm leading-relaxed text-foreground">{blueprint.next90Days}</p>
@@ -115,11 +156,12 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricTile label="Publisher level" value={blueprint.publisherLevel} hint="Five-stage maturity model" />
-        <MetricTile label="Overall score" value={`${blueprint.overallScore}/100`} hint="Placeholder scoring" />
-        <MetricTile label="Assessment status" value={data ? "Completed" : "Sample"} hint="Latest run" />
+        <MetricTile label="Publisher level" value={levelTitle} hint="Five-stage maturity model" />
+        <MetricTile label="Publisher Index™" value={`${overallScore}/100`} hint={scores ? "Your score" : "Sample score"} />
+        <MetricTile label="Assessment status" value={scores ? "Completed" : "Not started"} hint="Latest run" />
         <MetricTile label="Roadmap horizon" value="90 days" hint="Three sequenced months" />
       </div>
+
     </div>
   );
 }
