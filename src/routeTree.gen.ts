@@ -12,8 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAiToolkitRouteImport } from './routes/_authenticated/ai-toolkit'
+import { Route as AuthenticatedBlueprintRouteImport } from './routes/_authenticated/blueprint'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedProcessingRouteImport } from './routes/_authenticated/processing'
+import { Route as AuthenticatedResourcesRouteImport } from './routes/_authenticated/resources'
+import { Route as AuthenticatedRoadmapRouteImport } from './routes/_authenticated/roadmap'
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
 import { Route as AuthenticatedWizardRouteImport } from './routes/_authenticated/wizard'
 
@@ -31,6 +35,16 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAiToolkitRoute = AuthenticatedAiToolkitRouteImport.update({
+  id: '/ai-toolkit',
+  path: '/ai-toolkit',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBlueprintRoute = AuthenticatedBlueprintRouteImport.update({
+  id: '/blueprint',
+  path: '/blueprint',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -39,6 +53,16 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedProcessingRoute = AuthenticatedProcessingRouteImport.update({
   id: '/processing',
   path: '/processing',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedResourcesRoute = AuthenticatedResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRoadmapRoute = AuthenticatedRoadmapRouteImport.update({
+  id: '/roadmap',
+  path: '/roadmap',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedWelcomeRoute = AuthenticatedWelcomeRouteImport.update({
@@ -55,16 +79,24 @@ const AuthenticatedWizardRoute = AuthenticatedWizardRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/ai-toolkit': typeof AuthenticatedAiToolkitRoute
+  '/blueprint': typeof AuthenticatedBlueprintRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/processing': typeof AuthenticatedProcessingRoute
+  '/resources': typeof AuthenticatedResourcesRoute
+  '/roadmap': typeof AuthenticatedRoadmapRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/ai-toolkit': typeof AuthenticatedAiToolkitRoute
+  '/blueprint': typeof AuthenticatedBlueprintRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/processing': typeof AuthenticatedProcessingRoute
+  '/resources': typeof AuthenticatedResourcesRoute
+  '/roadmap': typeof AuthenticatedRoadmapRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
 }
@@ -73,24 +105,51 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/ai-toolkit': typeof AuthenticatedAiToolkitRoute
+  '/_authenticated/blueprint': typeof AuthenticatedBlueprintRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/processing': typeof AuthenticatedProcessingRoute
+  '/_authenticated/resources': typeof AuthenticatedResourcesRoute
+  '/_authenticated/roadmap': typeof AuthenticatedRoadmapRoute
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/_authenticated/wizard': typeof AuthenticatedWizardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/dashboard' | '/processing' | '/welcome' | '/wizard'
+    | '/'
+    | '/auth'
+    | '/ai-toolkit'
+    | '/blueprint'
+    | '/dashboard'
+    | '/processing'
+    | '/resources'
+    | '/roadmap'
+    | '/welcome'
+    | '/wizard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/processing' | '/welcome' | '/wizard'
+  to:
+    | '/'
+    | '/auth'
+    | '/ai-toolkit'
+    | '/blueprint'
+    | '/dashboard'
+    | '/processing'
+    | '/resources'
+    | '/roadmap'
+    | '/welcome'
+    | '/wizard'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/ai-toolkit'
+    | '/_authenticated/blueprint'
     | '/_authenticated/dashboard'
     | '/_authenticated/processing'
+    | '/_authenticated/resources'
+    | '/_authenticated/roadmap'
     | '/_authenticated/welcome'
     | '/_authenticated/wizard'
   fileRoutesById: FileRoutesById
@@ -124,6 +183,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/ai-toolkit': {
+      id: '/_authenticated/ai-toolkit'
+      path: '/ai-toolkit'
+      fullPath: '/ai-toolkit'
+      preLoaderRoute: typeof AuthenticatedAiToolkitRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/blueprint': {
+      id: '/_authenticated/blueprint'
+      path: '/blueprint'
+      fullPath: '/blueprint'
+      preLoaderRoute: typeof AuthenticatedBlueprintRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -136,6 +209,20 @@ declare module '@tanstack/react-router' {
       path: '/processing'
       fullPath: '/processing'
       preLoaderRoute: typeof AuthenticatedProcessingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/resources': {
+      id: '/_authenticated/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof AuthenticatedResourcesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/roadmap': {
+      id: '/_authenticated/roadmap'
+      path: '/roadmap'
+      fullPath: '/roadmap'
+      preLoaderRoute: typeof AuthenticatedRoadmapRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/welcome': {
@@ -156,15 +243,23 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAiToolkitRoute: typeof AuthenticatedAiToolkitRoute
+  AuthenticatedBlueprintRoute: typeof AuthenticatedBlueprintRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProcessingRoute: typeof AuthenticatedProcessingRoute
+  AuthenticatedResourcesRoute: typeof AuthenticatedResourcesRoute
+  AuthenticatedRoadmapRoute: typeof AuthenticatedRoadmapRoute
   AuthenticatedWelcomeRoute: typeof AuthenticatedWelcomeRoute
   AuthenticatedWizardRoute: typeof AuthenticatedWizardRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAiToolkitRoute: AuthenticatedAiToolkitRoute,
+  AuthenticatedBlueprintRoute: AuthenticatedBlueprintRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProcessingRoute: AuthenticatedProcessingRoute,
+  AuthenticatedResourcesRoute: AuthenticatedResourcesRoute,
+  AuthenticatedRoadmapRoute: AuthenticatedRoadmapRoute,
   AuthenticatedWelcomeRoute: AuthenticatedWelcomeRoute,
   AuthenticatedWizardRoute: AuthenticatedWizardRoute,
 }
