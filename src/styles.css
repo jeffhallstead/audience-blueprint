@@ -5,10 +5,10 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Owned Audience Blueprint™ — design system
+ * Publisher Blueprint™ — design system (brand pulled from jeffhallstead.com)
  *
- * Executive, minimal, high-contrast. Ink navy surfaces, warm parchment
- * canvas, a single restrained brass accent. All colors are oklch tokens;
+ * Executive, minimal, high-contrast. Deep navy surfaces, cyan accent,
+ * mono eyebrows. Components must never hardcode color utilities;
  * components must never hardcode color utilities.
  */
 
