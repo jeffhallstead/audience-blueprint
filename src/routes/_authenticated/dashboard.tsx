@@ -115,11 +115,12 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricTile label="Publisher level" value={blueprint.publisherLevel} hint="Five-stage maturity model" />
-        <MetricTile label="Overall score" value={`${blueprint.overallScore}/100`} hint="Placeholder scoring" />
-        <MetricTile label="Assessment status" value={data ? "Completed" : "Sample"} hint="Latest run" />
+        <MetricTile label="Publisher level" value={levelTitle} hint="Five-stage maturity model" />
+        <MetricTile label="Publisher Index™" value={`${overallScore}/100`} hint={scores ? "Your score" : "Sample score"} />
+        <MetricTile label="Assessment status" value={scores ? "Completed" : "Not started"} hint="Latest run" />
         <MetricTile label="Roadmap horizon" value="90 days" hint="Three sequenced months" />
       </div>
+
     </div>
   );
 }
