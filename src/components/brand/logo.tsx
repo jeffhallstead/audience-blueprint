@@ -1,31 +1,18 @@
 import { cn } from "@/lib/utils";
 
-/** Wordmark used across marketing and app chrome. */
+/** Wordmark used across marketing and app chrome. Matches jeffhallstead.com. */
 export function Logo({ className, inverted = false }: { className?: string; inverted?: boolean }) {
   return (
-    <span className={cn("flex items-center gap-2.5", className)}>
+    <span className={cn("flex flex-col leading-none", className)}>
       <span
         className={cn(
-          "grid size-8 place-items-center rounded-lg border text-[13px] font-semibold",
-          inverted
-            ? "border-sidebar-border bg-sidebar-accent text-sidebar-primary"
-            : "border-border bg-primary text-primary-foreground",
+          "text-wordmark text-[15px]",
+          inverted ? "text-sidebar-accent-foreground" : "text-foreground",
         )}
-        aria-hidden
       >
-        OA
+        Publisher Blueprint
       </span>
-      <span className="flex flex-col leading-none">
-        <span
-          className={cn(
-            "text-[13px] font-semibold tracking-tight",
-            inverted ? "text-sidebar-foreground" : "text-foreground",
-          )}
-        >
-          Publisher
-        </span>
-        <span className="text-eyebrow mt-1 text-[9px]">Blueprint</span>
-      </span>
+      <span className="text-eyebrow mt-1.5 text-[9px] text-primary">Jeff Hallstead</span>
     </span>
   );
 }
