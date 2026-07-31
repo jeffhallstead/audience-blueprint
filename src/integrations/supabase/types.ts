@@ -14,7 +14,313 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      assessment_answers: {
+        Row: {
+          assessment_id: string
+          created_at: string
+          id: string
+          question_key: string
+          section: string
+          updated_at: string
+          user_id: string
+          value: Json
+        }
+        Insert: {
+          assessment_id: string
+          created_at?: string
+          id?: string
+          question_key: string
+          section: string
+          updated_at?: string
+          user_id: string
+          value?: Json
+        }
+        Update: {
+          assessment_id?: string
+          created_at?: string
+          id?: string
+          question_key?: string
+          section?: string
+          updated_at?: string
+          user_id?: string
+          value?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_answers_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assessments: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          current_step: number
+          id: string
+          organization_id: string | null
+          status: Database["public"]["Enums"]["assessment_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          current_step?: number
+          id?: string
+          organization_id?: string | null
+          status?: Database["public"]["Enums"]["assessment_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          current_step?: number
+          id?: string
+          organization_id?: string | null
+          status?: Database["public"]["Enums"]["assessment_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blueprints: {
+        Row: {
+          assessment_id: string
+          created_at: string
+          generated_by: string
+          id: string
+          next_90_days: string | null
+          overall_score: number | null
+          publisher_level: string | null
+          recommended_priority: string | null
+          section_scores: Json
+          summary: string | null
+          top_opportunity: string | null
+          top_risk: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assessment_id: string
+          created_at?: string
+          generated_by?: string
+          id?: string
+          next_90_days?: string | null
+          overall_score?: number | null
+          publisher_level?: string | null
+          recommended_priority?: string | null
+          section_scores?: Json
+          summary?: string | null
+          top_opportunity?: string | null
+          top_risk?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assessment_id?: string
+          created_at?: string
+          generated_by?: string
+          id?: string
+          next_90_days?: string | null
+          overall_score?: number | null
+          publisher_level?: string | null
+          recommended_priority?: string | null
+          section_scores?: Json
+          summary?: string | null
+          top_opportunity?: string | null
+          top_risk?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blueprints_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          industry: string | null
+          marketer_count: number | null
+          name: string
+          owner_id: string
+          revenue_range: string | null
+          team_size: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          industry?: string | null
+          marketer_count?: number | null
+          name: string
+          owner_id: string
+          revenue_range?: string | null
+          team_size?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          industry?: string | null
+          marketer_count?: number | null
+          name?: string
+          owner_id?: string
+          revenue_range?: string | null
+          team_size?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          job_title: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          job_title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          job_title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      recommendations: {
+        Row: {
+          blueprint_id: string
+          category: string
+          created_at: string
+          effort: string
+          id: string
+          impact: string
+          position: number
+          rationale: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          blueprint_id: string
+          category: string
+          created_at?: string
+          effort?: string
+          id?: string
+          impact?: string
+          position?: number
+          rationale?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          blueprint_id?: string
+          category?: string
+          created_at?: string
+          effort?: string
+          id?: string
+          impact?: string
+          position?: number
+          rationale?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendations_blueprint_id_fkey"
+            columns: ["blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "blueprints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmaps: {
+        Row: {
+          blueprint_id: string
+          created_at: string
+          description: string | null
+          id: string
+          month: number
+          owner: string | null
+          position: number
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          blueprint_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          month: number
+          owner?: string | null
+          position?: number
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          blueprint_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          month?: number
+          owner?: string | null
+          position?: number
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmaps_blueprint_id_fkey"
+            columns: ["blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "blueprints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +329,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      assessment_status: "draft" | "in_progress" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +456,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      assessment_status: ["draft", "in_progress", "completed"],
+    },
   },
 } as const
