@@ -61,10 +61,10 @@ function Dashboard() {
         <Skeleton className="h-56 w-full rounded-xl" />
       ) : (
         <>
-          {!data ? (
-            <div className="surface-panel flex flex-wrap items-center justify-between gap-4 border-brass/40 p-5">
+          {!scores ? (
+            <div className="surface-panel flex flex-wrap items-center justify-between gap-4 border-primary/40 p-5">
               <p className="text-sm text-muted-foreground">
-                You're viewing sample data. Complete the assessment to generate your own blueprint.
+                You're viewing sample data. Complete the Publisher Index™ assessment to generate your own scores.
               </p>
               <Button asChild size="sm">
                 <Link to="/wizard">
@@ -72,16 +72,28 @@ function Dashboard() {
                 </Link>
               </Button>
             </div>
-          ) : null}
+          ) : (
+            <div className="surface-panel flex flex-wrap items-center justify-between gap-4 p-5">
+              <p className="text-sm text-muted-foreground">
+                Your latest Publisher Index™ assessment is complete.
+              </p>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/results">
+                  View full results <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+            </div>
+          )}
 
           <ScoreCard
-            score={blueprint.overallScore}
-            level={blueprint.publisherLevel}
-            levels={PUBLISHER_LEVELS}
+            score={overallScore}
+            level={levelTitle}
+            levels={MATURITY_LEVELS.map((level) => level.title)}
             levelIndex={levelIndex}
           />
         </>
       )}
+
 
       <div className="grid gap-5 lg:grid-cols-3">
         <DashboardCard eyebrow="Top opportunity" accent>
