@@ -18,9 +18,8 @@ import { nameSession } from "@/lib/copilot/copilot.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/copilot/chat/$sessionId")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    q: typeof search["q"] === "string" ? (search["q"] as string) : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { q?: string } =>
+    typeof search["q"] === "string" ? { q: search["q"] as string } : {},
   head: () => ({
     meta: [
       { title: "Ask Publisher Copilot™ — Publisher Blueprint" },
