@@ -37,7 +37,7 @@ export const syncAssessmentCompleted = createServerFn({ method: "POST" })
         email: (claims as { email?: string } | null)?.email ?? null,
         fullName: profile?.full_name ?? null,
         score: scores?.overall_score ?? null,
-        maturityLevel: scores?.maturity_title ?? scores?.maturity_level ?? null,
+        maturityLevel: scores?.maturity_title ?? (scores?.maturity_level != null ? String(scores.maturity_level) : null),
         occurredAt: new Date().toISOString(),
         metadata: { assessmentId: data.assessmentId },
       },
