@@ -40,8 +40,11 @@ export interface IntegrationAdapter {
   provider: IntegrationProvider;
   /** False when the provider is not connected/configured — the event is skipped, not failed. */
   isConfigured(): boolean;
+  /** For providers whose credentials belong to each end user. */
+  isConfiguredForUser?(userId: string | null): Promise<boolean>;
   send(event: IntegrationEvent): Promise<void>;
 }
+
 
 export const INTEGRATION_PROVIDERS: IntegrationProvider[] = [
   "airtable",
