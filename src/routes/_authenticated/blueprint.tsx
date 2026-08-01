@@ -78,9 +78,8 @@ function IndexDetail() {
         description="The complete diagnostic behind your score: how each capability was read and what your maturity level implies."
         actions={
           <>
-            <Button variant="outline" onClick={() => toast.info("PDF export arrives in a later phase.")}>
-              <Download className="size-4" aria-hidden /> Export
-            </Button>
+            <ExportMenu blueprint={blueprint} />
+
             <Button asChild>
               <Link to="/roadmap">
                 View roadmap <ArrowRight className="size-4" aria-hidden />
