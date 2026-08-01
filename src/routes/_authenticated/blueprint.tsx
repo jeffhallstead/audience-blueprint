@@ -9,6 +9,8 @@ import { ScoreRing } from "@/components/blueprint/score-ring";
 import { CategoryCard } from "@/components/blueprint/category-card";
 import { IndexRadar } from "@/components/assessment/index-radar";
 import { BlueprintEmptyState } from "@/components/blueprint/blueprint-empty-state";
+import { LockedFeature } from "@/components/billing/feature-gate";
+import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
