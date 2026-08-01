@@ -179,6 +179,15 @@ function IndexDetail() {
         </div>
       </ExportableSection>
 
+      <ExportableSection
+        id="saved-actions"
+        eyebrow="From Publisher Copilot™"
+        title="Saved to your Blueprint"
+        description="Actions you added from your strategy deliverables. Mark them done as you ship them."
+      >
+        <SavedActions />
+      </ExportableSection>
+
       {!entitlementLoading && !can("roadmap") ? (
         <LockedFeature
           feature="roadmap"
