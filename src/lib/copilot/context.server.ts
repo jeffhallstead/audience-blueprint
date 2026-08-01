@@ -65,7 +65,7 @@ export async function buildCopilotContext(supabase: Client, userId: string): Pro
   const { data: scoreRow } = await supabase
     .from("assessment_scores")
     .select(
-      "assessment_id, overall_score, audience_score, content_score, distribution_score, operations_score, strategy_score, alignment_score, maturity_level, maturity_title, created_at, assessments(completed_at, organizations(name, industry, business_model:revenue_range, team_size))",
+      "assessment_id, overall_score, audience_score, content_score, distribution_score, operations_score, strategy_score, alignment_score, maturity_level, maturity_title, created_at, assessments(completed_at, organizations(name))",
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
