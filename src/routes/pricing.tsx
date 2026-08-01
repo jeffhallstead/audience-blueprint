@@ -80,6 +80,7 @@ function PricingPage() {
         currentTier={tier}
         loading={loading || isLoading || authLoading}
         hasSubscription={!!entitlement?.subscription}
+        includedOsUntil={entitlement?.includedOsUntil ?? null}
         ownsBlueprint={(entitlement?.purchases ?? []).some((purchase) => purchase.productId === "publisher_blueprint")}
         onSelect={(priceId) => {
           if (!user) {
@@ -93,7 +94,19 @@ function PricingPage() {
 
       <p className="text-xs text-muted-foreground">
         Payments, invoices and refunds are handled by our reseller and merchant of record, Paddle.
-        Cancel Publisher OS™ any time — access continues to the end of the billing period.
+        Cancel Publisher OS™ any time — access continues to the end of the billing period. See our{" "}
+        <Link to="/terms" className="underline">
+          Terms
+        </Link>
+        ,{" "}
+        <Link to="/refund-policy" className="underline">
+          Refund policy
+        </Link>{" "}
+        and{" "}
+        <Link to="/privacy" className="underline">
+          Privacy notice
+        </Link>
+        .
       </p>
     </div>
   );

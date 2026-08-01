@@ -10,6 +10,8 @@ type PricingTableProps = {
   hasSubscription?: boolean;
   /** True when the one-time Blueprint has actually been purchased. */
   ownsBlueprint?: boolean;
+  /** ISO date until which OS access is already included with the Blueprint. */
+  includedOsUntil?: string | null;
   onSelect: (priceId: string) => void;
   onManage?: (() => void) | undefined;
 };
@@ -19,6 +21,7 @@ export function PricingTable({
   loading,
   hasSubscription,
   ownsBlueprint,
+  includedOsUntil,
   onSelect,
   onManage,
 }: PricingTableProps) {
@@ -31,11 +34,20 @@ export function PricingTable({
         const owned =
           plan.tier === "blueprint"
             ? !!ownsBlueprint
-            : plan.tier !== "free" && TIER_RANK[currentTier] >= TIER_RANK[plan.tier];
+            : plan.tier !== "free" &&
+              TIER_RANK[currentTier] >= TIER_RANK[plan.tier] &&
+              // OS reached only via the bundled Blueprint month is not "owned":
+              // the customer can still start a real subscription.
+              !(plan.tier === "os" && !hasSubscription && includedOsUntil);
         const isCurrent = plan.tier === currentTier;
         const manageable = plan.tier === "os" && hasSubscription;
+        // A Blueprint buyer already has a bundled OS month; subscribing early
+        // overlaps with it, so say so plainly rather than blocking the sale.
+        const overlaps =
+          plan.tier === "os" && !hasSubscription && !!includedOsUntil;
 
         let label = `Get ${plan.name}`;
+        if (overlaps) label = "Subscribe now";
         if (!plan.priceId) label = isCurrent ? "Your current plan" : "Included free";
         else if (manageable) label = "Manage subscription";
         else if (owned) label = plan.tier === "blueprint" ? "Owned — lifetime access" : "Your current plan";
@@ -64,6 +76,13 @@ export function PricingTable({
               {plan.highlight && !owned ? (
                 <p className="inline-flex rounded-full border border-primary/40 px-3 py-1 text-xs text-primary">
                   {plan.highlight}
+                </p>
+              ) : null}
+              {overlaps ? (
+                <p className="rounded-md border border-primary/30 bg-primary/5 p-3 text-xs leading-relaxed text-muted-foreground">
+                  Publisher OS™ is already included with your Blueprint until{" "}
+                  {new Date(includedOsUntil!).toLocaleDateString(undefined, { dateStyle: "medium" })}
+                  . If you subscribe now, billing starts today and overlaps with the included month.
                 </p>
               ) : null}
               {owned ? (

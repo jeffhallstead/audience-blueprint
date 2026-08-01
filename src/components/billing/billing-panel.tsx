@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { ExternalLink, ArrowRight } from "lucide-react";
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
-import { createPortalSession } from "@/lib/commerce/payments.functions";
+import { createPortalSession, listInvoices } from "@/lib/commerce/payments.functions";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { planForTier } from "@/lib/commerce/plans";
 import { trackCommerceEvent } from "@/lib/commerce/analytics";
@@ -42,7 +43,12 @@ export function BillingPanel() {
   }
 
   const subscription = entitlement?.subscription ?? null;
-  const purchases = entitlement?.purchases ?? [];
+  const invoicesQuery = useQuery({
+    queryKey: ["invoices", getPaddleEnvironment()],
+    queryFn: () => listInvoices({ data: { environment: getPaddleEnvironment() } }),
+    staleTime: 60_000,
+  });
+  const invoices = invoicesQuery.data ?? [];
 
   return (
     <div className="grid gap-5 lg:grid-cols-2">
@@ -109,23 +115,25 @@ export function BillingPanel() {
 
       <DashboardCard
         eyebrow="Billing"
-        title="Purchase history"
+        title="Invoices"
         footer="Invoices and refunds are handled by Paddle, our merchant of record."
       >
-        {purchases.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No purchases yet.</p>
+        {invoicesQuery.isLoading ? (
+          <p className="text-sm text-muted-foreground">Loading invoices…</p>
+        ) : invoices.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No invoices yet.</p>
         ) : (
           <ul className="space-y-3 text-sm">
-            {purchases.map((purchase) => (
-              <li key={purchase.id} className="flex items-center justify-between gap-4">
+            {invoices.map((invoice) => (
+              <li key={invoice.id} className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="font-medium">{planForTier("blueprint").name}</p>
+                  <p className="font-medium">{invoice.description}</p>
                   <p className="text-xs text-muted-foreground">
-                    {formatDate(purchase.createdAt)}
-                    {purchase.status !== "completed" ? ` · ${purchase.status.replace("_", " ")}` : ""}
+                    {formatDate(invoice.createdAt)}
+                    {invoice.status !== "completed" ? ` · ${invoice.status.replace("_", " ")}` : ""}
                   </p>
                 </div>
-                <span>{formatMoney(purchase.amountCents, purchase.currency)}</span>
+                <span>{formatMoney(invoice.amountCents, invoice.currency)}</span>
               </li>
             ))}
           </ul>
