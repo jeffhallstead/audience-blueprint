@@ -48,8 +48,12 @@ function Landing() {
         <Logo />
         <div className="flex items-center gap-2">
           <Button asChild variant="ghost" size="sm">
+            <Link to="/pricing">Pricing</Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm">
             <Link to="/auth">Sign in</Link>
           </Button>
+
           <Button asChild size="sm">
             <Link to="/auth" search={{ mode: "signup" }}>
               Create account
