@@ -166,9 +166,21 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
 
   const catalog = await resolveCatalog(data.items?.[0], env);
   if (!catalog) {
-    console.warn("[payments] skipping purchase: unknown catalog item");
+    // A paid transaction we cannot attribute must never disappear quietly.
+    console.error("[payments] UNMATCHED PURCHASE — no catalog item", {
+      transactionId: data.id,
+      userId,
+      environment: env,
+      rawPriceId: data.items?.[0]?.price?.id ?? data.items?.[0]?.priceId ?? null,
+    });
+    await logEvent(userId, "purchase_unmatched", {
+      transactionId: data.id,
+      environment: env,
+      rawPriceId: data.items?.[0]?.price?.id ?? data.items?.[0]?.priceId ?? null,
+    });
     return;
   }
+
 
   // Buying the Blueprint includes one month of Publisher OS™ access.
   const includedUntil = new Date();
