@@ -25,6 +25,8 @@ import { Route as AuthenticatedWizardRouteImport } from './routes/_authenticated
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedCopilotIndexRouteImport } from './routes/_authenticated/copilot.index'
 import { Route as AuthenticatedCopilotChatSessionIdRouteImport } from './routes/_authenticated/copilot.chat.$sessionId'
+import { Route as AuthenticatedCopilotDocumentsIndexRouteImport } from './routes/_authenticated/copilot.documents.index'
+import { Route as AuthenticatedCopilotDocumentsDocumentIdRouteImport } from './routes/_authenticated/copilot.documents.$documentId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -107,6 +109,18 @@ const AuthenticatedCopilotChatSessionIdRoute =
     path: '/copilot/chat/$sessionId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCopilotDocumentsIndexRoute =
+  AuthenticatedCopilotDocumentsIndexRouteImport.update({
+    id: '/copilot/documents/',
+    path: '/copilot/documents/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCopilotDocumentsDocumentIdRoute =
+  AuthenticatedCopilotDocumentsDocumentIdRouteImport.update({
+    id: '/copilot/documents/$documentId',
+    path: '/copilot/documents/$documentId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -124,6 +138,8 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/copilot/': typeof AuthenticatedCopilotIndexRoute
   '/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
+  '/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/copilot/documents/': typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -141,6 +157,8 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/copilot': typeof AuthenticatedCopilotIndexRoute
   '/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
+  '/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/copilot/documents': typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -160,6 +178,8 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/copilot/': typeof AuthenticatedCopilotIndexRoute
   '/_authenticated/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
+  '/_authenticated/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/_authenticated/copilot/documents/': typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -179,6 +199,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/copilot/'
     | '/copilot/chat/$sessionId'
+    | '/copilot/documents/$documentId'
+    | '/copilot/documents/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -196,6 +218,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/copilot'
     | '/copilot/chat/$sessionId'
+    | '/copilot/documents/$documentId'
+    | '/copilot/documents'
   id:
     | '__root__'
     | '/'
@@ -214,6 +238,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/_authenticated/copilot/'
     | '/_authenticated/copilot/chat/$sessionId'
+    | '/_authenticated/copilot/documents/$documentId'
+    | '/_authenticated/copilot/documents/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -337,6 +363,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCopilotChatSessionIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/copilot/documents/': {
+      id: '/_authenticated/copilot/documents/'
+      path: '/copilot/documents'
+      fullPath: '/copilot/documents/'
+      preLoaderRoute: typeof AuthenticatedCopilotDocumentsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/copilot/documents/$documentId': {
+      id: '/_authenticated/copilot/documents/$documentId'
+      path: '/copilot/documents/$documentId'
+      fullPath: '/copilot/documents/$documentId'
+      preLoaderRoute: typeof AuthenticatedCopilotDocumentsDocumentIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -353,6 +393,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedWizardRoute: typeof AuthenticatedWizardRoute
   AuthenticatedCopilotIndexRoute: typeof AuthenticatedCopilotIndexRoute
   AuthenticatedCopilotChatSessionIdRoute: typeof AuthenticatedCopilotChatSessionIdRoute
+  AuthenticatedCopilotDocumentsDocumentIdRoute: typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  AuthenticatedCopilotDocumentsIndexRoute: typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -369,6 +411,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCopilotIndexRoute: AuthenticatedCopilotIndexRoute,
   AuthenticatedCopilotChatSessionIdRoute:
     AuthenticatedCopilotChatSessionIdRoute,
+  AuthenticatedCopilotDocumentsDocumentIdRoute:
+    AuthenticatedCopilotDocumentsDocumentIdRoute,
+  AuthenticatedCopilotDocumentsIndexRoute:
+    AuthenticatedCopilotDocumentsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
