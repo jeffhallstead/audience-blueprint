@@ -1,167 +1,341 @@
+import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight, Download, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/page-header";
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
-import { ScoreCard } from "@/components/blueprint/score-card";
-import { MetricTile } from "@/components/blueprint/metric-tile";
-import { ProgressBar } from "@/components/blueprint/progress-bar";
+import { ExportableSection } from "@/components/blueprint/exportable-section";
+import { ScoreRing } from "@/components/blueprint/score-ring";
+import { CategoryCard } from "@/components/blueprint/category-card";
+import { OpportunityMatrix } from "@/components/blueprint/opportunity-matrix";
+import { StrengthList, GapList } from "@/components/blueprint/insight-lists";
+import { ActionList } from "@/components/blueprint/action-list";
+import { KpiGrid } from "@/components/blueprint/kpi-grid";
+import { UpgradeCta } from "@/components/blueprint/upgrade-cta";
+import { BlueprintEmptyState } from "@/components/blueprint/blueprint-empty-state";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchLatestBlueprint } from "@/lib/assessments";
-import { PLACEHOLDER_BLUEPRINT } from "@/lib/placeholder-blueprint";
-import { CATEGORIES, MATURITY_LEVELS } from "@/lib/assessment/config";
-import { fetchLatestScores } from "@/lib/assessment/persistence";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { MATURITY_LEVELS } from "@/lib/assessment/config";
+import { useBlueprint, formatAssessmentDate } from "@/lib/blueprint/use-blueprint";
+import { trackBlueprintEvent } from "@/lib/blueprint/analytics";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Executive Dashboard — Publisher Blueprint" },
-      { name: "description", content: "Your Publisher Index™ score, category breakdown, opportunities, and priorities." },
-      { property: "og:title", content: "Executive Dashboard — Publisher Blueprint" },
-      { property: "og:description", content: "Your Publisher Index™ score and strategic priorities." },
+      { title: "Publisher Blueprint™ Dashboard — Executive Overview" },
+      {
+        name: "description",
+        content:
+          "Your personalized Publisher Blueprint™: maturity level, Publisher Index™ score, category analysis, priority opportunities, and a 90-day roadmap.",
+      },
+      { property: "og:title", content: "Publisher Blueprint™ Dashboard" },
+      { property: "og:description", content: "Maturity, priorities, and a 90-day plan derived from your assessment." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Dashboard,
+  errorComponent: ({ error }) => (
+    <div role="alert" className="surface-panel p-6 text-sm text-destructive">
+      {error.message}
+    </div>
+  ),
 });
 
-const SAMPLE_CATEGORY_SCORES: Record<string, number> = {
-  audience: 58,
-  content: 71,
-  distribution: 54,
-  operations: 49,
-  strategy: 66,
-  alignment: 61,
-};
-
 function Dashboard() {
-  const { data: scores, isLoading } = useQuery({
-    queryKey: ["assessment", "scores"],
-    queryFn: fetchLatestScores,
-  });
-  const { data } = useQuery({ queryKey: ["blueprint", "latest"], queryFn: fetchLatestBlueprint });
+  const { data: blueprint, isLoading } = useBlueprint();
 
-  const blueprint = {
-    ...PLACEHOLDER_BLUEPRINT,
-    topOpportunity: data?.top_opportunity ?? PLACEHOLDER_BLUEPRINT.topOpportunity,
-    topRisk: data?.top_risk ?? PLACEHOLDER_BLUEPRINT.topRisk,
-    recommendedPriority: data?.recommended_priority ?? PLACEHOLDER_BLUEPRINT.recommendedPriority,
-    next90Days: data?.next_90_days ?? PLACEHOLDER_BLUEPRINT.next90Days,
-  };
+  useEffect(() => {
+    if (blueprint) void trackBlueprintEvent("dashboard_viewed", { overall: blueprint.overall });
+  }, [blueprint]);
 
-  const overallScore = scores?.overall ?? 62;
-  const maturity =
-    MATURITY_LEVELS.find((level) => level.level === scores?.maturityLevel) ??
-    MATURITY_LEVELS.find((level) => level.title === "Studio")!;
-  const levelTitle = maturity.title;
-  const levelIndex = maturity.level - 1;
-  const categoryScores = CATEGORIES.map((category) => ({
-    id: category.id,
-    label: category.label,
-    score: scores?.categories[category.id] ?? SAMPLE_CATEGORY_SCORES[category.id] ?? 0,
-  }));
+  if (isLoading) {
+    return (
+      <div className="space-y-8" aria-busy="true" aria-live="polite">
+        <Skeleton className="h-28 w-full rounded-xl" />
+        <Skeleton className="h-64 w-full rounded-xl" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Skeleton key={index} className="h-44 rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
+  if (!blueprint) {
+    return (
+      <div className="space-y-8">
+        <PageHeader
+          eyebrow="Publisher Blueprint™"
+          title="Executive dashboard"
+          description="Your personalized strategic assessment appears here once the Publisher Index™ is complete."
+        />
+        <BlueprintEmptyState />
+      </div>
+    );
+  }
+
+  const { summary, maturity } = blueprint;
 
   return (
-    <div className="space-y-10">
-      <PageHeader
-        eyebrow="Executive dashboard"
-        title="Owned audience readiness"
-        description="A consolidated view of your maturity, the single biggest opportunity, and what to sequence next."
-        actions={
-          <>
-            <Button variant="outline" onClick={() => toast.info("PDF export arrives in the next release.")}>
-              <Download className="size-4" /> Export PDF
-            </Button>
-            <Button asChild>
-              <Link to="/wizard">Retake assessment</Link>
-            </Button>
-          </>
-        }
-      />
-
-      {isLoading ? (
-        <Skeleton className="h-56 w-full rounded-xl" />
-      ) : (
-        <>
-          {!scores ? (
-            <div className="surface-panel flex flex-wrap items-center justify-between gap-4 border-primary/40 p-5">
-              <p className="text-sm text-muted-foreground">
-                You're viewing sample data. Complete the Publisher Index™ assessment to generate your own scores.
-              </p>
-              <Button asChild size="sm">
-                <Link to="/wizard">
-                  Start assessment <ArrowRight className="size-4" />
-                </Link>
-              </Button>
-            </div>
-          ) : (
-            <div className="surface-panel flex flex-wrap items-center justify-between gap-4 p-5">
-              <p className="text-sm text-muted-foreground">
-                Your latest Publisher Index™ assessment is complete.
-              </p>
-              <Button asChild variant="outline" size="sm">
-                <Link to="/results">
-                  View full results <ArrowRight className="size-4" />
-                </Link>
-              </Button>
-            </div>
-          )}
-
-          <ScoreCard
-            score={overallScore}
-            level={levelTitle}
-            levels={MATURITY_LEVELS.map((level) => level.title)}
-            levelIndex={levelIndex}
-          />
-        </>
-      )}
-
-
-      <div className="grid gap-5 lg:grid-cols-3">
-        <DashboardCard eyebrow="Top opportunity" accent>
-          <p className="text-sm leading-relaxed text-foreground">{blueprint.topOpportunity}</p>
-        </DashboardCard>
-        <DashboardCard eyebrow="Top risk">
-          <p className="text-sm leading-relaxed text-foreground">{blueprint.topRisk}</p>
-        </DashboardCard>
-        <DashboardCard eyebrow="Recommended priority">
-          <p className="text-sm leading-relaxed text-foreground">{blueprint.recommendedPriority}</p>
-        </DashboardCard>
-      </div>
-
-      <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-        <DashboardCard
-          eyebrow="Publisher Index™ categories"
-          title="Where you stand"
-          footer={scores ? undefined : "Sample data — complete the assessment for your own scores."}
-        >
-          <div className="space-y-4">
-            {categoryScores.map((item) => (
-              <ProgressBar key={item.id} label={item.label} value={item.score} />
-            ))}
+    <div className="space-y-12">
+      {/* Hero */}
+      <section
+        aria-labelledby="blueprint-hero-heading"
+        data-export-section="hero"
+        className="surface-panel grid gap-8 border-brass/30 p-6 sm:p-10 lg:grid-cols-[auto_minmax(0,1fr)]"
+      >
+        <div className="flex flex-col items-center gap-3">
+          <ScoreRing score={blueprint.overall} />
+          <span className="inline-flex rounded-full border border-brass/50 bg-brass/10 px-3 py-1 text-xs font-medium text-brass">
+            Level {maturity.level} · {maturity.title}
+          </span>
+        </div>
+        <div className="space-y-5">
+          <div className="space-y-2">
+            <p className="text-eyebrow">
+              {blueprint.organizationName ? `${blueprint.organizationName} · ` : ""}Publisher Blueprint™
+            </p>
+            <h1 id="blueprint-hero-heading" className="text-display text-3xl sm:text-4xl">
+              You are operating as a {maturity.title}
+            </h1>
+            <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">{maturity.summary}</p>
           </div>
+          <dl className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <dt className="text-eyebrow">Publisher Index™</dt>
+              <dd className="mt-1 text-sm font-semibold tabular-nums text-foreground">{blueprint.overall}/100</dd>
+            </div>
+            <div>
+              <dt className="text-eyebrow">Assessment date</dt>
+              <dd className="mt-1 text-sm text-foreground">{formatAssessmentDate(blueprint.completedAt)}</dd>
+            </div>
+            <div>
+              <dt className="text-eyebrow">Progress</dt>
+              <dd className="mt-1 text-sm text-foreground">
+                Stage {maturity.level} of {MATURITY_LEVELS.length}
+              </dd>
+            </div>
+          </dl>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild>
+              <Link to="/roadmap">
+                Continue building your blueprint <ArrowRight className="size-4" aria-hidden />
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                void trackBlueprintEvent("assessment_revisited");
+                toast.info("Retake the assessment any time — your history is preserved.");
+              }}
+              asChild
+            >
+              <Link to="/wizard">
+                <RefreshCw className="size-4" aria-hidden /> Retake assessment
+              </Link>
+            </Button>
+            <Button variant="ghost" onClick={() => toast.info("PDF export arrives in a later phase.")}>
+              <Download className="size-4" aria-hidden /> Export
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Executive summary */}
+      <ExportableSection
+        id="executive-summary"
+        eyebrow="Executive summary"
+        title="Where your organization stands"
+        description="A rule-based reading of your assessment: current position, the single biggest opportunity, the primary risk, and the focus that follows from both."
+      >
+        <div className="grid gap-5 lg:grid-cols-[1.3fr_1fr]">
+          <DashboardCard eyebrow="Current position">
+            <p className="text-sm leading-relaxed text-foreground">{summary.position}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground">{maturity.strategicFocus}</p>
+          </DashboardCard>
+          <div className="grid gap-5">
+            <DashboardCard eyebrow="Biggest opportunity" accent>
+              <p className="text-sm leading-relaxed text-foreground">{summary.biggestOpportunity}</p>
+            </DashboardCard>
+            <DashboardCard eyebrow="Biggest risk">
+              <p className="text-sm leading-relaxed text-foreground">{summary.biggestRisk}</p>
+            </DashboardCard>
+          </div>
+        </div>
+        <DashboardCard eyebrow="Recommended focus">
+          <p className="text-sm leading-relaxed text-foreground">{summary.recommendedFocus}</p>
         </DashboardCard>
+      </ExportableSection>
 
-
-        <DashboardCard eyebrow="Next 90 days" title="Immediate mandate" footer="Full sequencing lives in Roadmap.">
-          <p className="text-sm leading-relaxed text-foreground">{blueprint.next90Days}</p>
-          <Button asChild variant="outline" size="sm" className="w-fit">
-            <Link to="/roadmap">
-              Open roadmap <ArrowRight className="size-4" />
+      {/* Publisher Index */}
+      <ExportableSection
+        id="publisher-index"
+        eyebrow="Publisher Index™"
+        title="Your score and what it means"
+        actions={
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/blueprint">
+              Full index detail <ArrowRight className="size-4" aria-hidden />
             </Link>
           </Button>
-        </DashboardCard>
-      </div>
+        }
+      >
+        <div className="surface-panel grid gap-8 p-6 sm:p-8 lg:grid-cols-[auto_minmax(0,1fr)]">
+          <ScoreRing score={blueprint.overall} size={140} />
+          <div className="space-y-4">
+            <ol className="grid grid-cols-5 gap-1 text-center" aria-label="Maturity ladder">
+              {MATURITY_LEVELS.map((level) => (
+                <li key={level.level} className="space-y-2">
+                  <div
+                    className={`h-1 rounded-full ${level.level <= maturity.level ? "bg-brass" : "bg-muted"}`}
+                    aria-hidden
+                  />
+                  <span
+                    className={`block text-[10px] leading-tight ${
+                      level.level === maturity.level ? "font-semibold text-foreground" : "text-muted-foreground"
+                    }`}
+                  >
+                    {level.title}
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <Accordion type="single" collapsible>
+              <AccordionItem value="meaning" className="border-border">
+                <AccordionTrigger
+                  className="text-sm"
+                  onClick={() => void trackBlueprintEvent("section_expanded", {}, "what-this-means")}
+                >
+                  What this means
+                </AccordionTrigger>
+                <AccordionContent className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  <p>{maturity.summary}</p>
+                  <ul className="space-y-1.5">
+                    {maturity.characteristics.map((item) => (
+                      <li key={item} className="flex gap-2">
+                        <span aria-hidden className="mt-2 size-1 shrink-0 rounded-full bg-brass" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-foreground">{maturity.nextStep}</p>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+            <p className="text-xs text-muted-foreground">
+              Confidence · based on a completed {blueprint.categories.length}-category assessment. Benchmarks arrive in a
+              later phase.
+            </p>
+          </div>
+        </div>
+      </ExportableSection>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricTile label="Publisher level" value={levelTitle} hint="Five-stage maturity model" />
-        <MetricTile label="Publisher Index™" value={`${overallScore}/100`} hint={scores ? "Your score" : "Sample score"} />
-        <MetricTile label="Assessment status" value={scores ? "Completed" : "Not started"} hint="Latest run" />
-        <MetricTile label="Roadmap horizon" value="90 days" hint="Three sequenced months" />
-      </div>
+      {/* Category dashboard */}
+      <ExportableSection
+        id="category-analysis"
+        eyebrow="Category analysis"
+        title="Six capabilities, scored"
+        description="Each category is scored 0–100 and banded. Priority numbers indicate the order in which gaps should be addressed."
+      >
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {blueprint.categories.map((reading) => (
+            <CategoryCard key={reading.id} reading={reading} />
+          ))}
+        </div>
+      </ExportableSection>
 
+      {/* Opportunity matrix */}
+      <ExportableSection
+        id="opportunity-matrix"
+        eyebrow="Opportunity matrix"
+        title="The three highest-leverage moves"
+        description="Ranked by business impact against effort, derived from your lowest-scoring capabilities."
+      >
+        <OpportunityMatrix items={blueprint.opportunities} />
+      </ExportableSection>
+
+      {/* Strengths */}
+      <ExportableSection
+        id="strengths"
+        eyebrow="Strengths"
+        title="What is already working"
+        description="The capabilities to protect and build on."
+      >
+        <StrengthList items={blueprint.strengths} />
+      </ExportableSection>
+
+      {/* Gaps */}
+      <ExportableSection
+        id="growth-opportunities"
+        eyebrow="Growth opportunities"
+        title="Where the gap is widest"
+        description="Each gap includes why it matters now and the benefit of closing it."
+      >
+        <GapList items={blueprint.gaps} />
+      </ExportableSection>
+
+      {/* Quick wins */}
+      <ExportableSection
+        id="quick-wins"
+        eyebrow="Quick wins"
+        title="Three actions inside a week"
+        description="Low-effort moves that create momentum before the roadmap begins."
+      >
+        <ActionList items={blueprint.quickWins} />
+      </ExportableSection>
+
+      {/* Roadmap preview */}
+      <ExportableSection
+        id="roadmap-preview"
+        eyebrow="90-day roadmap"
+        title="Your implementation plan"
+        description={`Three sequenced phases calibrated to a ${maturity.title} operating level.`}
+        actions={
+          <Button asChild variant="outline" size="sm">
+            <Link to="/roadmap">
+              Open the roadmap <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          </Button>
+        }
+      >
+        <div className="grid gap-4 lg:grid-cols-3">
+          {blueprint.roadmap.map((phase) => (
+            <div key={phase.id} className="surface-panel space-y-2 p-5">
+              <p className="text-eyebrow">
+                Month {phase.month} · {phase.phase}
+              </p>
+              <p className="text-sm leading-relaxed text-foreground">{phase.objective}</p>
+              <p className="text-xs text-muted-foreground">{phase.activities.length} key activities</p>
+            </div>
+          ))}
+        </div>
+      </ExportableSection>
+
+      {/* KPIs */}
+      <ExportableSection
+        id="kpis"
+        eyebrow="Measurement"
+        title="Recommended KPIs"
+        description="The metrics that matter at your maturity level. Targets are directional until live integrations land."
+      >
+        <KpiGrid kpis={blueprint.kpis} />
+      </ExportableSection>
+
+      <UpgradeCta
+        cta={blueprint.cta}
+        onClick={() => {
+          void trackBlueprintEvent("upgrade_cta_clicked", { tier: blueprint.tier });
+          toast.info("Booking opens in the next phase — your blueprint is saved.");
+        }}
+      />
     </div>
   );
 }
