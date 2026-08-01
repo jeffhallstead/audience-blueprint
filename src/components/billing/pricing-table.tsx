@@ -8,6 +8,8 @@ type PricingTableProps = {
   loading?: boolean;
   /** True when there is an active or scheduled-to-cancel OS subscription. */
   hasSubscription?: boolean;
+  /** True when the one-time Blueprint has actually been purchased. */
+  ownsBlueprint?: boolean;
   onSelect: (priceId: string) => void;
   onManage?: (() => void) | undefined;
 };
@@ -16,6 +18,7 @@ export function PricingTable({
   currentTier,
   loading,
   hasSubscription,
+  ownsBlueprint,
   onSelect,
   onManage,
 }: PricingTableProps) {
@@ -25,7 +28,10 @@ export function PricingTable({
         const featured = plan.tier === "blueprint";
         // The Blueprint is a one-time purchase: once owned it is never re-sold,
         // including to OS subscribers who reached that tier through it.
-        const owned = plan.tier !== "free" && TIER_RANK[currentTier] >= TIER_RANK[plan.tier];
+        const owned =
+          plan.tier === "blueprint"
+            ? !!ownsBlueprint
+            : plan.tier !== "free" && TIER_RANK[currentTier] >= TIER_RANK[plan.tier];
         const isCurrent = plan.tier === currentTier;
         const manageable = plan.tier === "os" && hasSubscription;
 

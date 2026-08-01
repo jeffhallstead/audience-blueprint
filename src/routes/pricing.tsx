@@ -80,6 +80,7 @@ function PricingPage() {
         currentTier={tier}
         loading={loading || isLoading || authLoading}
         hasSubscription={!!entitlement?.subscription}
+        ownsBlueprint={(entitlement?.purchases ?? []).some((purchase) => purchase.productId === "publisher_blueprint")}
         onSelect={(priceId) => {
           if (!user) {
             toast.info("Create your free account first — it takes a minute.");
