@@ -83,7 +83,7 @@ export function ExportMenu({
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["export", "destinations"] }),
   });
 
-  const rows = buildExportRows({ blueprint, saved }, scopes);
+  const rows = buildExportRows({ blueprint, saved: saved ?? null }, scopes);
   const stem = exportFilename(blueprint);
 
   function toggleScope(scope: ExportScope, checked: boolean) {
