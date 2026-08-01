@@ -217,7 +217,7 @@ export function ExportMenu({
             <p className="text-xs text-muted-foreground">
               {airtableAvailable
                 ? "Rows upsert on the Key column, so re-exporting updates instead of duplicating."
-                : "Airtable is not connected yet."}
+                : "Connect your own Airtable account in Settings → Connections."}
             </p>
           </div>
 
@@ -246,7 +246,7 @@ export function ExportMenu({
             <p className="text-xs text-muted-foreground">
               {asanaAvailable
                 ? "One task per row, with roadmap months mapped to due dates."
-                : "Asana is not connected yet."}
+                : "Connect your own Asana account in Settings → Connections."}
             </p>
           </div>
         </div>
