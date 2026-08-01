@@ -152,7 +152,35 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
     amountCents: Number(data.details?.totals?.total ?? 0),
     environment: env,
   });
+
+  // CRM / records sync (queued, retried out of band).
+  try {
+    const { data: userRecord } = await getSupabase().auth.admin.getUserById(userId);
+    const { data: profile } = await getSupabase()
+      .from("profiles")
+      .select("full_name")
+      .eq("id", userId)
+      .maybeSingle();
+    const { enqueueIntegrationEvent } = await import("@/lib/integrations/outbox.server");
+    await enqueueIntegrationEvent(
+      {
+        eventName: "purchase.completed",
+        userId,
+        email: userRecord?.user?.email ?? null,
+        fullName: profile?.full_name ?? null,
+        tier: catalog.productId,
+        amount: Number(data.details?.totals?.total ?? 0) / 100,
+        currency: data.currencyCode ?? "USD",
+        occurredAt: new Date().toISOString(),
+        metadata: { transactionId: data.id, environment: env },
+      },
+      { dedupeKey: `purchase:${data.id}` },
+    );
+  } catch (err) {
+    console.error("[integrations] purchase sync enqueue failed:", err);
+  }
 }
+
 
 /**
  * Refunds and chargebacks. Access is revoked as soon as the adjustment is
