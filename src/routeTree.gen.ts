@@ -28,6 +28,7 @@ import { Route as AuthenticatedCopilotSimulatorRouteImport } from './routes/_aut
 import { Route as AuthenticatedCopilotChatSessionIdRouteImport } from './routes/_authenticated/copilot.chat.$sessionId'
 import { Route as AuthenticatedCopilotDocumentsIndexRouteImport } from './routes/_authenticated/copilot.documents.index'
 import { Route as AuthenticatedCopilotDocumentsDocumentIdRouteImport } from './routes/_authenticated/copilot.documents.$documentId'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -129,6 +130,12 @@ const AuthenticatedCopilotDocumentsDocumentIdRoute =
     path: '/copilot/documents/$documentId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/copilot/': typeof AuthenticatedCopilotIndexRoute
   '/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
   '/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/copilot/documents/': typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -168,6 +176,7 @@ export interface FileRoutesByTo {
   '/copilot': typeof AuthenticatedCopilotIndexRoute
   '/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
   '/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/copilot/documents': typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 export interface FileRoutesById {
@@ -190,6 +199,7 @@ export interface FileRoutesById {
   '/_authenticated/copilot/': typeof AuthenticatedCopilotIndexRoute
   '/_authenticated/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
   '/_authenticated/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/_authenticated/copilot/documents/': typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 export interface FileRouteTypes {
@@ -212,6 +222,7 @@ export interface FileRouteTypes {
     | '/copilot/'
     | '/copilot/chat/$sessionId'
     | '/copilot/documents/$documentId'
+    | '/api/public/payments/webhook'
     | '/copilot/documents/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -232,6 +243,7 @@ export interface FileRouteTypes {
     | '/copilot'
     | '/copilot/chat/$sessionId'
     | '/copilot/documents/$documentId'
+    | '/api/public/payments/webhook'
     | '/copilot/documents'
   id:
     | '__root__'
@@ -253,6 +265,7 @@ export interface FileRouteTypes {
     | '/_authenticated/copilot/'
     | '/_authenticated/copilot/chat/$sessionId'
     | '/_authenticated/copilot/documents/$documentId'
+    | '/api/public/payments/webhook'
     | '/_authenticated/copilot/documents/'
   fileRoutesById: FileRoutesById
 }
@@ -261,6 +274,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -398,6 +412,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCopilotDocumentsDocumentIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -448,6 +469,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
