@@ -34,13 +34,17 @@ export function PricingTable({
         const owned =
           plan.tier === "blueprint"
             ? !!ownsBlueprint
-            : plan.tier !== "free" && TIER_RANK[currentTier] >= TIER_RANK[plan.tier];
+            : plan.tier !== "free" &&
+              TIER_RANK[currentTier] >= TIER_RANK[plan.tier] &&
+              // OS reached only via the bundled Blueprint month is not "owned":
+              // the customer can still start a real subscription.
+              !(plan.tier === "os" && !hasSubscription && includedOsUntil);
         const isCurrent = plan.tier === currentTier;
         const manageable = plan.tier === "os" && hasSubscription;
         // A Blueprint buyer already has a bundled OS month; subscribing early
         // overlaps with it, so say so plainly rather than blocking the sale.
         const overlaps =
-          plan.tier === "os" && !hasSubscription && !!includedOsUntil && !owned;
+          plan.tier === "os" && !hasSubscription && !!includedOsUntil;
 
         let label = `Get ${plan.name}`;
         if (overlaps) label = "Subscribe now";
