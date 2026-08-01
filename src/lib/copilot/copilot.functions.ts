@@ -31,8 +31,12 @@ import { DOCUMENT_KIND_LABELS, type ObjectiveId } from "@/lib/copilot/objectives
 
 const DOCUMENT_OBJECTIVES = ["strategy", "roadmap", "pillars", "franchises", "score", "presentation"] as const;
 
+const envField = z.enum(["sandbox", "live"]).default("sandbox");
+
 const generateDocumentInput = z.object({
   objective: z.enum(DOCUMENT_OBJECTIVES),
+  /** Payment environment the client is running in; gates paid deliverables. */
+  environment: envField,
   /** Optional user steer, e.g. "focus on the EMEA segment". */
   instruction: z.string().max(2000).optional(),
   /** Set when regenerating: the previous document is superseded by a new version. */
@@ -55,6 +59,10 @@ export const generateStrategyDocument = createServerFn({ method: "POST" })
   .validator((input: unknown) => generateDocumentInput.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    // Paid deliverable: enforce entitlement server-side, not just in the UI.
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(supabase, userId, data.environment, "ai_documents");
+
     const briefing = await buildCopilotContext(supabase, userId);
     if (!briefing.hasAssessment) {
       throw new Error("Complete the Publisher Index™ assessment before generating strategy documents.");
@@ -126,6 +134,7 @@ export const generateStrategyDocument = createServerFn({ method: "POST" })
 
 const simulateInput = z.object({
   scenario: z.string().min(3).max(1000),
+  environment: envField,
   supersedesDocumentId: z.string().uuid().optional(),
 });
 
@@ -134,6 +143,9 @@ export const simulateScenario = createServerFn({ method: "POST" })
   .validator((input: unknown) => simulateInput.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(supabase, userId, data.environment, "ai_documents");
+
     const briefing = await buildCopilotContext(supabase, userId);
     if (!briefing.hasAssessment) {
       throw new Error("Complete the Publisher Index™ assessment before running scenarios.");
@@ -181,8 +193,12 @@ export const simulateScenario = createServerFn({ method: "POST" })
 
 export const generatePromptPack = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .validator((input: unknown) => z.object({ environment: envField }).parse(input ?? {}))
+  .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(supabase, userId, data.environment, "ai_documents");
+
     const briefing = await buildCopilotContext(supabase, userId);
     if (!briefing.hasAssessment) {
       throw new Error("Complete the Publisher Index™ assessment before generating a prompt pack.");
