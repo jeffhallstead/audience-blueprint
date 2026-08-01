@@ -384,7 +384,8 @@ function CopilotHome() {
             <p className="text-sm text-muted-foreground">No conversations yet.</p>
           )}
         </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }
