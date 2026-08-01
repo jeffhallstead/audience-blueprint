@@ -127,6 +127,15 @@ function RoadmapPage() {
       >
         <ActionList items={blueprint.longTerm} variant="long" />
       </ExportableSection>
+
+      <ExportableSection
+        id="copilot-actions"
+        eyebrow="From Publisher Copilot™"
+        title="Added from your strategy documents"
+        description="Actions you pushed into the Blueprint, tracked alongside the generated plan."
+      >
+        <SavedActions compact />
+      </ExportableSection>
       </>
       ) : null}
     </div>
