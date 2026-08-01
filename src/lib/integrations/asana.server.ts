@@ -1,19 +1,12 @@
 import type { ExportRow } from "@/lib/export/rows";
+import { getUserCredential } from "./credentials.server";
 import type { IntegrationAdapter } from "./types";
 
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/asana";
+const ASANA_API = "https://app.asana.com/api/1.0";
 
-function config() {
+function authHeaders(token: string) {
   return {
-    lovableKey: process.env["LOVABLE_API_KEY"],
-    connectionKey: process.env["ASANA_API_KEY"],
-  };
-}
-
-function headers(lovableKey: string, connectionKey: string) {
-  return {
-    Authorization: `Bearer ${lovableKey}`,
-    "X-Connection-Api-Key": connectionKey,
+    Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
 }
@@ -42,28 +35,32 @@ function notes(row: ExportRow): string {
     .join("\n");
 }
 
-/** Creates one Asana task per exported Blueprint row. */
+/** Creates one Asana task per exported Blueprint row, in the user's own account. */
 export const asanaAdapter: IntegrationAdapter = {
   provider: "asana",
 
+  // Credentials are per user, so availability is decided per event.
   isConfigured() {
-    const c = config();
-    return Boolean(c.lovableKey && c.connectionKey);
+    return true;
+  },
+
+  async isConfiguredForUser(userId) {
+    const credential = await getUserCredential(userId, "asana");
+    return Boolean(credential?.token);
   },
 
   async send(event) {
-    const c = config();
-    if (!c.lovableKey) throw new Error("LOVABLE_API_KEY is not configured");
-    if (!c.connectionKey) throw new Error("ASANA_API_KEY is not configured");
+    const credential = await getUserCredential(event.userId, "asana");
+    if (!credential?.token) throw new Error("This user has not connected Asana");
 
     const projectId = event.target?.asanaProjectId?.trim();
     if (!projectId) throw new Error("No Asana project selected for this export");
 
     const rows = event.records ?? [];
     for (const row of rows) {
-      const response = await fetch(`${GATEWAY_URL}/api/1.0/tasks`, {
+      const response = await fetch(`${ASANA_API}/tasks`, {
         method: "POST",
-        headers: headers(c.lovableKey, c.connectionKey),
+        headers: authHeaders(credential.token),
         body: JSON.stringify({
           data: {
             name: row.Title.slice(0, 250),
@@ -83,18 +80,26 @@ export const asanaAdapter: IntegrationAdapter = {
   },
 };
 
-/** Projects the connected Asana account can write to, for the target picker. */
-export async function listAsanaProjects(): Promise<Array<{ id: string; name: string }>> {
-  const c = config();
-  if (!c.lovableKey || !c.connectionKey) return [];
-
-  const response = await fetch(`${GATEWAY_URL}/api/1.0/projects?limit=100&opt_fields=gid,name`, {
-    headers: headers(c.lovableKey, c.connectionKey),
+/** Projects the user's connected Asana account can write to, for the target picker. */
+export async function listAsanaProjects(token: string): Promise<Array<{ id: string; name: string }>> {
+  const response = await fetch(`${ASANA_API}/projects?limit=100&opt_fields=gid,name&archived=false`, {
+    headers: authHeaders(token),
   });
   if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`Asana project list failed [${response.status}]: ${body}`);
+    throw new Error(`Asana project list failed [${response.status}]: ${await response.text()}`);
   }
   const json = (await response.json()) as { data?: Array<{ gid: string; name: string }> };
   return (json.data ?? []).map((project) => ({ id: project.gid, name: project.name }));
+}
+
+/** Verifies a personal access token and returns the account name. */
+export async function fetchAsanaUser(token: string): Promise<{ name: string; email: string | null }> {
+  const response = await fetch(`${ASANA_API}/users/me?opt_fields=name,email`, {
+    headers: authHeaders(token),
+  });
+  if (!response.ok) {
+    throw new Error(`Asana token check failed [${response.status}]: ${await response.text()}`);
+  }
+  const json = (await response.json()) as { data?: { name?: string; email?: string } };
+  return { name: json.data?.name ?? "Asana account", email: json.data?.email ?? null };
 }
