@@ -388,6 +388,42 @@ export type Database = {
         }
         Relationships: []
       }
+      export_targets: {
+        Row: {
+          airtable_table: string | null
+          asana_project_id: string | null
+          asana_project_name: string | null
+          created_at: string
+          id: string
+          last_exported_at: string | null
+          provider: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          airtable_table?: string | null
+          asana_project_id?: string | null
+          asana_project_name?: string | null
+          created_at?: string
+          id?: string
+          last_exported_at?: string | null
+          provider: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          airtable_table?: string | null
+          asana_project_id?: string | null
+          asana_project_name?: string | null
+          created_at?: string
+          id?: string
+          last_exported_at?: string | null
+          provider?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       generated_documents: {
         Row: {
           assessment_id: string | null

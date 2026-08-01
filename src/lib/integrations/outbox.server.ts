@@ -3,13 +3,17 @@ import type {
   IntegrationEvent,
   IntegrationProvider,
 } from "./types";
-import { INTEGRATION_PROVIDERS, MAX_ATTEMPTS } from "./types";
+import { CONTACT_PROVIDERS, INTEGRATION_PROVIDERS, MAX_ATTEMPTS } from "./types";
 import { airtableAdapter } from "./airtable.server";
+import { airtableRecordsAdapter } from "./airtable-records.server";
+import { asanaAdapter } from "./asana.server";
 import { hubspotAdapter } from "./hubspot.server";
 
 const ADAPTERS: Record<IntegrationProvider, IntegrationAdapter> = {
   airtable: airtableAdapter,
   hubspot: hubspotAdapter,
+  airtable_records: airtableRecordsAdapter,
+  asana: asanaAdapter,
 };
 
 export function getAdapter(provider: IntegrationProvider): IntegrationAdapter | null {
@@ -17,20 +21,22 @@ export function getAdapter(provider: IntegrationProvider): IntegrationAdapter | 
 }
 
 /** Providers that currently have credentials wired up. */
-export function configuredProviders(): IntegrationProvider[] {
-  return INTEGRATION_PROVIDERS.filter((p) => ADAPTERS[p].isConfigured());
+export function configuredProviders(
+  candidates: IntegrationProvider[] = INTEGRATION_PROVIDERS,
+): IntegrationProvider[] {
+  return candidates.filter((p) => ADAPTERS[p].isConfigured());
 }
 
 /**
- * Queue an event for every configured provider. Never throws — integrations must
- * not break signup, assessment, or checkout flows.
+ * Queue an event for the given providers (contact providers by default).
+ * Never throws — integrations must not break signup, assessment, or checkout flows.
  */
 export async function enqueueIntegrationEvent(
   event: IntegrationEvent,
-  options: { dedupeKey?: string } = {},
+  options: { dedupeKey?: string; providers?: IntegrationProvider[] } = {},
 ): Promise<void> {
   try {
-    const providers = configuredProviders();
+    const providers = configuredProviders(options.providers ?? CONTACT_PROVIDERS);
     if (providers.length === 0) return;
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -50,6 +56,7 @@ export async function enqueueIntegrationEvent(
     console.error("[integrations] enqueue threw:", err);
   }
 }
+
 
 /** Exponential backoff: 1m, 4m, 9m, 16m, 25m. */
 function backoffMinutes(attempts: number) {

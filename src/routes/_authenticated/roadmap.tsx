@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/page-header";
+import { ExportMenu } from "@/components/blueprint/export-menu";
 import { ExportableSection } from "@/components/blueprint/exportable-section";
 import { RoadmapPhaseCard } from "@/components/blueprint/roadmap-phase-card";
 import { ActionList } from "@/components/blueprint/action-list";
@@ -81,9 +82,8 @@ function RoadmapPage() {
         description={`Three sequenced phases calibrated to a ${blueprint.maturity.title} operating level. Each phase carries an objective, the activities that deliver it, and the metrics that prove it worked.`}
         actions={
           <>
-            <Button variant="outline" onClick={() => toast.info("PDF export arrives in a later phase.")}>
-              <Download className="size-4" aria-hidden /> Export
-            </Button>
+            <ExportMenu blueprint={blueprint} defaultScopes={["roadmap", "saved"]} />
+
             <Button asChild>
               <Link to="/resources">
                 Supporting resources <ArrowRight className="size-4" aria-hidden />

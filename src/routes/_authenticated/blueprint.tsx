@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/page-header";
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
+import { ExportMenu } from "@/components/blueprint/export-menu";
 import { ExportableSection } from "@/components/blueprint/exportable-section";
 import { ScoreRing } from "@/components/blueprint/score-ring";
 import { CategoryCard } from "@/components/blueprint/category-card";
@@ -78,9 +79,8 @@ function IndexDetail() {
         description="The complete diagnostic behind your score: how each capability was read and what your maturity level implies."
         actions={
           <>
-            <Button variant="outline" onClick={() => toast.info("PDF export arrives in a later phase.")}>
-              <Download className="size-4" aria-hidden /> Export
-            </Button>
+            <ExportMenu blueprint={blueprint} />
+
             <Button asChild>
               <Link to="/roadmap">
                 View roadmap <ArrowRight className="size-4" aria-hidden />
