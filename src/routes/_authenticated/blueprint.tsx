@@ -178,6 +178,15 @@ function IndexDetail() {
           </div>
         </div>
       </ExportableSection>
+
+      {!entitlementLoading && !can("roadmap") ? (
+        <LockedFeature
+          feature="roadmap"
+          title="Turn this diagnostic into a strategic plan"
+          description="Unlock the full executive dashboard, opportunity matrix, 90-day roadmap, AI strategy documents like The Branded Entertainment Brief, and PDF export — plus one month of Publisher OS™."
+        />
+      ) : null}
     </div>
   );
 }
+
