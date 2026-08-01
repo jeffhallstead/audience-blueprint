@@ -23,6 +23,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
 import { Route as AuthenticatedWizardRouteImport } from './routes/_authenticated/wizard'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedCheckoutSuccessRouteImport } from './routes/_authenticated/checkout.success'
 import { Route as AuthenticatedCopilotIndexRouteImport } from './routes/_authenticated/copilot.index'
 import { Route as AuthenticatedCopilotPromptsRouteImport } from './routes/_authenticated/copilot.prompts'
 import { Route as AuthenticatedCopilotSimulatorRouteImport } from './routes/_authenticated/copilot.simulator'
@@ -100,6 +101,12 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCheckoutSuccessRoute =
+  AuthenticatedCheckoutSuccessRouteImport.update({
+    id: '/checkout/success',
+    path: '/checkout/success',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCopilotIndexRoute =
   AuthenticatedCopilotIndexRouteImport.update({
     id: '/copilot/',
@@ -157,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
   '/copilot/': typeof AuthenticatedCopilotIndexRoute
@@ -179,6 +187,7 @@ export interface FileRoutesByTo {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
   '/copilot': typeof AuthenticatedCopilotIndexRoute
@@ -203,6 +212,7 @@ export interface FileRoutesById {
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/_authenticated/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/_authenticated/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/_authenticated/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/_authenticated/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
   '/_authenticated/copilot/': typeof AuthenticatedCopilotIndexRoute
@@ -227,6 +237,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wizard'
     | '/api/chat'
+    | '/checkout/success'
     | '/copilot/prompts'
     | '/copilot/simulator'
     | '/copilot/'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wizard'
     | '/api/chat'
+    | '/checkout/success'
     | '/copilot/prompts'
     | '/copilot/simulator'
     | '/copilot'
@@ -272,6 +284,7 @@ export interface FileRouteTypes {
     | '/_authenticated/welcome'
     | '/_authenticated/wizard'
     | '/api/chat'
+    | '/_authenticated/checkout/success'
     | '/_authenticated/copilot/prompts'
     | '/_authenticated/copilot/simulator'
     | '/_authenticated/copilot/'
@@ -389,6 +402,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/checkout/success': {
+      id: '/_authenticated/checkout/success'
+      path: '/checkout/success'
+      fullPath: '/checkout/success'
+      preLoaderRoute: typeof AuthenticatedCheckoutSuccessRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/copilot/': {
       id: '/_authenticated/copilot/'
       path: '/copilot'
@@ -452,6 +472,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedWelcomeRoute: typeof AuthenticatedWelcomeRoute
   AuthenticatedWizardRoute: typeof AuthenticatedWizardRoute
+  AuthenticatedCheckoutSuccessRoute: typeof AuthenticatedCheckoutSuccessRoute
   AuthenticatedCopilotPromptsRoute: typeof AuthenticatedCopilotPromptsRoute
   AuthenticatedCopilotSimulatorRoute: typeof AuthenticatedCopilotSimulatorRoute
   AuthenticatedCopilotIndexRoute: typeof AuthenticatedCopilotIndexRoute
@@ -471,6 +492,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedWelcomeRoute: AuthenticatedWelcomeRoute,
   AuthenticatedWizardRoute: AuthenticatedWizardRoute,
+  AuthenticatedCheckoutSuccessRoute: AuthenticatedCheckoutSuccessRoute,
   AuthenticatedCopilotPromptsRoute: AuthenticatedCopilotPromptsRoute,
   AuthenticatedCopilotSimulatorRoute: AuthenticatedCopilotSimulatorRoute,
   AuthenticatedCopilotIndexRoute: AuthenticatedCopilotIndexRoute,
