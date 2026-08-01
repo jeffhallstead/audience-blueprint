@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -40,18 +40,33 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [pending, setPending] = useState(false);
+  const [googlePending, setGooglePending] = useState(false);
   const [checkEmail, setCheckEmail] = useState(false);
+  const navigatedRef = useRef(false);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (!data.session) return;
-      navigate({ to: await resolvePostAuthPath(), replace: true });
-    });
+  const goToApp = useCallback(async () => {
+    if (navigatedRef.current) return;
+    navigatedRef.current = true;
+    navigate({ to: await resolvePostAuthPath(), replace: true });
   }, [navigate]);
 
-  async function goToApp() {
-    navigate({ to: await resolvePostAuthPath(), replace: true });
-  }
+  // Navigate off this page whenever a session actually exists — on mount, and
+  // whenever one arrives later (OAuth popup completing, token exchange, etc.).
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) void goToApp();
+    });
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) return;
+      if (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED") {
+        void goToApp();
+      }
+    });
+
+    return () => subscription.subscription.unsubscribe();
+  }, [goToApp]);
+
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -96,16 +111,35 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
-    setPending(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (result.error) {
+    setGooglePending(true);
+    // Safety net: if the popup is dismissed or the session never lands, don't
+    // leave the button stuck in a permanent pending state.
+    const timeout = window.setTimeout(() => {
+      if (navigatedRef.current) return;
+      setGooglePending(false);
+      toast.error("Sign-in didn't complete. Please try again.");
+    }, 20000);
+
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        toast.error("Google sign-in failed. Please try again.");
+        return;
+      }
+      if (result.redirected) return;
+      await goToApp();
+    } catch {
       toast.error("Google sign-in failed. Please try again.");
-      setPending(false);
-      return;
+    } finally {
+      if (!navigatedRef.current) {
+        window.clearTimeout(timeout);
+        setGooglePending(false);
+      }
     }
-    if (result.redirected) return;
-    await goToApp();
   }
+
 
 
   return (
@@ -154,9 +188,15 @@ function AuthPage() {
                 </h1>
               </div>
 
-              <Button variant="outline" className="w-full" onClick={handleGoogle} disabled={pending}>
-                Continue with Google
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={handleGoogle}
+                disabled={googlePending || pending}
+              >
+                {googlePending ? "Connecting to Google…" : "Continue with Google"}
               </Button>
+
 
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                 <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
