@@ -15,6 +15,7 @@ export type Feature =
   | "full_dashboard"
   | "roadmap"
   | "ai_documents"
+  | "ai_chat"
   | "ai_chat_unlimited"
   | "pdf_export"
   | "progress_tracking"
@@ -29,6 +30,7 @@ export const FEATURE_MINIMUM: Record<Feature, Tier> = {
   full_dashboard: "blueprint",
   roadmap: "blueprint",
   ai_documents: "blueprint",
+  ai_chat: "blueprint",
   pdf_export: "blueprint",
   ai_chat_unlimited: "os",
   progress_tracking: "os",
@@ -46,6 +48,12 @@ export const PRICE_IDS = {
 } as const;
 
 /** Paddle product external_id → tier. Used by the webhook to map purchases. */
+/** Paddle price external_id → product external_id. Used by the webhook. */
+export const PRICE_PRODUCT: Record<string, string> = {
+  [PRICE_IDS.blueprint]: "publisher_blueprint",
+  [PRICE_IDS.os]: "publisher_os",
+};
+
 export const PRODUCT_TIER: Record<string, Exclude<Tier, "free">> = {
   publisher_blueprint: "blueprint",
   publisher_os: "os",
