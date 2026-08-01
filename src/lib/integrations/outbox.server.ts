@@ -104,7 +104,7 @@ export async function dispatchOutbox(limit = 25): Promise<DispatchResult> {
     }
 
     try {
-      await adapter.send(row.payload as unknown as IntegrationEvent);
+      await adapter!.send(row.payload as unknown as IntegrationEvent);
       result.delivered += 1;
       await supabaseAdmin
         .from("integration_outbox")
