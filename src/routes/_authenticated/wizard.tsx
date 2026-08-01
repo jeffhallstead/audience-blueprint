@@ -49,6 +49,7 @@ const REVIEW_STEP = SECTIONS.length;
 function Wizard() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const syncAssessment = useServerFn(syncAssessmentCompleted);
 
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
   const [answers, setAnswers] = useState<AssessmentAnswers>({});
