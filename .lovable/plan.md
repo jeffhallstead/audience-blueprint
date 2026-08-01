@@ -1,33 +1,51 @@
 ## Goal
-Make the Publisher Copilot page read as an ordered walkthrough by numbering its sections.
 
-## What the page has today
-Five unnumbered section headings in this order, all styled as small brass mono labels:
-1. Strategy actions (primary objective cards)
-2. Ask your strategist (suggested questions)
-3. Secondary tools grid (simulator, prompts, extra deliverables) — currently has **no heading at all**
-4. Recent deliverables
-5. Recent conversations
+Let you take everything in your Blueprint — saved actions, the 90-day roadmap, blueprint recommendations, KPIs, and category scores — out of the app: download as a spreadsheet file, or push straight into Airtable or Asana as rows/tasks.
 
-## Changes
+Yes, the existing code extends cleanly. The integration adapter pattern (`IntegrationAdapter` + `integration_outbox`) already used for Airtable/HubSpot contact sync is the right backbone; it just needs a second event shape for "records" rather than "contacts".
 
-**Numbered section headings**
-- Introduce a small shared `SectionHeading` component in the Copilot route (numbered badge + label + optional right-side action) so all sections are consistent.
-- The badge is a circular/rounded brass-outlined chip containing the step number, followed by the existing mono uppercase label.
-- Apply in order:
-  - 1 — Start here: Strategy actions
-  - 2 — Go deeper: more tools (new heading for the currently unlabeled secondary grid)
-  - 3 — Ask your strategist
-  - 4 — Your deliverables (Recent deliverables + Recent conversations sit side by side under one numbered heading, each keeping its own sub-label)
-- Reorder so the secondary tools grid sits directly after strategy actions, keeping "generate → explore → ask → review" as a logical progression.
+## 1. One export data model
 
-**Supporting copy**
-- Add a one-line helper sentence under each numbered heading explaining what to do at that step (e.g. step 1: "Generate your core deliverables from your Publisher Index™ results").
+A single builder turns the current blueprint into a flat list of export rows with stable columns:
 
-**Accessibility / semantics**
-- Numbers are decorative chips; headings stay real `h2` elements with the full text ("1. Start here: Strategy actions") available to screen readers via the heading text itself.
+```text
+Type | Category | Title | Detail | Impact | Effort | Phase/Month | Owner | Status | Source | Created
+```
+
+Rows come from saved recommendations, roadmap phases, blueprint recommendations, KPIs, and category scores. Every destination (CSV, XLSX, Airtable, Asana) consumes this same list, so the columns stay identical everywhere.
+
+## 2. File download (CSV + XLSX)
+
+- An **Export** menu on `/blueprint` and `/roadmap` (and the Strategy Library) with: Download CSV, Download Excel (.xlsx), and Copy for Google Sheets.
+- CSV is generated in the browser (no dependency); XLSX uses a small sheet-writing library.
+- Google Sheets is covered by the CSV/clipboard path — File > Import in Sheets, no connector or OAuth needed.
+- A scope picker so you can export everything or just one section.
+
+## 3. Direct push to Airtable
+
+- New `airtableRecordsAdapter` alongside the existing contacts adapter, writing to a separate table (default "Publisher Blueprint Actions", configurable) in your already-connected base.
+- Batched creates (10 records/request, as Airtable requires), `typecast: true` so fields auto-map.
+- Dedupe by a stable external key per row so re-exporting updates rather than duplicating.
+
+## 4. Direct push to Asana
+
+- Requires connecting the Asana connector first (one approval card during implementation).
+- New `asanaAdapter` creating one task per exported row: title as task name, detail as notes, impact/effort/category as tags or custom-field-free notes, roadmap month mapped to a due date.
+- You pick the target Asana project the first time; the choice is stored per user.
+
+## 5. Wiring and reliability
+
+- Exports queue through the existing `integration_outbox` (status, attempts, backoff, dedupe) so a failed push retries instead of silently dropping.
+- Push is triggered by an authenticated server function; the UI shows queued → delivered state and links to the destination when the provider returns record/task URLs.
+- A small `export_targets` table stores per-user destination config (Airtable table name, Asana project id, last export time).
 
 ## Technical notes
-- Single file touched: `src/routes/_authenticated/copilot.index.tsx`.
-- Presentation-only — no changes to objectives config, document queries, generation logic, or entitlements.
-- Uses existing tokens (`text-brass`, `border-brass/30`, `font-mono` label style); no new colors.
+
+- New: `src/lib/export/rows.ts` (shared row builder), `src/lib/export/file.ts` (CSV/XLSX), `src/lib/export/export.functions.ts` (server fn to enqueue a push), `src/lib/integrations/airtable-records.server.ts`, `src/lib/integrations/asana.server.ts`.
+- Extend `IntegrationEvent` with a discriminated `records` variant so adapters stay type-safe; `INTEGRATION_PROVIDERS` gains `airtable_records` and `asana`.
+- One migration for `export_targets` (RLS scoped to `auth.uid()`, GRANTs for `authenticated` + `service_role`).
+- The Asana connector must be linked before its adapter reports `isConfigured()`; until then the Asana option shows a "Connect Asana" state rather than failing.
+
+## Testing
+
+Export CSV from `/blueprint` and open in Excel/Sheets; push to Airtable and confirm rows appear in the new table; connect Asana, pick a project, push and confirm tasks with due dates.
