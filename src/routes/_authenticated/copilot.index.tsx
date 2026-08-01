@@ -44,6 +44,24 @@ const SUGGESTED_QUESTIONS = [
   "Where are we wasting effort right now?",
 ];
 
+function SectionHeading({ step, label, hint }: { step: number; label: string; hint?: string }) {
+  return (
+    <div className="space-y-1">
+      <h2 className="flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-brass">
+        <span
+          aria-hidden
+          className="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-brass/40 bg-brass/10 text-[10px] leading-none text-brass"
+        >
+          {step}
+        </span>
+        <span className="sr-only">{`Step ${step}: `}</span>
+        {label}
+      </h2>
+      {hint ? <p className="pl-7.5 text-xs text-muted-foreground">{hint}</p> : null}
+    </div>
+  );
+}
+
 function CopilotHome() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -135,7 +153,11 @@ function CopilotHome() {
       />
 
       <section className="space-y-4">
-        <h2 className="font-mono text-[10px] uppercase tracking-[0.18em] text-brass">Strategy actions</h2>
+        <SectionHeading
+          step={1}
+          label="Start here: Strategy actions"
+          hint="Generate your core deliverables straight from your Publisher Index™ results."
+        />
         <div className="grid gap-5 sm:grid-cols-2">
           {PRIMARY_OBJECTIVES.map((objective) => {
             const Icon = objectiveIcon(objective.icon);
@@ -207,21 +229,12 @@ function CopilotHome() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="font-mono text-[10px] uppercase tracking-[0.18em] text-brass">Ask your strategist</h2>
-        <div className="flex flex-wrap gap-2">
-          {SUGGESTED_QUESTIONS.map((question) => (
-            <button
-              key={question}
-              onClick={() => void startConversation(question)}
-              className="rounded-full border border-border px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-brass/50 hover:text-foreground"
-            >
-              {question}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="grid gap-5 lg:grid-cols-3">
+        <SectionHeading
+          step={2}
+          label="Go deeper: more tools"
+          hint="Model scenarios, grab prompts, and produce the supporting deliverables."
+        />
+        <div className="grid gap-5 lg:grid-cols-3">
         {secondary.map((objective) => {
           const Icon = objectiveIcon(objective.icon);
           const to = objective.id === "simulator" ? "/copilot/simulator" : objective.id === "prompts" ? "/copilot/prompts" : null;
@@ -279,12 +292,38 @@ function CopilotHome() {
             </button>
           );
         })}
+        </div>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <section className="space-y-4">
+        <SectionHeading
+          step={3}
+          label="Ask your strategist"
+          hint="Pressure-test the plan in conversation, or start from one of these questions."
+        />
+        <div className="flex flex-wrap gap-2">
+          {SUGGESTED_QUESTIONS.map((question) => (
+            <button
+              key={question}
+              onClick={() => void startConversation(question)}
+              className="rounded-full border border-border px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-brass/50 hover:text-foreground"
+            >
+              {question}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeading
+          step={4}
+          label="Review your deliverables"
+          hint="Everything Copilot has produced for you so far."
+        />
+        <div className="grid gap-8 lg:grid-cols-2">
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-mono text-[10px] uppercase tracking-[0.18em] text-brass">Recent deliverables</h2>
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-brass">Recent deliverables</h3>
             <Link to="/copilot/documents" className="text-xs text-muted-foreground hover:text-foreground">
               View all
             </Link>
@@ -316,7 +355,7 @@ function CopilotHome() {
 
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-mono text-[10px] uppercase tracking-[0.18em] text-brass">Recent conversations</h2>
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-brass">Recent conversations</h3>
             <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => void startConversation()}>
               <Sparkles className="size-3.5" /> New
             </Button>
