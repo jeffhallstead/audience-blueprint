@@ -49,7 +49,7 @@ function CopilotHome() {
   const queryClient = useQueryClient();
   const { data: blueprint, isLoading } = useBlueprint();
   const { data: sessions } = useSessions();
-  const { data: documents } = useDocuments();
+  const { data: documents, isLoading: documentsLoading } = useDocuments();
   const createSession = useCreateSession();
   const generateDocument = useServerFn(generateStrategyDocument);
   const [runningObjective, setRunningObjective] = useState<string | null>(null);
