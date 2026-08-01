@@ -141,6 +141,7 @@ function CopilotHome() {
             const Icon = objectiveIcon(objective.icon);
             const running = runningObjective === objective.id;
             const isAsk = objective.id === "ask";
+            const existing = isAsk ? undefined : latestByKind.get(objective.id);
             return (
               <article
                 key={objective.id}
@@ -158,16 +159,42 @@ function CopilotHome() {
                     Delivers: {objective.deliverable}
                   </p>
                 </div>
-                <Button
-                  size="sm"
-                  variant={isAsk ? "outline" : "default"}
-                  className="w-fit"
-                  disabled={busy}
-                  onClick={() => (isAsk ? void startConversation() : runObjective.mutate(objective.id))}
-                >
-                  {running ? <Loader2 className="size-4 animate-spin" /> : <ArrowRight className="size-4" />}
-                  {running ? "Generating…" : isAsk ? "Start a conversation" : "Generate"}
-                </Button>
+                {existing ? (
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button size="sm" asChild>
+                        <Link to="/copilot/documents/$documentId" params={{ documentId: existing.id }}>
+                          <FileText className="size-4" aria-hidden />
+                          View my report
+                        </Link>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-xs"
+                        disabled={busy}
+                        onClick={() => runObjective.mutate(objective.id)}
+                      >
+                        {running ? <Loader2 className="size-3.5 animate-spin" /> : <RefreshCw className="size-3.5" />}
+                        {running ? "Regenerating…" : "Regenerate"}
+                      </Button>
+                    </div>
+                    <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground/80">
+                      Generated {formatGenerated(existing.created_at)}
+                    </p>
+                  </div>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant={isAsk ? "outline" : "default"}
+                    className="w-fit"
+                    disabled={busy || (!isAsk && documentsLoading)}
+                    onClick={() => (isAsk ? void startConversation() : runObjective.mutate(objective.id))}
+                  >
+                    {running ? <Loader2 className="size-4 animate-spin" /> : <ArrowRight className="size-4" />}
+                    {running ? "Generating…" : isAsk ? "Start a conversation" : "Generate"}
+                  </Button>
+                )}
               </article>
             );
           })}
