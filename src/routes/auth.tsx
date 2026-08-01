@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -40,18 +40,33 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [pending, setPending] = useState(false);
+  const [googlePending, setGooglePending] = useState(false);
   const [checkEmail, setCheckEmail] = useState(false);
+  const navigatedRef = useRef(false);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (!data.session) return;
-      navigate({ to: await resolvePostAuthPath(), replace: true });
-    });
+  const goToApp = useCallback(async () => {
+    if (navigatedRef.current) return;
+    navigatedRef.current = true;
+    navigate({ to: await resolvePostAuthPath(), replace: true });
   }, [navigate]);
 
-  async function goToApp() {
-    navigate({ to: await resolvePostAuthPath(), replace: true });
-  }
+  // Navigate off this page whenever a session actually exists — on mount, and
+  // whenever one arrives later (OAuth popup completing, token exchange, etc.).
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) void goToApp();
+    });
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) return;
+      if (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED") {
+        void goToApp();
+      }
+    });
+
+    return () => subscription.subscription.unsubscribe();
+  }, [goToApp]);
+
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
