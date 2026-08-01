@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Check, Copy, Download, Loader2, Pencil, RefreshCw, Save, Star } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Markdown } from "@/components/copilot/markdown";
 import { downloadText, slugifyTitle } from "@/components/copilot/utils";
-import { useSaveRecommendation, useUpdateDocument, type DocumentRow } from "@/lib/copilot/queries";
+import {
+  useSaveRecommendation,
+  useSavedRecommendations,
+  useUpdateDocument,
+  type DocumentRow,
+} from "@/lib/copilot/queries";
 import type { StrategyDocument } from "@/lib/copilot/schema";
 import { DOCUMENT_KIND_LABELS } from "@/lib/copilot/objectives";
 
