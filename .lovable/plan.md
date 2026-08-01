@@ -1,51 +1,31 @@
-## Goal
+## Confirmed diagnosis
 
-Let you take everything in your Blueprint — saved actions, the 90-day roadmap, blueprint recommendations, KPIs, and category scores — out of the app: download as a spreadsheet file, or push straight into Airtable or Asana as rows/tasks.
+The current workaround targets the wrong completion mechanism for the failing context. The installed managed-auth helper detects a mobile browser inside the preview iframe, opens Google in a separate tab, and waits for an `authorization_response` message before setting the app session (`@lovable.dev/cloud-auth-js`, installed v1.1.2). It does not return the session to the iframe as URL tokens in that path. Therefore `consumeOAuthRedirect()` in `src/lib/auth/oauth-redirect.ts` cannot repair this mobile-preview flow.
 
-Yes, the existing code extends cleanly. The integration adapter pattern (`IntegrationAdapter` + `integration_outbox`) already used for Airtable/HubSpot contact sync is the right backbone; it just needs a second event shape for "records" rather than "contacts".
+The app also has multiple competing completion paths—root token consumption, `/auth` session listeners, focus reconciliation, a 150-second timeout, and immediate protected-route navigation. This makes session hydration and navigation timing fragile even though the backend logs confirm Google authentication itself succeeds.
 
-## 1. One export data model
+## Implementation plan
 
-A single builder turns the current blueprint into a flat list of export rows with stable columns:
+1. **Refresh the managed Google auth integration**
+   - Re-run the Lovable Cloud Google provider configuration so the generated integration and supported auth package are current.
+   - Keep Google OAuth routed through the generated `lovable.auth.signInWithOAuth` helper; do not replace it with a raw provider call or custom popup.
 
-```text
-Type | Category | Title | Detail | Impact | Effort | Phase/Month | Owner | Status | Source | Created
-```
+2. **Remove the incorrect redirect workaround**
+   - Remove the custom URL-token consumer from the root route and delete its helper if it has no remaining callers.
+   - Stop relying on focus/visibility events or a competing app-level timeout to infer whether OAuth completed.
 
-Rows come from saved recommendations, roadmap phases, blueprint recommendations, KPIs, and category scores. Every destination (CSV, XLSX, Airtable, Asana) consumes this same list, so the columns stay identical everywhere.
+3. **Make `/auth` session-confirmed and deterministic**
+   - Call the managed helper directly from the Google button with the public same-origin return URL.
+   - Treat `redirected` as a handoff and otherwise wait for the helper to finish setting the session.
+   - Confirm the authenticated identity with `auth.getUser()` before navigating.
+   - Navigate only after identity confirmation; otherwise keep the user on `/auth`, restore the button, and show a useful error rather than silently looping.
+   - Preserve one guarded post-auth navigation so duplicate auth events cannot race each other.
 
-## 2. File download (CSV + XLSX)
+4. **Harden the public return landing**
+   - On `/`, forward users only after a validated authenticated user is available, rather than using a locally cached session as sufficient proof.
+   - Resolve the correct destination (`/welcome` or `/dashboard`) only after that confirmation so the protected layout does not bounce the user back to `/auth` during hydration.
 
-- An **Export** menu on `/blueprint` and `/roadmap` (and the Strategy Library) with: Download CSV, Download Excel (.xlsx), and Copy for Google Sheets.
-- CSV is generated in the browser (no dependency); XLSX uses a small sheet-writing library.
-- Google Sheets is covered by the CSV/clipboard path — File > Import in Sheets, no connector or OAuth needed.
-- A scope picker so you can export everything or just one section.
-
-## 3. Direct push to Airtable
-
-- New `airtableRecordsAdapter` alongside the existing contacts adapter, writing to a separate table (default "Publisher Blueprint Actions", configurable) in your already-connected base.
-- Batched creates (10 records/request, as Airtable requires), `typecast: true` so fields auto-map.
-- Dedupe by a stable external key per row so re-exporting updates rather than duplicating.
-
-## 4. Direct push to Asana
-
-- Requires connecting the Asana connector first (one approval card during implementation).
-- New `asanaAdapter` creating one task per exported row: title as task name, detail as notes, impact/effort/category as tags or custom-field-free notes, roadmap month mapped to a due date.
-- You pick the target Asana project the first time; the choice is stored per user.
-
-## 5. Wiring and reliability
-
-- Exports queue through the existing `integration_outbox` (status, attempts, backoff, dedupe) so a failed push retries instead of silently dropping.
-- Push is triggered by an authenticated server function; the UI shows queued → delivered state and links to the destination when the provider returns record/task URLs.
-- A small `export_targets` table stores per-user destination config (Airtable table name, Asana project id, last export time).
-
-## Technical notes
-
-- New: `src/lib/export/rows.ts` (shared row builder), `src/lib/export/file.ts` (CSV/XLSX), `src/lib/export/export.functions.ts` (server fn to enqueue a push), `src/lib/integrations/airtable-records.server.ts`, `src/lib/integrations/asana.server.ts`.
-- Extend `IntegrationEvent` with a discriminated `records` variant so adapters stay type-safe; `INTEGRATION_PROVIDERS` gains `airtable_records` and `asana`.
-- One migration for `export_targets` (RLS scoped to `auth.uid()`, GRANTs for `authenticated` + `service_role`).
-- The Asana connector must be linked before its adapter reports `isConfigured()`; until then the Asana option shows a "Connect Asana" state rather than failing.
-
-## Testing
-
-Export CSV from `/blueprint` and open in Excel/Sheets; push to Airtable and confirm rows appear in the new table; connect Asana, pick a project, push and confirm tasks with due dates.
+5. **Verify the complete flow**
+   - Check that signed-out users remain on `/auth` and the Google button recovers after cancellation/error.
+   - Verify successful Google completion establishes a persisted session, reaches `/welcome` or `/dashboard`, and survives refresh.
+   - Test both desktop popup behavior and mobile/full-page behavior, and inspect browser/auth signals for any remaining redirect or session errors.
