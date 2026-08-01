@@ -111,6 +111,14 @@ function CopilotHome() {
   const secondary = OBJECTIVES.filter((objective) => !objective.primary && objective.id !== "ask");
   const busy = runObjective.isPending;
 
+  // Documents come back newest-first, so the first match per kind is the latest report.
+  const latestByKind = new Map<string, (typeof documents)[number]>();
+  for (const document of documents ?? []) {
+    if (!latestByKind.has(document.kind)) latestByKind.set(document.kind, document);
+  }
+  const formatGenerated = (value: string) =>
+    new Date(value).toLocaleDateString(undefined, { dateStyle: "medium" });
+
   return (
     <div className="space-y-12">
       <PageHeader
