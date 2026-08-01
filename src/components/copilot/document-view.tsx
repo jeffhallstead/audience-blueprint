@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Check, Copy, Download, Loader2, Pencil, RefreshCw, Save, Star } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Markdown } from "@/components/copilot/markdown";
 import { downloadText, slugifyTitle } from "@/components/copilot/utils";
-import { useSaveRecommendation, useUpdateDocument, type DocumentRow } from "@/lib/copilot/queries";
+import {
+  useSaveRecommendation,
+  useSavedRecommendations,
+  useUpdateDocument,
+  type DocumentRow,
+} from "@/lib/copilot/queries";
 import type { StrategyDocument } from "@/lib/copilot/schema";
 import { DOCUMENT_KIND_LABELS } from "@/lib/copilot/objectives";
 
@@ -36,6 +42,11 @@ export function DocumentView({
   const [copied, setCopied] = useState(false);
   const updateDocument = useUpdateDocument();
   const saveRecommendation = useSaveRecommendation();
+  const navigate = useNavigate();
+  const { data: saved } = useSavedRecommendations();
+  const savedTitles = new Set(
+    (saved ?? []).filter((item) => item.document_id === document.id).map((item) => item.title),
+  );
 
   const body = document.body as unknown as StrategyDocument | { simulation?: unknown } | null;
   const structured = body && "sections" in (body as object) ? (body as StrategyDocument) : null;
@@ -152,7 +163,9 @@ export function DocumentView({
             <section className="space-y-4">
               <h2 className="font-display text-lg font-semibold tracking-tight text-foreground">Recommended actions</h2>
               <div className="space-y-3">
-                {structured.actions.map((action, index) => (
+                {structured.actions.map((action, index) => {
+                  const alreadySaved = savedTitles.has(action.title);
+                  return (
                   <div key={index} className="rounded-xl border border-border bg-card p-5">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <h3 className="text-sm font-semibold text-foreground">{action.title}</h3>
@@ -164,27 +177,41 @@ export function DocumentView({
                           variant="ghost"
                           size="sm"
                           className="h-7 text-xs"
-                          disabled={saveRecommendation.isPending}
+                          disabled={saveRecommendation.isPending || alreadySaved}
                           onClick={() =>
                             saveRecommendation.mutate(
                               {
                                 title: action.title,
                                 body: `${action.description}\n\nImpact: ${action.impact}\nEffort: ${action.effort}\nOwner: ${action.owner}\nDependencies: ${action.dependencies.join(", ") || "None"}`,
                                 category: document.kind,
+                                impact: action.impact,
                                 effort: action.effort,
                                 documentId: document.id,
                               },
                               {
-                                onSuccess: () => toast.success("Added to your Blueprint"),
+                                onSuccess: () =>
+                                  toast.success("Added to your Blueprint", {
+                                    action: {
+                                      label: "View",
+                                      onClick: () => navigate({ to: "/blueprint", hash: "saved-actions" }),
+                                    },
+                                  }),
                                 onError: (error) => toast.error((error as Error).message),
                               },
                             )
                           }
                         >
-                          Add to Blueprint
+                          {alreadySaved ? (
+                            <>
+                              <Check className="size-3.5" aria-hidden /> Added
+                            </>
+                          ) : (
+                            "Add to Blueprint"
+                          )}
                         </Button>
                       </div>
                     </div>
+
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{action.description}</p>
                     <dl className="mt-4 grid gap-3 text-xs sm:grid-cols-2">
                       <div>
@@ -205,7 +232,8 @@ export function DocumentView({
                       ) : null}
                     </dl>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           ) : null}

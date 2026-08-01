@@ -9,6 +9,7 @@ import { ScoreRing } from "@/components/blueprint/score-ring";
 import { CategoryCard } from "@/components/blueprint/category-card";
 import { IndexRadar } from "@/components/assessment/index-radar";
 import { BlueprintEmptyState } from "@/components/blueprint/blueprint-empty-state";
+import { SavedActions } from "@/components/blueprint/saved-actions";
 import { LockedFeature } from "@/components/billing/feature-gate";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { Button } from "@/components/ui/button";
@@ -177,6 +178,15 @@ function IndexDetail() {
             </DashboardCard>
           </div>
         </div>
+      </ExportableSection>
+
+      <ExportableSection
+        id="saved-actions"
+        eyebrow="From Publisher Copilot™"
+        title="Saved to your Blueprint"
+        description="Actions you added from your strategy deliverables. Mark them done as you ship them."
+      >
+        <SavedActions />
       </ExportableSection>
 
       {!entitlementLoading && !can("roadmap") ? (

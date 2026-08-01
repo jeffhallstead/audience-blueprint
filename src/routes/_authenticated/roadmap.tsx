@@ -7,6 +7,7 @@ import { ExportableSection } from "@/components/blueprint/exportable-section";
 import { RoadmapPhaseCard } from "@/components/blueprint/roadmap-phase-card";
 import { ActionList } from "@/components/blueprint/action-list";
 import { BlueprintEmptyState } from "@/components/blueprint/blueprint-empty-state";
+import { SavedActions } from "@/components/blueprint/saved-actions";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBlueprint } from "@/lib/blueprint/use-blueprint";
@@ -126,6 +127,15 @@ function RoadmapPage() {
         description="The structural investments that follow once the first quarter lands."
       >
         <ActionList items={blueprint.longTerm} variant="long" />
+      </ExportableSection>
+
+      <ExportableSection
+        id="copilot-actions"
+        eyebrow="From Publisher Copilot™"
+        title="Added from your strategy documents"
+        description="Actions you pushed into the Blueprint, tracked alongside the generated plan."
+      >
+        <SavedActions compact />
       </ExportableSection>
       </>
       ) : null}
