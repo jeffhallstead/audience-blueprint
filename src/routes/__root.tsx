@@ -13,6 +13,8 @@ import appCss from "../styles.css?url";
 import { Toaster } from "../components/ui/sonner";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "../integrations/supabase/client";
+import { consumeOAuthRedirect } from "../lib/auth/oauth-redirect";
+
 
 function NotFoundComponent() {
   return (
@@ -121,6 +123,12 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
+  // Mobile OAuth returns to the app origin with tokens in the URL; consume them
+  // so the session is established before anything else reads it.
+  useEffect(() => {
+    void consumeOAuthRedirect();
+  }, []);
+
   // Single global auth subscriber: keeps router/cache in sync with the session.
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
@@ -130,6 +138,7 @@ function RootComponent() {
     });
     return () => data.subscription.unsubscribe();
   }, [router, queryClient]);
+
 
   return (
     <QueryClientProvider client={queryClient}>
