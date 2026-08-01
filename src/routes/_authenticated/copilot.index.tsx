@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, FileText, Loader2, MessageSquare, Sparkles } from "lucide-react";
+import { ArrowRight, FileText, Loader2, MessageSquare, RefreshCw, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/page-header";
 import { BlueprintEmptyState } from "@/components/blueprint/blueprint-empty-state";
