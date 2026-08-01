@@ -44,7 +44,10 @@ function PricingPage() {
   async function manageSubscription() {
     try {
       const { url } = await createPortalSession({ data: { environment: getPaddleEnvironment() } });
-      if (!url) return toast.info("No billing account yet.");
+      if (!url) {
+        toast.info("No billing account yet.");
+        return;
+      }
       window.open(url, "_blank", "noopener,noreferrer");
     } catch {
       toast.error("Could not open the billing portal.");
