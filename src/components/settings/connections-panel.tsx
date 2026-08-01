@@ -171,9 +171,10 @@ export function ConnectionsPanel() {
                     Base to export into
                   </Label>
                   <Select
-                    value={bases.data?.selectedBaseId ?? undefined}
+                    value={bases.data?.selectedBaseId ?? ""}
                     onValueChange={(value) => chooseBase.mutate(value)}
                   >
+
                     <SelectTrigger id="airtable-base">
                       <SelectValue placeholder={bases.isLoading ? "Loading bases…" : "Choose a base"} />
                     </SelectTrigger>
