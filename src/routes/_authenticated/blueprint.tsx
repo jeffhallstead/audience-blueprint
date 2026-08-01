@@ -9,6 +9,8 @@ import { ScoreRing } from "@/components/blueprint/score-ring";
 import { CategoryCard } from "@/components/blueprint/category-card";
 import { IndexRadar } from "@/components/assessment/index-radar";
 import { BlueprintEmptyState } from "@/components/blueprint/blueprint-empty-state";
+import { LockedFeature } from "@/components/billing/feature-gate";
+import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -40,6 +42,8 @@ export const Route = createFileRoute("/_authenticated/blueprint")({
 
 function IndexDetail() {
   const { data: blueprint, isLoading } = useBlueprint();
+  const { can, isLoading: entitlementLoading } = useEntitlement();
+
 
   useEffect(() => {
     if (blueprint) void trackBlueprintEvent("publisher_index_viewed", { overall: blueprint.overall });
@@ -174,6 +178,15 @@ function IndexDetail() {
           </div>
         </div>
       </ExportableSection>
+
+      {!entitlementLoading && !can("roadmap") ? (
+        <LockedFeature
+          feature="roadmap"
+          title="Turn this diagnostic into a strategic plan"
+          description="Unlock the full executive dashboard, opportunity matrix, 90-day roadmap, AI strategy documents like The Branded Entertainment Brief, and PDF export — plus one month of Publisher OS™."
+        />
+      ) : null}
     </div>
   );
 }
+
