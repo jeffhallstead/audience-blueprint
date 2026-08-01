@@ -61,14 +61,16 @@ function Landing() {
       navigate({ to: await resolvePostAuthPath(), replace: true });
     };
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) void forward();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) void forward();
     });
 
     const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) return;
-      if (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED") {
-        void forward();
+      if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
+        supabase.auth.getUser().then(({ data }) => {
+          if (data.user) void forward();
+        });
       }
     });
 
