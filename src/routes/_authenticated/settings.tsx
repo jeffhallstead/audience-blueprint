@@ -103,12 +103,6 @@ function Settings() {
           </div>
         </DashboardCard>
 
-        <DashboardCard eyebrow="Account" title="Sign-in" footer="Contact support to change your email address.">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" value={user?.email ?? ""} readOnly disabled />
-          </div>
-        </DashboardCard>
       </form>
 
       <section aria-labelledby="billing-heading" className="space-y-5">
