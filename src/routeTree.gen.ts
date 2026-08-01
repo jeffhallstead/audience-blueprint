@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedAiToolkitRouteImport } from './routes/_authenticated/ai-toolkit'
 import { Route as AuthenticatedBlueprintRouteImport } from './routes/_authenticated/blueprint'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedProcessingRouteImport } from './routes/_authenticated/processing'
@@ -22,6 +21,13 @@ import { Route as AuthenticatedRoadmapRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
 import { Route as AuthenticatedWizardRouteImport } from './routes/_authenticated/wizard'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedCopilotIndexRouteImport } from './routes/_authenticated/copilot.index'
+import { Route as AuthenticatedCopilotPromptsRouteImport } from './routes/_authenticated/copilot.prompts'
+import { Route as AuthenticatedCopilotSimulatorRouteImport } from './routes/_authenticated/copilot.simulator'
+import { Route as AuthenticatedCopilotChatSessionIdRouteImport } from './routes/_authenticated/copilot.chat.$sessionId'
+import { Route as AuthenticatedCopilotDocumentsIndexRouteImport } from './routes/_authenticated/copilot.documents.index'
+import { Route as AuthenticatedCopilotDocumentsDocumentIdRouteImport } from './routes/_authenticated/copilot.documents.$documentId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -36,11 +42,6 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedAiToolkitRoute = AuthenticatedAiToolkitRouteImport.update({
-  id: '/ai-toolkit',
-  path: '/ai-toolkit',
-  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedBlueprintRoute = AuthenticatedBlueprintRouteImport.update({
   id: '/blueprint',
@@ -87,11 +88,51 @@ const AuthenticatedWizardRoute = AuthenticatedWizardRouteImport.update({
   path: '/wizard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedCopilotIndexRoute =
+  AuthenticatedCopilotIndexRouteImport.update({
+    id: '/copilot/',
+    path: '/copilot/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCopilotPromptsRoute =
+  AuthenticatedCopilotPromptsRouteImport.update({
+    id: '/copilot/prompts',
+    path: '/copilot/prompts',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCopilotSimulatorRoute =
+  AuthenticatedCopilotSimulatorRouteImport.update({
+    id: '/copilot/simulator',
+    path: '/copilot/simulator',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCopilotChatSessionIdRoute =
+  AuthenticatedCopilotChatSessionIdRouteImport.update({
+    id: '/copilot/chat/$sessionId',
+    path: '/copilot/chat/$sessionId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCopilotDocumentsIndexRoute =
+  AuthenticatedCopilotDocumentsIndexRouteImport.update({
+    id: '/copilot/documents/',
+    path: '/copilot/documents/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCopilotDocumentsDocumentIdRoute =
+  AuthenticatedCopilotDocumentsDocumentIdRouteImport.update({
+    id: '/copilot/documents/$documentId',
+    path: '/copilot/documents/$documentId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/ai-toolkit': typeof AuthenticatedAiToolkitRoute
   '/blueprint': typeof AuthenticatedBlueprintRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/processing': typeof AuthenticatedProcessingRoute
@@ -101,11 +142,17 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
+  '/api/chat': typeof ApiChatRoute
+  '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
+  '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
+  '/copilot/': typeof AuthenticatedCopilotIndexRoute
+  '/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
+  '/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/copilot/documents/': typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/ai-toolkit': typeof AuthenticatedAiToolkitRoute
   '/blueprint': typeof AuthenticatedBlueprintRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/processing': typeof AuthenticatedProcessingRoute
@@ -115,13 +162,19 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
+  '/api/chat': typeof ApiChatRoute
+  '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
+  '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
+  '/copilot': typeof AuthenticatedCopilotIndexRoute
+  '/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
+  '/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/copilot/documents': typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/ai-toolkit': typeof AuthenticatedAiToolkitRoute
   '/_authenticated/blueprint': typeof AuthenticatedBlueprintRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/processing': typeof AuthenticatedProcessingRoute
@@ -131,13 +184,19 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/_authenticated/wizard': typeof AuthenticatedWizardRoute
+  '/api/chat': typeof ApiChatRoute
+  '/_authenticated/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
+  '/_authenticated/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
+  '/_authenticated/copilot/': typeof AuthenticatedCopilotIndexRoute
+  '/_authenticated/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
+  '/_authenticated/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/_authenticated/copilot/documents/': typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
-    | '/ai-toolkit'
     | '/blueprint'
     | '/dashboard'
     | '/processing'
@@ -147,11 +206,17 @@ export interface FileRouteTypes {
     | '/settings'
     | '/welcome'
     | '/wizard'
+    | '/api/chat'
+    | '/copilot/prompts'
+    | '/copilot/simulator'
+    | '/copilot/'
+    | '/copilot/chat/$sessionId'
+    | '/copilot/documents/$documentId'
+    | '/copilot/documents/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/ai-toolkit'
     | '/blueprint'
     | '/dashboard'
     | '/processing'
@@ -161,12 +226,18 @@ export interface FileRouteTypes {
     | '/settings'
     | '/welcome'
     | '/wizard'
+    | '/api/chat'
+    | '/copilot/prompts'
+    | '/copilot/simulator'
+    | '/copilot'
+    | '/copilot/chat/$sessionId'
+    | '/copilot/documents/$documentId'
+    | '/copilot/documents'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/_authenticated/ai-toolkit'
     | '/_authenticated/blueprint'
     | '/_authenticated/dashboard'
     | '/_authenticated/processing'
@@ -176,12 +247,20 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/welcome'
     | '/_authenticated/wizard'
+    | '/api/chat'
+    | '/_authenticated/copilot/prompts'
+    | '/_authenticated/copilot/simulator'
+    | '/_authenticated/copilot/'
+    | '/_authenticated/copilot/chat/$sessionId'
+    | '/_authenticated/copilot/documents/$documentId'
+    | '/_authenticated/copilot/documents/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -206,13 +285,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/ai-toolkit': {
-      id: '/_authenticated/ai-toolkit'
-      path: '/ai-toolkit'
-      fullPath: '/ai-toolkit'
-      preLoaderRoute: typeof AuthenticatedAiToolkitRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/blueprint': {
       id: '/_authenticated/blueprint'
@@ -277,11 +349,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWizardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/copilot/': {
+      id: '/_authenticated/copilot/'
+      path: '/copilot'
+      fullPath: '/copilot/'
+      preLoaderRoute: typeof AuthenticatedCopilotIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/copilot/prompts': {
+      id: '/_authenticated/copilot/prompts'
+      path: '/copilot/prompts'
+      fullPath: '/copilot/prompts'
+      preLoaderRoute: typeof AuthenticatedCopilotPromptsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/copilot/simulator': {
+      id: '/_authenticated/copilot/simulator'
+      path: '/copilot/simulator'
+      fullPath: '/copilot/simulator'
+      preLoaderRoute: typeof AuthenticatedCopilotSimulatorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/copilot/chat/$sessionId': {
+      id: '/_authenticated/copilot/chat/$sessionId'
+      path: '/copilot/chat/$sessionId'
+      fullPath: '/copilot/chat/$sessionId'
+      preLoaderRoute: typeof AuthenticatedCopilotChatSessionIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/copilot/documents/': {
+      id: '/_authenticated/copilot/documents/'
+      path: '/copilot/documents'
+      fullPath: '/copilot/documents/'
+      preLoaderRoute: typeof AuthenticatedCopilotDocumentsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/copilot/documents/$documentId': {
+      id: '/_authenticated/copilot/documents/$documentId'
+      path: '/copilot/documents/$documentId'
+      fullPath: '/copilot/documents/$documentId'
+      preLoaderRoute: typeof AuthenticatedCopilotDocumentsDocumentIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAiToolkitRoute: typeof AuthenticatedAiToolkitRoute
   AuthenticatedBlueprintRoute: typeof AuthenticatedBlueprintRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProcessingRoute: typeof AuthenticatedProcessingRoute
@@ -291,10 +411,15 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedWelcomeRoute: typeof AuthenticatedWelcomeRoute
   AuthenticatedWizardRoute: typeof AuthenticatedWizardRoute
+  AuthenticatedCopilotPromptsRoute: typeof AuthenticatedCopilotPromptsRoute
+  AuthenticatedCopilotSimulatorRoute: typeof AuthenticatedCopilotSimulatorRoute
+  AuthenticatedCopilotIndexRoute: typeof AuthenticatedCopilotIndexRoute
+  AuthenticatedCopilotChatSessionIdRoute: typeof AuthenticatedCopilotChatSessionIdRoute
+  AuthenticatedCopilotDocumentsDocumentIdRoute: typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  AuthenticatedCopilotDocumentsIndexRoute: typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAiToolkitRoute: AuthenticatedAiToolkitRoute,
   AuthenticatedBlueprintRoute: AuthenticatedBlueprintRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProcessingRoute: AuthenticatedProcessingRoute,
@@ -304,6 +429,15 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedWelcomeRoute: AuthenticatedWelcomeRoute,
   AuthenticatedWizardRoute: AuthenticatedWizardRoute,
+  AuthenticatedCopilotPromptsRoute: AuthenticatedCopilotPromptsRoute,
+  AuthenticatedCopilotSimulatorRoute: AuthenticatedCopilotSimulatorRoute,
+  AuthenticatedCopilotIndexRoute: AuthenticatedCopilotIndexRoute,
+  AuthenticatedCopilotChatSessionIdRoute:
+    AuthenticatedCopilotChatSessionIdRoute,
+  AuthenticatedCopilotDocumentsDocumentIdRoute:
+    AuthenticatedCopilotDocumentsDocumentIdRoute,
+  AuthenticatedCopilotDocumentsIndexRoute:
+    AuthenticatedCopilotDocumentsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -313,6 +447,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

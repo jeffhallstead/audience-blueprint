@@ -14,6 +14,97 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          message_key: string | null
+          model: string | null
+          parts: Json
+          role: string
+          session_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          message_key?: string | null
+          model?: string | null
+          parts?: Json
+          role: string
+          session_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          message_key?: string | null
+          model?: string | null
+          parts?: Json
+          role?: string
+          session_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "ai_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_sessions: {
+        Row: {
+          assessment_id: string | null
+          created_at: string
+          favorite: boolean
+          id: string
+          objective: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assessment_id?: string | null
+          created_at?: string
+          favorite?: boolean
+          id?: string
+          objective?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assessment_id?: string | null
+          created_at?: string
+          favorite?: boolean
+          id?: string
+          objective?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_sessions_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessment_answers: {
         Row: {
           assessment_id: string
@@ -261,6 +352,85 @@ export type Database = {
           },
         ]
       }
+      generated_documents: {
+        Row: {
+          assessment_id: string | null
+          body: Json
+          created_at: string
+          favorite: boolean
+          id: string
+          kind: string
+          markdown: string
+          model: string | null
+          parent_document_id: string | null
+          session_id: string | null
+          status: string
+          summary: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          assessment_id?: string | null
+          body?: Json
+          created_at?: string
+          favorite?: boolean
+          id?: string
+          kind: string
+          markdown?: string
+          model?: string | null
+          parent_document_id?: string | null
+          session_id?: string | null
+          status?: string
+          summary?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          version?: number
+        }
+        Update: {
+          assessment_id?: string | null
+          body?: Json
+          created_at?: string
+          favorite?: boolean
+          id?: string
+          kind?: string
+          markdown?: string
+          model?: string | null
+          parent_document_id?: string | null
+          session_id?: string | null
+          status?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_documents_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_parent_document_id_fkey"
+            columns: ["parent_document_id"]
+            isOneToOne: false
+            referencedRelation: "generated_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "ai_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           created_at: string
@@ -324,6 +494,48 @@ export type Database = {
           id?: string
           job_title?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      prompt_templates: {
+        Row: {
+          body: string
+          category: string
+          created_at: string
+          description: string
+          favorite: boolean
+          id: string
+          is_system: boolean
+          slug: string
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          body: string
+          category?: string
+          created_at?: string
+          description?: string
+          favorite?: boolean
+          id?: string
+          is_system?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          body?: string
+          category?: string
+          created_at?: string
+          description?: string
+          favorite?: boolean
+          id?: string
+          is_system?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -426,6 +638,111 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      saved_recommendations: {
+        Row: {
+          body: string
+          category: string
+          created_at: string
+          document_id: string | null
+          effort: string
+          favorite: boolean
+          id: string
+          impact: string
+          position: number
+          session_id: string | null
+          source: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          category?: string
+          created_at?: string
+          document_id?: string | null
+          effort?: string
+          favorite?: boolean
+          id?: string
+          impact?: string
+          position?: number
+          session_id?: string | null
+          source?: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          category?: string
+          created_at?: string
+          document_id?: string | null
+          effort?: string
+          favorite?: boolean
+          id?: string
+          impact?: string
+          position?: number
+          session_id?: string | null
+          source?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_recommendations_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "generated_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_recommendations_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "ai_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_feedback: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          metadata: Json
+          rating: string
+          target_id: string | null
+          target_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          rating?: string
+          target_id?: string | null
+          target_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          rating?: string
+          target_id?: string | null
+          target_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {

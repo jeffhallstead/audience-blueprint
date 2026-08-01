@@ -6,6 +6,7 @@ import {
   FileText,
   Map as MapIcon,
   Sparkles,
+  FolderOpen,
   BookOpen,
   Settings as SettingsIcon,
   Menu,
@@ -22,7 +23,8 @@ const NAV_ITEMS = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/blueprint", label: "My Blueprint", icon: FileText },
   { to: "/roadmap", label: "Roadmap", icon: MapIcon },
-  { to: "/ai-toolkit", label: "AI Toolkit", icon: Sparkles },
+  { to: "/copilot", label: "Publisher Copilot", icon: Sparkles },
+  { to: "/copilot/documents", label: "Strategy Library", icon: FolderOpen },
   { to: "/resources", label: "Resources", icon: BookOpen },
   { to: "/settings", label: "Settings", icon: SettingsIcon },
 ] as const;
@@ -33,7 +35,16 @@ function NavList({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
   return (
     <nav className="space-y-1" aria-label="Primary">
       {NAV_ITEMS.map((item) => {
-        const active = pathname === item.to;
+        // Longest matching prefix wins so nested Copilot routes highlight the
+        // specific entry rather than both it and its parent.
+        const matches = NAV_ITEMS.filter(
+          (candidate) => pathname === candidate.to || pathname.startsWith(`${candidate.to}/`),
+        );
+        const best = matches.reduce<string | null>(
+          (longest, candidate) => (longest && longest.length >= candidate.to.length ? longest : candidate.to),
+          null,
+        );
+        const active = best === item.to;
         return (
           <Link
             key={item.to}
