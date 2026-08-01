@@ -1,28 +1,33 @@
-## Problem
+## Goal
+Make the Publisher Copilot page read as an ordered walkthrough by numbering its sections.
 
-On `/copilot`, every strategy card always shows "Generate", even after a report exists. The page already loads all generated documents (`useDocuments()`), but never checks whether one matches the card's objective.
+## What the page has today
+Five unnumbered section headings in this order, all styled as small brass mono labels:
+1. Strategy actions (primary objective cards)
+2. Ask your strategist (suggested questions)
+3. Secondary tools grid (simulator, prompts, extra deliverables) — currently has **no heading at all**
+4. Recent deliverables
+5. Recent conversations
 
-## Plan
+## Changes
 
-1. **Match documents to objectives.** On the Copilot home page, build a lookup of the most recent non-archived document per `kind` from the documents already loaded. Each objective card's `id` equals the document `kind` (`strategy`, `roadmap`, `pillars`, `franchises`, `score`, `presentation`).
+**Numbered section headings**
+- Introduce a small shared `SectionHeading` component in the Copilot route (numbered badge + label + optional right-side action) so all sections are consistent.
+- The badge is a circular/rounded brass-outlined chip containing the step number, followed by the existing mono uppercase label.
+- Apply in order:
+  - 1 — Start here: Strategy actions
+  - 2 — Go deeper: more tools (new heading for the currently unlabeled secondary grid)
+  - 3 — Ask your strategist
+  - 4 — Your deliverables (Recent deliverables + Recent conversations sit side by side under one numbered heading, each keeping its own sub-label)
+- Reorder so the secondary tools grid sits directly after strategy actions, keeping "generate → explore → ask → review" as a logical progression.
 
-2. **Change the card action when a report exists.**
-   - Primary button becomes "View my report" and links to `/copilot/documents/$documentId` for the latest matching document.
-   - A secondary, quieter "Regenerate" action sits next to it so a new version can still be produced.
-   - Cards with no document keep today's single "Generate" button. The "Ask Publisher Copilot™" card is unchanged.
+**Supporting copy**
+- Add a one-line helper sentence under each numbered heading explaining what to do at that step (e.g. step 1: "Generate your core deliverables from your Publisher Index™ results").
 
-3. **Show when it was generated.** Under the buttons, a small line like "Generated Aug 1, 2026" so it's obvious the report is existing work, not new.
-
-4. **Same treatment for the secondary cards** (Executive Presentation) in the lower grid, so behavior is consistent.
+**Accessibility / semantics**
+- Numbers are decorative chips; headings stay real `h2` elements with the full text ("1. Start here: Strategy actions") available to screen readers via the heading text itself.
 
 ## Technical notes
-
-- Single file: `src/routes/_authenticated/copilot.index.tsx`. No schema, server function, or query changes — `useDocuments()` already returns everything needed, ordered by `created_at` desc.
-- Guard rendering while documents are still loading so the button doesn't flip from "Generate" to "View my report" after paint; treat undefined data as "no report yet" but disable the generate action until loaded.
-- Regenerate reuses the existing `runObjective` mutation and its navigate-on-success behavior.
-
-## How to test
-
-1. Go to `/copilot` — cards for objectives you've already run show "View my report" plus "Regenerate".
-2. Click "View my report" — opens the existing document, no new AI generation.
-3. Click "Regenerate" on one — a new document is created and opened; returning to `/copilot` shows the new date.
+- Single file touched: `src/routes/_authenticated/copilot.index.tsx`.
+- Presentation-only — no changes to objectives config, document queries, generation logic, or entitlements.
+- Uses existing tokens (`text-brass`, `border-brass/30`, `font-mono` label style); no new colors.
