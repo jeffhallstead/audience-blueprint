@@ -112,33 +112,35 @@ function AuthPage() {
 
   async function handleGoogle() {
     setGooglePending(true);
-    // Safety net: if the popup is dismissed or the session never lands, don't
-    // leave the button stuck in a permanent pending state.
-    const timeout = window.setTimeout(() => {
-      if (navigatedRef.current) return;
-      setGooglePending(false);
-      toast.error("Sign-in didn't complete. Please try again.");
-    }, 20000);
-
     try {
+      // Resolves when the OAuth tab/popup posts back, is closed, or is blocked.
+      // No client-side timeout: on mobile the provider opens a full tab and a
+      // sign-in can legitimately take minutes.
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin,
       });
+
       if (result.error) {
-        toast.error("Google sign-in failed. Please try again.");
+        // The session may still have landed via the auth-state listener.
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          await goToApp();
+          return;
+        }
+        toast.error(result.error.message || "Google sign-in failed. Please try again.");
         return;
       }
       if (result.redirected) return;
       await goToApp();
-    } catch {
-      toast.error("Google sign-in failed. Please try again.");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Google sign-in failed. Please try again.",
+      );
     } finally {
-      if (!navigatedRef.current) {
-        window.clearTimeout(timeout);
-        setGooglePending(false);
-      }
+      if (!navigatedRef.current) setGooglePending(false);
     }
   }
+
 
 
 
