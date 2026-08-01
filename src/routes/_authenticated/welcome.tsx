@@ -26,6 +26,17 @@ const FACTS = [
 ];
 
 function Welcome() {
+  const triggerWelcomeEmail = useServerFn(sendWelcomeEmail);
+  const attempted = useRef(false);
+
+  useEffect(() => {
+    if (attempted.current) return;
+    attempted.current = true;
+    triggerWelcomeEmail({ data: { origin: window.location.origin } }).catch(() => {
+      // Welcome email is best-effort; never block the screen.
+    });
+  }, [triggerWelcomeEmail]);
+
   return (
     <div className="mx-auto max-w-3xl space-y-12">
       <div className="space-y-4">
