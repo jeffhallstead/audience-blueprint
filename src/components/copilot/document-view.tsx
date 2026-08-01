@@ -36,6 +36,11 @@ export function DocumentView({
   const [copied, setCopied] = useState(false);
   const updateDocument = useUpdateDocument();
   const saveRecommendation = useSaveRecommendation();
+  const navigate = useNavigate();
+  const { data: saved } = useSavedRecommendations();
+  const savedTitles = new Set(
+    (saved ?? []).filter((item) => item.document_id === document.id).map((item) => item.title),
+  );
 
   const body = document.body as unknown as StrategyDocument | { simulation?: unknown } | null;
   const structured = body && "sections" in (body as object) ? (body as StrategyDocument) : null;
