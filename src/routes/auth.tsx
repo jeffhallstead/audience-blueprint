@@ -43,6 +43,7 @@ function AuthPage() {
   const [googlePending, setGooglePending] = useState(false);
   const [checkEmail, setCheckEmail] = useState(false);
   const navigatedRef = useRef(false);
+  const googlePendingRef = useRef(false);
 
   const goToApp = useCallback(async () => {
     if (navigatedRef.current) return;
@@ -65,6 +66,33 @@ function AuthPage() {
     });
 
     return () => subscription.subscription.unsubscribe();
+  }, [goToApp]);
+
+  // OAuth can finish in a separate tab even when the popup response message is
+  // lost. Reconcile the real session whenever this page becomes active again,
+  // and release the button when no session was created.
+  useEffect(() => {
+    const reconcileGoogleSignIn = async () => {
+      if (!googlePendingRef.current || document.visibilityState === "hidden") return;
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        await goToApp();
+        return;
+      }
+      googlePendingRef.current = false;
+      setGooglePending(false);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") void reconcileGoogleSignIn();
+    };
+
+    window.addEventListener("focus", reconcileGoogleSignIn);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      window.removeEventListener("focus", reconcileGoogleSignIn);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, [goToApp]);
 
 
@@ -111,14 +139,24 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
+    googlePendingRef.current = true;
     setGooglePending(true);
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
     try {
-      // Resolves when the OAuth tab/popup posts back, is closed, or is blocked.
-      // No client-side timeout: on mobile the provider opens a full tab and a
-      // sign-in can legitimately take minutes.
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+      // Full-page mobile OAuth redirects immediately. The timeout only guards
+      // the popup path when its completion message is lost.
+      const timeout = new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(
+          () => reject(new Error("Google sign-in took too long. Please try again.")),
+          60_000,
+        );
       });
+      const result = await Promise.race([
+        lovable.auth.signInWithOAuth("google", {
+          redirect_uri: window.location.origin,
+        }),
+        timeout,
+      ]);
 
       if (result.error) {
         // The session may still have landed via the auth-state listener.
@@ -133,10 +171,17 @@ function AuthPage() {
       if (result.redirected) return;
       await goToApp();
     } catch (error) {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        await goToApp();
+        return;
+      }
       toast.error(
         error instanceof Error ? error.message : "Google sign-in failed. Please try again.",
       );
     } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+      googlePendingRef.current = false;
       if (!navigatedRef.current) setGooglePending(false);
     }
   }
