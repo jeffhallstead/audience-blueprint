@@ -42,6 +42,8 @@ export const Route = createFileRoute("/_authenticated/blueprint")({
 
 function IndexDetail() {
   const { data: blueprint, isLoading } = useBlueprint();
+  const { can, isLoading: entitlementLoading } = useEntitlement();
+
 
   useEffect(() => {
     if (blueprint) void trackBlueprintEvent("publisher_index_viewed", { overall: blueprint.overall });
