@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { BillingPanel } from "@/components/billing/billing-panel";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -108,6 +109,13 @@ function Settings() {
           </div>
         </DashboardCard>
       </form>
+
+      <section aria-labelledby="billing-heading" className="space-y-5">
+        <h2 id="billing-heading" className="text-display text-2xl">
+          Plan &amp; billing
+        </h2>
+        <BillingPanel />
+      </section>
     </div>
   );
 }
