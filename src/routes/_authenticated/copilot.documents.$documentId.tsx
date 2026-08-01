@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { getPaddleEnvironment } from "@/lib/paddle";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
@@ -37,7 +38,11 @@ function DocumentDetail() {
   const regenerate = useMutation({
     mutationFn: async () =>
       generateDocument({
-        data: { objective: document!.kind as "strategy", supersedesDocumentId: documentId },
+        data: {
+          objective: document!.kind as "strategy",
+          supersedesDocumentId: documentId,
+          environment: getPaddleEnvironment(),
+        },
       }),
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: copilotKeys.documents });

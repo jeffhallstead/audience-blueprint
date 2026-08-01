@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { getPaddleEnvironment } from "@/lib/paddle";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, FileText, Loader2, MessageSquare, Sparkles } from "lucide-react";
@@ -55,7 +56,7 @@ function CopilotHome() {
 
   const runObjective = useMutation({
     mutationFn: async (objective: string) =>
-      generateDocument({ data: { objective: objective as "strategy" } }),
+      generateDocument({ data: { objective: objective as "strategy", environment: getPaddleEnvironment() } }),
     onMutate: (objective) => setRunningObjective(objective),
     onSettled: () => setRunningObjective(null),
     onSuccess: (result) => {

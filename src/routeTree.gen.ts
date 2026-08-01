@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedBlueprintRouteImport } from './routes/_authenticated/blueprint'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedPricingRouteImport } from './routes/_authenticated/pricing'
 import { Route as AuthenticatedProcessingRouteImport } from './routes/_authenticated/processing'
 import { Route as AuthenticatedResourcesRouteImport } from './routes/_authenticated/resources'
 import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated/results'
@@ -22,12 +23,14 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
 import { Route as AuthenticatedWizardRouteImport } from './routes/_authenticated/wizard'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedCheckoutSuccessRouteImport } from './routes/_authenticated/checkout.success'
 import { Route as AuthenticatedCopilotIndexRouteImport } from './routes/_authenticated/copilot.index'
 import { Route as AuthenticatedCopilotPromptsRouteImport } from './routes/_authenticated/copilot.prompts'
 import { Route as AuthenticatedCopilotSimulatorRouteImport } from './routes/_authenticated/copilot.simulator'
 import { Route as AuthenticatedCopilotChatSessionIdRouteImport } from './routes/_authenticated/copilot.chat.$sessionId'
 import { Route as AuthenticatedCopilotDocumentsIndexRouteImport } from './routes/_authenticated/copilot.documents.index'
 import { Route as AuthenticatedCopilotDocumentsDocumentIdRouteImport } from './routes/_authenticated/copilot.documents.$documentId'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -51,6 +54,11 @@ const AuthenticatedBlueprintRoute = AuthenticatedBlueprintRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPricingRoute = AuthenticatedPricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedProcessingRoute = AuthenticatedProcessingRouteImport.update({
@@ -93,6 +101,12 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCheckoutSuccessRoute =
+  AuthenticatedCheckoutSuccessRouteImport.update({
+    id: '/checkout/success',
+    path: '/checkout/success',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCopilotIndexRoute =
   AuthenticatedCopilotIndexRouteImport.update({
     id: '/copilot/',
@@ -129,12 +143,19 @@ const AuthenticatedCopilotDocumentsDocumentIdRoute =
     path: '/copilot/documents/$documentId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/blueprint': typeof AuthenticatedBlueprintRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/pricing': typeof AuthenticatedPricingRoute
   '/processing': typeof AuthenticatedProcessingRoute
   '/resources': typeof AuthenticatedResourcesRoute
   '/results': typeof AuthenticatedResultsRoute
@@ -143,11 +164,13 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
   '/copilot/': typeof AuthenticatedCopilotIndexRoute
   '/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
   '/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/copilot/documents/': typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -155,6 +178,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/blueprint': typeof AuthenticatedBlueprintRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/pricing': typeof AuthenticatedPricingRoute
   '/processing': typeof AuthenticatedProcessingRoute
   '/resources': typeof AuthenticatedResourcesRoute
   '/results': typeof AuthenticatedResultsRoute
@@ -163,11 +187,13 @@ export interface FileRoutesByTo {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
   '/copilot': typeof AuthenticatedCopilotIndexRoute
   '/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
   '/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/copilot/documents': typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 export interface FileRoutesById {
@@ -177,6 +203,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/blueprint': typeof AuthenticatedBlueprintRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/pricing': typeof AuthenticatedPricingRoute
   '/_authenticated/processing': typeof AuthenticatedProcessingRoute
   '/_authenticated/resources': typeof AuthenticatedResourcesRoute
   '/_authenticated/results': typeof AuthenticatedResultsRoute
@@ -185,11 +212,13 @@ export interface FileRoutesById {
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/_authenticated/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/_authenticated/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/_authenticated/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/_authenticated/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
   '/_authenticated/copilot/': typeof AuthenticatedCopilotIndexRoute
   '/_authenticated/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
   '/_authenticated/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/_authenticated/copilot/documents/': typeof AuthenticatedCopilotDocumentsIndexRoute
 }
 export interface FileRouteTypes {
@@ -199,6 +228,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blueprint'
     | '/dashboard'
+    | '/pricing'
     | '/processing'
     | '/resources'
     | '/results'
@@ -207,11 +237,13 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wizard'
     | '/api/chat'
+    | '/checkout/success'
     | '/copilot/prompts'
     | '/copilot/simulator'
     | '/copilot/'
     | '/copilot/chat/$sessionId'
     | '/copilot/documents/$documentId'
+    | '/api/public/payments/webhook'
     | '/copilot/documents/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -219,6 +251,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blueprint'
     | '/dashboard'
+    | '/pricing'
     | '/processing'
     | '/resources'
     | '/results'
@@ -227,11 +260,13 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wizard'
     | '/api/chat'
+    | '/checkout/success'
     | '/copilot/prompts'
     | '/copilot/simulator'
     | '/copilot'
     | '/copilot/chat/$sessionId'
     | '/copilot/documents/$documentId'
+    | '/api/public/payments/webhook'
     | '/copilot/documents'
   id:
     | '__root__'
@@ -240,6 +275,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/blueprint'
     | '/_authenticated/dashboard'
+    | '/_authenticated/pricing'
     | '/_authenticated/processing'
     | '/_authenticated/resources'
     | '/_authenticated/results'
@@ -248,11 +284,13 @@ export interface FileRouteTypes {
     | '/_authenticated/welcome'
     | '/_authenticated/wizard'
     | '/api/chat'
+    | '/_authenticated/checkout/success'
     | '/_authenticated/copilot/prompts'
     | '/_authenticated/copilot/simulator'
     | '/_authenticated/copilot/'
     | '/_authenticated/copilot/chat/$sessionId'
     | '/_authenticated/copilot/documents/$documentId'
+    | '/api/public/payments/webhook'
     | '/_authenticated/copilot/documents/'
   fileRoutesById: FileRoutesById
 }
@@ -261,6 +299,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -298,6 +337,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pricing': {
+      id: '/_authenticated/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof AuthenticatedPricingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/processing': {
@@ -356,6 +402,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/checkout/success': {
+      id: '/_authenticated/checkout/success'
+      path: '/checkout/success'
+      fullPath: '/checkout/success'
+      preLoaderRoute: typeof AuthenticatedCheckoutSuccessRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/copilot/': {
       id: '/_authenticated/copilot/'
       path: '/copilot'
@@ -398,12 +451,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCopilotDocumentsDocumentIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedBlueprintRoute: typeof AuthenticatedBlueprintRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedPricingRoute: typeof AuthenticatedPricingRoute
   AuthenticatedProcessingRoute: typeof AuthenticatedProcessingRoute
   AuthenticatedResourcesRoute: typeof AuthenticatedResourcesRoute
   AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
@@ -411,6 +472,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedWelcomeRoute: typeof AuthenticatedWelcomeRoute
   AuthenticatedWizardRoute: typeof AuthenticatedWizardRoute
+  AuthenticatedCheckoutSuccessRoute: typeof AuthenticatedCheckoutSuccessRoute
   AuthenticatedCopilotPromptsRoute: typeof AuthenticatedCopilotPromptsRoute
   AuthenticatedCopilotSimulatorRoute: typeof AuthenticatedCopilotSimulatorRoute
   AuthenticatedCopilotIndexRoute: typeof AuthenticatedCopilotIndexRoute
@@ -422,6 +484,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBlueprintRoute: AuthenticatedBlueprintRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedPricingRoute: AuthenticatedPricingRoute,
   AuthenticatedProcessingRoute: AuthenticatedProcessingRoute,
   AuthenticatedResourcesRoute: AuthenticatedResourcesRoute,
   AuthenticatedResultsRoute: AuthenticatedResultsRoute,
@@ -429,6 +492,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedWelcomeRoute: AuthenticatedWelcomeRoute,
   AuthenticatedWizardRoute: AuthenticatedWizardRoute,
+  AuthenticatedCheckoutSuccessRoute: AuthenticatedCheckoutSuccessRoute,
   AuthenticatedCopilotPromptsRoute: AuthenticatedCopilotPromptsRoute,
   AuthenticatedCopilotSimulatorRoute: AuthenticatedCopilotSimulatorRoute,
   AuthenticatedCopilotIndexRoute: AuthenticatedCopilotIndexRoute,
@@ -448,17 +512,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

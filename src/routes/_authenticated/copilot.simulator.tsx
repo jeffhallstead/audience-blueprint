@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { getPaddleEnvironment } from "@/lib/paddle";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Loader2, Play } from "lucide-react";
@@ -40,7 +41,7 @@ function Simulator() {
   const runSimulation = useServerFn(simulateScenario);
 
   const simulate = useMutation({
-    mutationFn: async (value: string) => runSimulation({ data: { scenario: value } }),
+    mutationFn: async (value: string) => runSimulation({ data: { scenario: value, environment: getPaddleEnvironment() } }),
     onSuccess: (response) => {
       setResult(response.simulation);
       queryClient.invalidateQueries({ queryKey: copilotKeys.documents });

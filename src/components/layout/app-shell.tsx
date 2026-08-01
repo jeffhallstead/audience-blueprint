@@ -8,11 +8,13 @@ import {
   Sparkles,
   FolderOpen,
   BookOpen,
+  CreditCard,
   Settings as SettingsIcon,
   Menu,
   LogOut,
 } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
+import { PaymentTestModeBanner } from "@/components/billing/payment-test-mode-banner";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,6 +28,7 @@ const NAV_ITEMS = [
   { to: "/copilot", label: "Publisher Copilot", icon: Sparkles },
   { to: "/copilot/documents", label: "Strategy Library", icon: FolderOpen },
   { to: "/resources", label: "Resources", icon: BookOpen },
+  { to: "/pricing", label: "Plans & Billing", icon: CreditCard },
   { to: "/settings", label: "Settings", icon: SettingsIcon },
 ] as const;
 
@@ -114,6 +117,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
+        <PaymentTestModeBanner />
         <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur lg:hidden">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
