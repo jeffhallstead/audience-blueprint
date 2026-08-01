@@ -153,5 +153,14 @@ export const pushExportRows = createServerFn({ method: "POST" })
       .eq("user_id", context.userId)
       .eq("provider", data.provider);
 
-    return { queued: true as const, rows: data.rows.length };
+    // Drain immediately so the push feels synchronous; the scheduled dispatch
+    // endpoint still retries anything that fails here.
+    try {
+      const { dispatchOutbox } = await import("@/lib/integrations/outbox.server");
+      const result = await dispatchOutbox(10);
+      return { queued: true as const, rows: data.rows.length, delivered: result.delivered, failed: result.failed };
+    } catch (err) {
+      console.error("[export] immediate dispatch failed:", err);
+      return { queued: true as const, rows: data.rows.length, delivered: 0, failed: 0 };
+    }
   });
