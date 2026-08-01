@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { PricingTable } from "@/components/billing/pricing-table";
-import { PaymentTestModeBanner } from "@/components/billing/payment-test-mode-banner";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { useCheckout } from "@/lib/commerce/use-checkout";
 import { trackCommerceEvent } from "@/lib/commerce/analytics";
@@ -38,7 +37,6 @@ function PricingPage() {
 
   return (
     <>
-      <PaymentTestModeBanner />
       <div className="space-y-10">
         <header className="max-w-2xl space-y-3">
           <p className="text-eyebrow">Plans</p>
