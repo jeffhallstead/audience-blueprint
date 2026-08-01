@@ -144,13 +144,15 @@ function AuthPage() {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     try {
       // Full-page mobile OAuth redirects immediately. The timeout only guards
-      // the popup path when its completion message is lost.
+      // the popup path when its completion message is lost; it must outlast the
+      // helper's own 120s in-app webview fallback.
       const timeout = new Promise<never>((_, reject) => {
         timeoutId = setTimeout(
           () => reject(new Error("Google sign-in took too long. Please try again.")),
-          60_000,
+          150_000,
         );
       });
+
       const result = await Promise.race([
         lovable.auth.signInWithOAuth("google", {
           redirect_uri: window.location.origin,
