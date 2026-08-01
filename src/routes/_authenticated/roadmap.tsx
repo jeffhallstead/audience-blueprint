@@ -1,67 +1,119 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { Download } from "lucide-react";
+import { useEffect } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, Download } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/page-header";
-import { Timeline, type TimelineEntry } from "@/components/blueprint/timeline";
-import { RoadmapCard } from "@/components/blueprint/roadmap-card";
+import { ExportableSection } from "@/components/blueprint/exportable-section";
+import { RoadmapPhaseCard } from "@/components/blueprint/roadmap-phase-card";
+import { ActionList } from "@/components/blueprint/action-list";
+import { BlueprintEmptyState } from "@/components/blueprint/blueprint-empty-state";
 import { Button } from "@/components/ui/button";
-import { PLACEHOLDER_ROADMAP, type RoadmapItem } from "@/lib/placeholder-blueprint";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useBlueprint } from "@/lib/blueprint/use-blueprint";
+import { trackBlueprintEvent } from "@/lib/blueprint/analytics";
 
 export const Route = createFileRoute("/_authenticated/roadmap")({
   head: () => ({
     meta: [
-      { title: "90-Day Roadmap — Publisher Blueprint" },
-      { name: "description", content: "A sequenced three-month roadmap with owners for your owned-audience build." },
-      { property: "og:title", content: "90-Day Roadmap — Publisher Blueprint" },
-      { property: "og:description", content: "A sequenced three-month roadmap with named owners." },
+      { title: "90-Day Roadmap — Publisher Blueprint™" },
+      {
+        name: "description",
+        content:
+          "A three-phase, 90-day implementation plan generated from your Publisher Index™ score, with objectives, activities, and success metrics.",
+      },
+      { property: "og:title", content: "90-Day Roadmap — Publisher Blueprint™" },
+      { property: "og:description", content: "Three sequenced phases with objectives, activities, and success metrics." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: RoadmapPage,
+  errorComponent: ({ error }) => (
+    <div role="alert" className="surface-panel p-6 text-sm text-destructive">
+      {error.message}
+    </div>
+  ),
 });
 
-const MONTH_LABELS: Record<number, { label: string; title: string }> = {
-  1: { label: "Month 1", title: "Establish the thesis" },
-  2: { label: "Month 2", title: "Build the engine" },
-  3: { label: "Month 3", title: "Distribute and measure" },
-};
-
 function RoadmapPage() {
-  const [items, setItems] = useState<RoadmapItem[]>(PLACEHOLDER_ROADMAP);
+  const { data: blueprint, isLoading } = useBlueprint();
 
-  function updateItem(index: number, next: RoadmapItem) {
-    setItems((prev) => prev.map((item, i) => (i === index ? next : item)));
-    toast.success("Initiative updated");
+  useEffect(() => {
+    if (blueprint) void trackBlueprintEvent("roadmap_viewed", { tier: blueprint.tier });
+  }, [blueprint]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8" aria-busy="true" aria-live="polite">
+        <Skeleton className="h-24 w-full rounded-xl" />
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Skeleton key={index} className="h-64 w-full rounded-xl" />
+        ))}
+      </div>
+    );
   }
 
-  const entries: TimelineEntry[] = [1, 2, 3].map((month) => ({
-    id: `month-${month}`,
-    label: MONTH_LABELS[month]!.label,
-    title: MONTH_LABELS[month]!.title,
-    content: (
-      <div className="space-y-4">
-        {items.map((item, index) =>
-          item.month === month ? (
-            <RoadmapCard key={`${month}-${index}`} item={item} onChange={(next) => updateItem(index, next)} />
-          ) : null,
-        )}
+  if (!blueprint) {
+    return (
+      <div className="space-y-8">
+        <PageHeader
+          eyebrow="Roadmap"
+          title="Your next 90 days"
+          description="The roadmap is generated from your assessment results."
+        />
+        <BlueprintEmptyState
+          title="Your 90-day roadmap is generated from your results"
+          description="Complete the Publisher Index™ assessment and a three-phase implementation plan — calibrated to your maturity level — will be waiting here."
+        />
       </div>
-    ),
-  }));
+    );
+  }
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-12">
       <PageHeader
-        eyebrow="Roadmap"
-        title="Your next 90 days"
-        description="Three months of sequenced initiatives with named owners. Edit any card to match your operating reality."
+        eyebrow="90-day roadmap"
+        title="Your implementation plan"
+        description={`Three sequenced phases calibrated to a ${blueprint.maturity.title} operating level. Each phase carries an objective, the activities that deliver it, and the metrics that prove it worked.`}
         actions={
-          <Button variant="outline" onClick={() => toast.info("PDF export arrives in the next release.")}>
-            <Download className="size-4" /> Export PDF
-          </Button>
+          <>
+            <Button variant="outline" onClick={() => toast.info("PDF export arrives in a later phase.")}>
+              <Download className="size-4" aria-hidden /> Export
+            </Button>
+            <Button asChild>
+              <Link to="/resources">
+                Supporting resources <ArrowRight className="size-4" aria-hidden />
+              </Link>
+            </Button>
+          </>
         }
       />
-      <Timeline entries={entries} />
+
+      <ExportableSection id="roadmap-phases" eyebrow="Phases" title="Month by month">
+        <div className="space-y-5">
+          {blueprint.roadmap.map((phase) => (
+            <RoadmapPhaseCard key={phase.id} phase={phase} />
+          ))}
+        </div>
+      </ExportableSection>
+
+      <ExportableSection
+        id="quick-wins"
+        eyebrow="Before day one"
+        title="Quick wins to start this week"
+        description="Low-effort actions that build momentum ahead of month one."
+      >
+        <ActionList items={blueprint.quickWins} />
+      </ExportableSection>
+
+      <ExportableSection
+        id="long-term"
+        eyebrow="Beyond 90 days"
+        title="Long-term initiatives"
+        description="The structural investments that follow once the first quarter lands."
+      >
+        <ActionList items={blueprint.longTerm} variant="long" />
+      </ExportableSection>
     </div>
   );
 }
