@@ -87,7 +87,7 @@ export function ConnectionsPanel() {
   });
 
   return (
-    <DashboardCard title="Connections" description="Send your Blueprint into your own Airtable base or Asana workspace.">
+    <DashboardCard eyebrow="Integrations" title="Connections">
       <div className="space-y-6">
         {(Object.keys(PROVIDER_COPY) as Provider[]).map((provider, index) => {
           const copy = PROVIDER_COPY[provider];
