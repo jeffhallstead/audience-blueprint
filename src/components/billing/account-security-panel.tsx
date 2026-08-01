@@ -151,8 +151,8 @@ export function AccountSecurityPanel() {
         <div className="space-y-4">
           <p className="text-sm leading-relaxed text-muted-foreground">
             Permanently deletes your account, assessments, blueprints, Copilot sessions and billing
-            records. This cannot be undone. Cancel any active subscription first so you are not
-            billed again.
+            records. This cannot be undone. Any active subscription is cancelled at the end of the
+            current billing period before your account is removed, so you are never billed again.
           </p>
           <div className="space-y-2">
             <Label htmlFor="confirm-delete">Type DELETE to confirm</Label>
