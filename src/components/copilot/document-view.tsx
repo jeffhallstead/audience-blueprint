@@ -152,7 +152,9 @@ export function DocumentView({
             <section className="space-y-4">
               <h2 className="font-display text-lg font-semibold tracking-tight text-foreground">Recommended actions</h2>
               <div className="space-y-3">
-                {structured.actions.map((action, index) => (
+                {structured.actions.map((action, index) => {
+                  const alreadySaved = savedTitles.has(action.title);
+                  return (
                   <div key={index} className="rounded-xl border border-border bg-card p-5">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <h3 className="text-sm font-semibold text-foreground">{action.title}</h3>
@@ -164,27 +166,41 @@ export function DocumentView({
                           variant="ghost"
                           size="sm"
                           className="h-7 text-xs"
-                          disabled={saveRecommendation.isPending}
+                          disabled={saveRecommendation.isPending || alreadySaved}
                           onClick={() =>
                             saveRecommendation.mutate(
                               {
                                 title: action.title,
                                 body: `${action.description}\n\nImpact: ${action.impact}\nEffort: ${action.effort}\nOwner: ${action.owner}\nDependencies: ${action.dependencies.join(", ") || "None"}`,
                                 category: document.kind,
+                                impact: action.impact,
                                 effort: action.effort,
                                 documentId: document.id,
                               },
                               {
-                                onSuccess: () => toast.success("Added to your Blueprint"),
+                                onSuccess: () =>
+                                  toast.success("Added to your Blueprint", {
+                                    action: {
+                                      label: "View",
+                                      onClick: () => navigate({ to: "/blueprint", hash: "saved-actions" }),
+                                    },
+                                  }),
                                 onError: (error) => toast.error((error as Error).message),
                               },
                             )
                           }
                         >
-                          Add to Blueprint
+                          {alreadySaved ? (
+                            <>
+                              <Check className="size-3.5" aria-hidden /> Added
+                            </>
+                          ) : (
+                            "Add to Blueprint"
+                          )}
                         </Button>
                       </div>
                     </div>
+
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{action.description}</p>
                     <dl className="mt-4 grid gap-3 text-xs sm:grid-cols-2">
                       <div>
