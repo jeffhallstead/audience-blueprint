@@ -514,6 +514,7 @@ export type Database = {
           id: string
           job_title: string | null
           updated_at: string
+          welcome_email_sent_at: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -522,6 +523,7 @@ export type Database = {
           id: string
           job_title?: string | null
           updated_at?: string
+          welcome_email_sent_at?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -530,6 +532,7 @@ export type Database = {
           id?: string
           job_title?: string | null
           updated_at?: string
+          welcome_email_sent_at?: string | null
         }
         Relationships: []
       }

@@ -1,8 +1,11 @@
+import { useEffect, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, ClipboardList, Clock, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
 import { WIZARD_SECTIONS } from "@/lib/wizard-config";
+import { sendWelcomeEmail } from "@/lib/email/welcome.functions";
 
 export const Route = createFileRoute("/_authenticated/welcome")({
   head: () => ({
@@ -23,6 +26,17 @@ const FACTS = [
 ];
 
 function Welcome() {
+  const triggerWelcomeEmail = useServerFn(sendWelcomeEmail);
+  const attempted = useRef(false);
+
+  useEffect(() => {
+    if (attempted.current) return;
+    attempted.current = true;
+    triggerWelcomeEmail({ data: { origin: window.location.origin } }).catch(() => {
+      // Welcome email is best-effort; never block the screen.
+    });
+  }, [triggerWelcomeEmail]);
+
   return (
     <div className="mx-auto max-w-3xl space-y-12">
       <div className="space-y-4">
