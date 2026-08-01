@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/accordion";
 import { MATURITY_LEVELS } from "@/lib/assessment/config";
 import { useBlueprint, formatAssessmentDate } from "@/lib/blueprint/use-blueprint";
+import { LockedFeature } from "@/components/billing/feature-gate";
 import { trackBlueprintEvent } from "@/lib/blueprint/analytics";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -49,7 +50,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
-  const { data: blueprint, isLoading } = useBlueprint();
+  const { data: blueprint, isLoading, locked } = useBlueprint();
 
   useEffect(() => {
     if (blueprint) void trackBlueprintEvent("dashboard_viewed", { overall: blueprint.overall });
@@ -150,6 +151,13 @@ function Dashboard() {
       </section>
 
       {/* Executive summary */}
+      {locked ? (
+        <LockedFeature
+          feature="full_dashboard"
+          title="Unlock your executive summary"
+          description="Your Publisher Index™ score and category readings are always free. The strategic interpretation — position, biggest opportunity, primary risk, opportunity matrix, quick wins, 90-day roadmap and KPIs — comes with Publisher Blueprint™."
+        />
+      ) : (
       <ExportableSection
         id="executive-summary"
         eyebrow="Executive summary"
@@ -174,6 +182,7 @@ function Dashboard() {
           <p className="text-sm leading-relaxed text-foreground">{summary.recommendedFocus}</p>
         </DashboardCard>
       </ExportableSection>
+      )}
 
       {/* Publisher Index */}
       <ExportableSection
@@ -252,6 +261,8 @@ function Dashboard() {
         </div>
       </ExportableSection>
 
+      {!locked ? (
+        <>
       {/* Opportunity matrix */}
       <ExportableSection
         id="opportunity-matrix"
@@ -336,6 +347,8 @@ function Dashboard() {
           toast.info("Booking opens in the next phase — your blueprint is saved.");
         }}
       />
+        </>
+      ) : null}
     </div>
   );
 }
