@@ -2,14 +2,27 @@ import type { IntegrationAdapter, IntegrationEvent } from "./types";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/airtable";
 
+/** Accepts a bare base id, a "baseId/tableId" pair, or a full Airtable URL. */
+function parseBaseRef(raw: string | undefined) {
+  if (!raw) return { baseId: undefined as string | undefined, tableId: undefined as string | undefined };
+  return {
+    baseId: raw.match(/app[A-Za-z0-9]{14}/)?.[0],
+    tableId: raw.match(/tbl[A-Za-z0-9]{14}/)?.[0],
+  };
+}
+
 function config() {
+  const ref = parseBaseRef(process.env["AIRTABLE_BASE_ID"]);
+  const rawTable = process.env["AIRTABLE_TABLE_NAME"]?.trim();
   return {
     lovableKey: process.env["LOVABLE_API_KEY"],
     connectionKey: process.env["AIRTABLE_API_KEY"],
-    baseId: process.env["AIRTABLE_BASE_ID"],
-    tableName: process.env["AIRTABLE_TABLE_NAME"] ?? "Publisher Blueprint Contacts",
+    baseId: ref.baseId,
+    // A table id from the base ref wins only when no explicit table name is set.
+    tableName: rawTable || ref.tableId || "Publisher Blueprint Contacts",
   };
 }
+
 
 /** Maps a normalized event onto Airtable field names. Unknown fields are dropped by Airtable
  *  only when typecast is off, so we keep the field set intentionally small and stable. */
