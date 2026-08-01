@@ -9,8 +9,9 @@ export const entitlementQueryKey = ["entitlement"] as const;
  * Client-side entitlement state. UX only — every paid payload is also gated
  * server-side (see assertFeature / route loaders).
  */
-export function useEntitlement() {
+export function useEntitlement(options: { enabled?: boolean } = {}) {
   const query = useQuery({
+    enabled: options.enabled ?? true,
     queryKey: entitlementQueryKey,
     queryFn: () => getEntitlement({ data: { environment: getPaddleEnvironment() } }),
     staleTime: 30_000,
