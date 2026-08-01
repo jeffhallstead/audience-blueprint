@@ -33,6 +33,7 @@ import { Route as AuthenticatedCopilotSimulatorRouteImport } from './routes/_aut
 import { Route as AuthenticatedCopilotChatSessionIdRouteImport } from './routes/_authenticated/copilot.chat.$sessionId'
 import { Route as AuthenticatedCopilotDocumentsIndexRouteImport } from './routes/_authenticated/copilot.documents.index'
 import { Route as AuthenticatedCopilotDocumentsDocumentIdRouteImport } from './routes/_authenticated/copilot.documents.$documentId'
+import { Route as ApiPublicIntegrationsDispatchRouteImport } from './routes/api/public/integrations/dispatch'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
@@ -162,6 +163,12 @@ const AuthenticatedCopilotDocumentsDocumentIdRoute =
     path: '/copilot/documents/$documentId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicIntegrationsDispatchRoute =
+  ApiPublicIntegrationsDispatchRouteImport.update({
+    id: '/api/public/integrations/dispatch',
+    path: '/api/public/integrations/dispatch',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -198,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/copilot/': typeof AuthenticatedCopilotIndexRoute
   '/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
   '/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/api/public/integrations/dispatch': typeof ApiPublicIntegrationsDispatchRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/copilot/documents/': typeof AuthenticatedCopilotDocumentsIndexRoute
@@ -225,6 +233,7 @@ export interface FileRoutesByTo {
   '/copilot': typeof AuthenticatedCopilotIndexRoute
   '/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
   '/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/api/public/integrations/dispatch': typeof ApiPublicIntegrationsDispatchRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/copilot/documents': typeof AuthenticatedCopilotDocumentsIndexRoute
@@ -254,6 +263,7 @@ export interface FileRoutesById {
   '/_authenticated/copilot/': typeof AuthenticatedCopilotIndexRoute
   '/_authenticated/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
   '/_authenticated/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
+  '/api/public/integrations/dispatch': typeof ApiPublicIntegrationsDispatchRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/_authenticated/copilot/documents/': typeof AuthenticatedCopilotDocumentsIndexRoute
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/copilot/'
     | '/copilot/chat/$sessionId'
     | '/copilot/documents/$documentId'
+    | '/api/public/integrations/dispatch'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
     | '/copilot/documents/'
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/copilot'
     | '/copilot/chat/$sessionId'
     | '/copilot/documents/$documentId'
+    | '/api/public/integrations/dispatch'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
     | '/copilot/documents'
@@ -338,6 +350,7 @@ export interface FileRouteTypes {
     | '/_authenticated/copilot/'
     | '/_authenticated/copilot/chat/$sessionId'
     | '/_authenticated/copilot/documents/$documentId'
+    | '/api/public/integrations/dispatch'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
     | '/_authenticated/copilot/documents/'
@@ -352,6 +365,7 @@ export interface RootRouteChildren {
   RefundPolicyRoute: typeof RefundPolicyRoute
   TermsRoute: typeof TermsRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiPublicIntegrationsDispatchRoute: typeof ApiPublicIntegrationsDispatchRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
@@ -526,6 +540,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCopilotDocumentsDocumentIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/integrations/dispatch': {
+      id: '/api/public/integrations/dispatch'
+      path: '/api/public/integrations/dispatch'
+      fullPath: '/api/public/integrations/dispatch'
+      preLoaderRoute: typeof ApiPublicIntegrationsDispatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -596,6 +617,7 @@ const rootRouteChildren: RootRouteChildren = {
   RefundPolicyRoute: RefundPolicyRoute,
   TermsRoute: TermsRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiPublicIntegrationsDispatchRoute: ApiPublicIntegrationsDispatchRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
