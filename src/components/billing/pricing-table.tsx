@@ -1,20 +1,41 @@
 import { Check, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PLANS, type Tier } from "@/lib/commerce/plans";
+import { PLANS, TIER_RANK, type Tier } from "@/lib/commerce/plans";
 import { cn } from "@/lib/utils";
 
 type PricingTableProps = {
   currentTier: Tier;
   loading?: boolean;
+  /** True when there is an active or scheduled-to-cancel OS subscription. */
+  hasSubscription?: boolean;
   onSelect: (priceId: string) => void;
+  onManage?: (() => void) | undefined;
 };
 
-export function PricingTable({ currentTier, loading, onSelect }: PricingTableProps) {
+export function PricingTable({
+  currentTier,
+  loading,
+  hasSubscription,
+  onSelect,
+  onManage,
+}: PricingTableProps) {
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       {PLANS.map((plan) => {
-        const isCurrent = plan.tier === currentTier;
         const featured = plan.tier === "blueprint";
+        // The Blueprint is a one-time purchase: once owned it is never re-sold,
+        // including to OS subscribers who reached that tier through it.
+        const owned = plan.tier !== "free" && TIER_RANK[currentTier] >= TIER_RANK[plan.tier];
+        const isCurrent = plan.tier === currentTier;
+        const manageable = plan.tier === "os" && hasSubscription;
+
+        let label = `Get ${plan.name}`;
+        if (!plan.priceId) label = isCurrent ? "Your current plan" : "Included free";
+        else if (manageable) label = "Manage subscription";
+        else if (owned) label = plan.tier === "blueprint" ? "Owned — lifetime access" : "Your current plan";
+
+        const disabled = loading || (!plan.priceId ? true : owned && !manageable);
+
         return (
           <section
             key={plan.tier}
@@ -22,6 +43,7 @@ export function PricingTable({ currentTier, loading, onSelect }: PricingTablePro
             className={cn(
               "surface-panel flex flex-col gap-6 p-6 sm:p-8",
               featured && "border-primary/50 shadow-lg",
+              owned && "border-success/40",
             )}
           >
             <header className="space-y-2">
@@ -33,9 +55,14 @@ export function PricingTable({ currentTier, loading, onSelect }: PricingTablePro
                 {plan.cadence}
               </p>
               <p className="text-sm leading-relaxed text-muted-foreground">{plan.tagline}</p>
-              {plan.highlight ? (
+              {plan.highlight && !owned ? (
                 <p className="inline-flex rounded-full border border-primary/40 px-3 py-1 text-xs text-primary">
                   {plan.highlight}
+                </p>
+              ) : null}
+              {owned ? (
+                <p className="inline-flex rounded-full border border-success/40 px-3 py-1 text-xs text-success">
+                  Included in your account
                 </p>
               ) : null}
             </header>
@@ -56,16 +83,15 @@ export function PricingTable({ currentTier, loading, onSelect }: PricingTablePro
             </ul>
 
             <Button
-              variant={featured ? "default" : "outline"}
+              variant={featured && !owned ? "default" : "outline"}
               size="lg"
-              disabled={isCurrent || !plan.priceId || loading}
-              onClick={() => plan.priceId && onSelect(plan.priceId)}
+              disabled={disabled}
+              onClick={() => {
+                if (manageable) return onManage?.();
+                if (plan.priceId && !owned) onSelect(plan.priceId);
+              }}
             >
-              {isCurrent
-                ? "Your current plan"
-                : plan.priceId
-                  ? `Get ${plan.name}`
-                  : "Included free"}
+              {label}
             </Button>
           </section>
         );
