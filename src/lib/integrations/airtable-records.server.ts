@@ -1,22 +1,10 @@
 import type { ExportRow } from "@/lib/export/rows";
+import { getUserCredential } from "./credentials.server";
 import type { IntegrationAdapter, IntegrationEvent } from "./types";
 
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/airtable";
+const AIRTABLE_API = "https://api.airtable.com";
 
 const DEFAULT_TABLE = "Publisher Blueprint Actions";
-
-function parseBaseRef(raw: string | undefined) {
-  if (!raw) return { baseId: undefined as string | undefined };
-  return { baseId: raw.match(/app[A-Za-z0-9]{14}/)?.[0] };
-}
-
-function config() {
-  return {
-    lovableKey: process.env["LOVABLE_API_KEY"],
-    connectionKey: process.env["AIRTABLE_API_KEY"],
-    baseId: parseBaseRef(process.env["AIRTABLE_BASE_ID"]).baseId,
-  };
-}
 
 function toFields(row: ExportRow): Record<string, unknown> {
   return {
@@ -41,37 +29,53 @@ function chunk<T>(items: T[], size: number): T[][] {
   return out;
 }
 
+/** Bases the user's own personal access token can reach. */
+export async function listAirtableBases(token: string): Promise<Array<{ id: string; name: string }>> {
+  const response = await fetch(`${AIRTABLE_API}/v0/meta/bases`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    throw new Error(`Airtable base list failed [${response.status}]: ${await response.text()}`);
+  }
+  const json = (await response.json()) as { bases?: Array<{ id: string; name: string }> };
+  return (json.bases ?? []).map((base) => ({ id: base.id, name: base.name }));
+}
+
 /**
- * Pushes exported Blueprint rows into an Airtable table (separate from the
- * contacts sync). Upserts on the stable `Key` field so re-exporting a plan
- * updates the existing rows instead of duplicating them.
+ * Pushes exported Blueprint rows into the user's own Airtable base, using the
+ * personal access token they connected. Upserts on the stable `Key` field so
+ * re-exporting a plan updates the existing rows instead of duplicating them.
  */
 export const airtableRecordsAdapter: IntegrationAdapter = {
   provider: "airtable_records",
 
+  // Credentials are per user, so availability is decided per event.
   isConfigured() {
-    const c = config();
-    return Boolean(c.lovableKey && c.connectionKey && c.baseId);
+    return true;
+  },
+
+  async isConfiguredForUser(userId) {
+    const credential = await getUserCredential(userId, "airtable");
+    return Boolean(credential?.token && credential.airtableBaseId);
   },
 
   async send(event) {
-    const c = config();
-    if (!c.lovableKey) throw new Error("LOVABLE_API_KEY is not configured");
-    if (!c.connectionKey) throw new Error("AIRTABLE_API_KEY is not configured");
-    if (!c.baseId) throw new Error("AIRTABLE_BASE_ID is not configured");
+    const credential = await getUserCredential(event.userId, "airtable");
+    if (!credential?.token) throw new Error("This user has not connected Airtable");
+    const baseId = credential.airtableBaseId;
+    if (!baseId) throw new Error("No Airtable base selected");
 
     const rows = event.records ?? [];
     if (rows.length === 0) return;
 
     const table = event.target?.airtableTable?.trim() || DEFAULT_TABLE;
-    const url = `${GATEWAY_URL}/v0/${c.baseId}/${encodeURIComponent(table)}`;
+    const url = `${AIRTABLE_API}/v0/${baseId}/${encodeURIComponent(table)}`;
 
     for (const batch of chunk(rows, 10)) {
       const response = await fetch(url, {
         method: "PATCH",
         headers: {
-          Authorization: `Bearer ${c.lovableKey}`,
-          "X-Connection-Api-Key": c.connectionKey,
+          Authorization: `Bearer ${credential.token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
