@@ -111,16 +111,35 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
-    setPending(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (result.error) {
+    setGooglePending(true);
+    // Safety net: if the popup is dismissed or the session never lands, don't
+    // leave the button stuck in a permanent pending state.
+    const timeout = window.setTimeout(() => {
+      if (navigatedRef.current) return;
+      setGooglePending(false);
+      toast.error("Sign-in didn't complete. Please try again.");
+    }, 20000);
+
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        toast.error("Google sign-in failed. Please try again.");
+        return;
+      }
+      if (result.redirected) return;
+      await goToApp();
+    } catch {
       toast.error("Google sign-in failed. Please try again.");
-      setPending(false);
-      return;
+    } finally {
+      if (!navigatedRef.current) {
+        window.clearTimeout(timeout);
+        setGooglePending(false);
+      }
     }
-    if (result.redirected) return;
-    await goToApp();
   }
+
 
 
   return (
