@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { objectiveIcon } from "@/components/copilot/utils";
 import { OBJECTIVES, PRIMARY_OBJECTIVES, DOCUMENT_KIND_LABELS } from "@/lib/copilot/objectives";
 import { generateStrategyDocument } from "@/lib/copilot/copilot.functions";
-import { copilotKeys, useCreateSession, useDocuments, useSessions } from "@/lib/copilot/queries";
+import { copilotKeys, useCreateSession, useDocuments, useSessions, type DocumentRow } from "@/lib/copilot/queries";
 import { useBlueprint } from "@/lib/blueprint/use-blueprint";
 
 export const Route = createFileRoute("/_authenticated/copilot/")({
