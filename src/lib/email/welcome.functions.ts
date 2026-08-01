@@ -51,5 +51,19 @@ export const sendWelcomeEmail = createServerFn({ method: "POST" })
       return { sent: false as const };
     }
 
+    // First-touch CRM sync — never blocks the welcome flow.
+    const { enqueueIntegrationEvent } = await import("@/lib/integrations/outbox.server");
+    await enqueueIntegrationEvent(
+      {
+        eventName: "user.signed_up",
+        userId,
+        email,
+        fullName: profile?.full_name ?? null,
+        occurredAt: new Date().toISOString(),
+      },
+      { dedupeKey: `signup:${userId}` },
+    );
+
     return { sent: true as const };
   });
+

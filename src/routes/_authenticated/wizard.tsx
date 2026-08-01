@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { syncAssessmentCompleted } from "@/lib/integrations/sync.functions";
 import { ArrowLeft, ArrowRight, Check, Clock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -47,6 +49,7 @@ const REVIEW_STEP = SECTIONS.length;
 function Wizard() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const syncAssessment = useServerFn(syncAssessmentCompleted);
 
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
   const [answers, setAnswers] = useState<AssessmentAnswers>({});
@@ -158,6 +161,8 @@ function Wizard() {
     setSubmitting(true);
     try {
       await completeAssessment(user.id, assessmentId, answers);
+      // CRM sync is best-effort and must never block the results screen.
+      void syncAssessment({ data: { assessmentId } }).catch(() => {});
       navigate({ to: "/results" });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not save your assessment");
