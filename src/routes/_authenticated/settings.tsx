@@ -105,12 +105,20 @@ function Settings() {
 
       </form>
 
+      <section aria-labelledby="connections-heading" className="space-y-5">
+        <h2 id="connections-heading" className="text-display text-2xl">
+          Connections
+        </h2>
+        <ConnectionsPanel />
+      </section>
+
       <section aria-labelledby="billing-heading" className="space-y-5">
         <h2 id="billing-heading" className="text-display text-2xl">
           Plan &amp; billing
         </h2>
         <BillingPanel />
       </section>
+
 
       <section aria-labelledby="account-heading" className="space-y-5">
         <h2 id="account-heading" className="text-display text-2xl">
