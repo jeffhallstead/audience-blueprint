@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { resolvePostAuthPath } from "@/lib/auth/post-auth";
+
 
 const searchSchema = z.object({ mode: z.enum(["signin", "signup"]).optional() });
 
@@ -41,10 +43,15 @@ function AuthPage() {
   const [checkEmail, setCheckEmail] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard", replace: true });
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!data.session) return;
+      navigate({ to: await resolvePostAuthPath(), replace: true });
     });
   }, [navigate]);
+
+  async function goToApp() {
+    navigate({ to: await resolvePostAuthPath(), replace: true });
+  }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -66,18 +73,20 @@ function AuthPage() {
           },
         });
         if (error) throw error;
+        // Auto-confirm is enabled, so a session is returned immediately. The
+        // inbox screen remains only as a fallback if that ever changes.
         if (!data.session) {
           setCheckEmail(true);
           return;
         }
-        navigate({ to: "/welcome", replace: true });
+        await goToApp();
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: parsed.data.email,
           password: parsed.data.password,
         });
         if (error) throw error;
-        navigate({ to: "/dashboard", replace: true });
+        await goToApp();
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Authentication failed");
@@ -95,8 +104,9 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/dashboard", replace: true });
+    await goToApp();
   }
+
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
