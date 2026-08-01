@@ -1,8 +1,11 @@
+import { useEffect, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, ClipboardList, Clock, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
 import { WIZARD_SECTIONS } from "@/lib/wizard-config";
+import { sendWelcomeEmail } from "@/lib/email/welcome.functions";
 
 export const Route = createFileRoute("/_authenticated/welcome")({
   head: () => ({

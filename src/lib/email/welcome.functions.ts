@@ -2,17 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { sendTemplateEmail } from "@/lib/email-templates/send-email";
+import { resolveWelcomeUrl } from "./welcome.server";
 
-const WELCOME_PATH = "/welcome";
-
-const ALLOWED_ORIGINS = [/^https:\/\/[a-z0-9-]+\.lovable\.app$/i, /^https:\/\/([a-z0-9-]+\.)?jeffhallstead\.com$/i];
-
-function resolveWelcomeUrl(origin: string | undefined): string {
-  if (origin && ALLOWED_ORIGINS.some((pattern) => pattern.test(origin))) {
-    return `${origin}${WELCOME_PATH}`;
-  }
-  return `https://jeffhallstead.com${WELCOME_PATH}`;
-}
 
 /**
  * Sends the welcome email once per account. Safe to call on every visit to the
