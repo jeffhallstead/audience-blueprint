@@ -23,6 +23,7 @@ import { buildSystemPrompt } from "@/lib/copilot/prompts.server";
 interface ChatRequestBody {
   messages?: unknown;
   sessionId?: unknown;
+  environment?: unknown;
 }
 
 function textOf(message: UIMessage): string {
@@ -48,6 +49,16 @@ export const Route = createFileRoute("/api/chat")({
         if (!sessionId) return new Response("sessionId is required", { status: 400 });
 
         const { supabase, userId } = auth;
+        const environment = body.environment === "live" ? "live" : "sandbox";
+
+        // Publisher Copilot™ chat is a paid capability — enforce it here, not
+        // only in the UI. Free users get the assessment and their index score.
+        const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+        try {
+          await requireFeature(supabase, userId, environment, "ai_chat");
+        } catch (error) {
+          return new Response((error as Error).message, { status: 402 });
+        }
 
         // Ownership check — never stream against someone else's session.
         const { data: session } = await supabase

@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { BillingPanel } from "@/components/billing/billing-panel";
+import { AccountSecurityPanel } from "@/components/billing/account-security-panel";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -102,12 +103,6 @@ function Settings() {
           </div>
         </DashboardCard>
 
-        <DashboardCard eyebrow="Account" title="Sign-in" footer="Contact support to change your email address.">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" value={user?.email ?? ""} readOnly disabled />
-          </div>
-        </DashboardCard>
       </form>
 
       <section aria-labelledby="billing-heading" className="space-y-5">
@@ -115,6 +110,13 @@ function Settings() {
           Plan &amp; billing
         </h2>
         <BillingPanel />
+      </section>
+
+      <section aria-labelledby="account-heading" className="space-y-5">
+        <h2 id="account-heading" className="text-display text-2xl">
+          Account &amp; security
+        </h2>
+        <AccountSecurityPanel />
       </section>
     </div>
   );

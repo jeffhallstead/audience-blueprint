@@ -12,9 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as AuthenticatedBlueprintRouteImport } from './routes/_authenticated/blueprint'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedPricingRouteImport } from './routes/_authenticated/pricing'
 import { Route as AuthenticatedProcessingRouteImport } from './routes/_authenticated/processing'
 import { Route as AuthenticatedResourcesRouteImport } from './routes/_authenticated/resources'
 import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated/results'
@@ -46,6 +46,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedBlueprintRoute = AuthenticatedBlueprintRouteImport.update({
   id: '/blueprint',
   path: '/blueprint',
@@ -54,11 +59,6 @@ const AuthenticatedBlueprintRoute = AuthenticatedBlueprintRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedPricingRoute = AuthenticatedPricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedProcessingRoute = AuthenticatedProcessingRouteImport.update({
@@ -153,9 +153,9 @@ const ApiPublicPaymentsWebhookRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/pricing': typeof PricingRoute
   '/blueprint': typeof AuthenticatedBlueprintRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/pricing': typeof AuthenticatedPricingRoute
   '/processing': typeof AuthenticatedProcessingRoute
   '/resources': typeof AuthenticatedResourcesRoute
   '/results': typeof AuthenticatedResultsRoute
@@ -176,9 +176,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/pricing': typeof PricingRoute
   '/blueprint': typeof AuthenticatedBlueprintRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/pricing': typeof AuthenticatedPricingRoute
   '/processing': typeof AuthenticatedProcessingRoute
   '/resources': typeof AuthenticatedResourcesRoute
   '/results': typeof AuthenticatedResultsRoute
@@ -201,9 +201,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/pricing': typeof PricingRoute
   '/_authenticated/blueprint': typeof AuthenticatedBlueprintRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/pricing': typeof AuthenticatedPricingRoute
   '/_authenticated/processing': typeof AuthenticatedProcessingRoute
   '/_authenticated/resources': typeof AuthenticatedResourcesRoute
   '/_authenticated/results': typeof AuthenticatedResultsRoute
@@ -226,9 +226,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/pricing'
     | '/blueprint'
     | '/dashboard'
-    | '/pricing'
     | '/processing'
     | '/resources'
     | '/results'
@@ -249,9 +249,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/pricing'
     | '/blueprint'
     | '/dashboard'
-    | '/pricing'
     | '/processing'
     | '/resources'
     | '/results'
@@ -273,9 +273,9 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/pricing'
     | '/_authenticated/blueprint'
     | '/_authenticated/dashboard'
-    | '/_authenticated/pricing'
     | '/_authenticated/processing'
     | '/_authenticated/resources'
     | '/_authenticated/results'
@@ -298,6 +298,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  PricingRoute: typeof PricingRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -325,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/blueprint': {
       id: '/_authenticated/blueprint'
       path: '/blueprint'
@@ -337,13 +345,6 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/pricing': {
-      id: '/_authenticated/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof AuthenticatedPricingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/processing': {
@@ -464,7 +465,6 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedBlueprintRoute: typeof AuthenticatedBlueprintRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedPricingRoute: typeof AuthenticatedPricingRoute
   AuthenticatedProcessingRoute: typeof AuthenticatedProcessingRoute
   AuthenticatedResourcesRoute: typeof AuthenticatedResourcesRoute
   AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
@@ -484,7 +484,6 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBlueprintRoute: AuthenticatedBlueprintRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedPricingRoute: AuthenticatedPricingRoute,
   AuthenticatedProcessingRoute: AuthenticatedProcessingRoute,
   AuthenticatedResourcesRoute: AuthenticatedResourcesRoute,
   AuthenticatedResultsRoute: AuthenticatedResultsRoute,
@@ -511,6 +510,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  PricingRoute: PricingRoute,
   ApiChatRoute: ApiChatRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }

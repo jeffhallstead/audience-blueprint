@@ -22,11 +22,12 @@ export function BillingPanel() {
   const [opening, setOpening] = useState(false);
   const plan = planForTier(tier);
 
-  async function openPortal() {
+  async function openPortal(target: "overview" | "cancel" = "overview") {
     setOpening(true);
     try {
-      void trackCommerceEvent("portal_opened");
-      const { url } = await createPortalSession({ data: { environment: getPaddleEnvironment() } });
+      void trackCommerceEvent(target === "cancel" ? "cancel_started" : "portal_opened");
+      const session = await createPortalSession({ data: { environment: getPaddleEnvironment() } });
+      const url = target === "cancel" ? (session.cancelUrl ?? session.url) : session.url;
       if (!url) {
         toast.info("No billing account yet — make a purchase first.");
         return;
@@ -48,6 +49,20 @@ export function BillingPanel() {
       <DashboardCard eyebrow="Plan" title={isLoading ? "Loading…" : plan.name}>
         <div className="space-y-4 text-sm">
           <p className="text-muted-foreground">{plan.tagline}</p>
+
+          {subscription?.status === "past_due" ? (
+            <p className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+              Your last payment failed. We are retrying it — update your payment method to keep
+              Publisher OS™ active.
+            </p>
+          ) : null}
+
+          {subscription?.cancelAtPeriodEnd ? (
+            <p className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
+              Your subscription is scheduled to end on {formatDate(subscription.currentPeriodEnd)}.
+              You keep full access until then.
+            </p>
+          ) : null}
 
           {subscription ? (
             <dl className="space-y-2">
@@ -78,6 +93,16 @@ export function BillingPanel() {
             <Button variant="outline" onClick={() => void openPortal()} disabled={opening}>
               Manage billing <ExternalLink className="size-4" aria-hidden />
             </Button>
+            {subscription && !subscription.cancelAtPeriodEnd && subscription.status !== "canceled" ? (
+              <Button
+                variant="ghost"
+                onClick={() => void openPortal("cancel")}
+                disabled={opening}
+                className="text-muted-foreground"
+              >
+                Cancel subscription
+              </Button>
+            ) : null}
           </div>
         </div>
       </DashboardCard>
@@ -95,7 +120,10 @@ export function BillingPanel() {
               <li key={purchase.id} className="flex items-center justify-between gap-4">
                 <div>
                   <p className="font-medium">{planForTier("blueprint").name}</p>
-                  <p className="text-xs text-muted-foreground">{formatDate(purchase.createdAt)}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatDate(purchase.createdAt)}
+                    {purchase.status !== "completed" ? ` · ${purchase.status.replace("_", " ")}` : ""}
+                  </p>
                 </div>
                 <span>{formatMoney(purchase.amountCents, purchase.currency)}</span>
               </li>

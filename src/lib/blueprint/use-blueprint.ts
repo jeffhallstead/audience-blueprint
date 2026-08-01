@@ -1,25 +1,31 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchLatestScores } from "@/lib/assessment/persistence";
-import { generateBlueprint, type Blueprint } from "./engine";
+import { getPaddleEnvironment } from "@/lib/paddle";
+import { getBlueprintPayload, type BlueprintPayload } from "./blueprint.functions";
+import type { Blueprint } from "./engine";
 
-/** The single read path every Publisher Blueprint™ screen uses. */
+export const blueprintQueryKey = ["blueprint", "payload"] as const;
+
+/**
+ * The single read path every Publisher Blueprint™ screen uses.
+ * `locked` means the server withheld the paid analysis for this tier.
+ */
 export function useBlueprint() {
-  return useQuery<Blueprint | null>({
-    queryKey: ["blueprint", "generated"],
-    queryFn: async () => {
-      const scores = await fetchLatestScores();
-      if (!scores) return null;
-      return generateBlueprint({
-        overall: scores.overall,
-        categories: scores.categories,
-        maturityLevel: scores.maturityLevel,
-        completedAt: scores.completedAt,
-        organizationName: scores.organizationName,
-      });
-    },
+  const query = useQuery<BlueprintPayload>({
+    queryKey: blueprintQueryKey,
+    queryFn: () => getBlueprintPayload({ data: { environment: getPaddleEnvironment() } }),
     staleTime: 60_000,
   });
+
+  const blueprint: Blueprint | null = query.data?.blueprint ?? null;
+
+  return {
+    ...query,
+    data: blueprint,
+    blueprint,
+    locked: query.data?.locked ?? true,
+    tier: query.data?.tier ?? "free",
+  };
 }
 
 export interface AssessmentHistoryEntry {

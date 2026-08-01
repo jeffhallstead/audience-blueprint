@@ -8,6 +8,7 @@ import { BlueprintEmptyState } from "@/components/blueprint/blueprint-empty-stat
 import { UpgradeCta } from "@/components/blueprint/upgrade-cta";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBlueprint } from "@/lib/blueprint/use-blueprint";
+import { LockedFeature } from "@/components/billing/feature-gate";
 import { trackBlueprintEvent } from "@/lib/blueprint/analytics";
 
 export const Route = createFileRoute("/_authenticated/resources")({
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/_authenticated/resources")({
 });
 
 function ResourcesPage() {
-  const { data: blueprint, isLoading } = useBlueprint();
+  const { data: blueprint, isLoading, locked } = useBlueprint();
 
   useEffect(() => {
     if (blueprint) void trackBlueprintEvent("resources_viewed", { count: blueprint.resources.length });
@@ -74,6 +75,13 @@ function ResourcesPage() {
         description="Selected against your lowest-scoring capabilities and the phases of your 90-day roadmap."
       />
 
+      {locked ? (
+        <LockedFeature
+          feature="full_dashboard"
+          title="Resource matching is part of Publisher Blueprint™"
+          description="Upgrade to see the frameworks, templates and playbooks matched to your lowest-scoring capabilities and each phase of your 90-day roadmap."
+        />
+      ) : (
       <ExportableSection id="recommended-resources" eyebrow="Recommended" title="Start here">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {blueprint.resources.map((resource) => (
@@ -88,6 +96,7 @@ function ResourcesPage() {
           ))}
         </div>
       </ExportableSection>
+      )}
 
       <UpgradeCta
         cta={blueprint.cta}

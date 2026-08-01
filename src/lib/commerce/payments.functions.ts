@@ -61,5 +61,13 @@ export const createPortalSession = createServerFn({ method: "POST" })
       subscription?.paddle_subscription_id ? [subscription.paddle_subscription_id] : [],
     );
 
-    return { url: session.urls.general.overview as string | null };
+    const subscriptionUrls = (session.urls.subscriptions ?? [])[0] as
+      | { cancelSubscription?: string; updateSubscriptionPaymentMethod?: string }
+      | undefined;
+
+    return {
+      url: session.urls.general.overview as string | null,
+      cancelUrl: subscriptionUrls?.cancelSubscription ?? null,
+      updatePaymentMethodUrl: subscriptionUrls?.updateSubscriptionPaymentMethod ?? null,
+    };
   });
