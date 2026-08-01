@@ -28,12 +28,18 @@ function sanitizeRows(input: unknown): ExportRow[] {
   });
 }
 
-/** Which record destinations currently have credentials wired up. */
+/** Which record destinations this user has connected. */
 export const getExportDestinations = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { configuredProviders } = await import("@/lib/integrations/outbox.server");
-    const available = configuredProviders(RECORD_PROVIDERS);
+    const { listUserConnections } = await import("@/lib/integrations/credentials.server");
+    const connections = await listUserConnections(context.userId);
+
+    const available: IntegrationProvider[] = [];
+    if (connections.some((c) => c.provider === "airtable" && c.airtableBaseId)) {
+      available.push("airtable_records");
+    }
+    if (connections.some((c) => c.provider === "asana")) available.push("asana");
 
     const { data } = await context.supabase
       .from("export_targets")
@@ -42,6 +48,7 @@ export const getExportDestinations = createServerFn({ method: "GET" })
 
     return {
       available,
+      connections,
       targets: data ?? [],
     };
   });
@@ -77,19 +84,22 @@ export const saveExportTarget = createServerFn({ method: "POST" })
     return { saved: true as const };
   });
 
-/** Asana projects the connected account can write to. */
+/** Asana projects this user's connected account can write to. */
 export const listExportAsanaProjects = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async () => {
-    const { asanaAdapter, listAsanaProjects } = await import("@/lib/integrations/asana.server");
-    if (!asanaAdapter.isConfigured()) return { connected: false as const, projects: [] };
+  .handler(async ({ context }) => {
+    const { getUserCredential } = await import("@/lib/integrations/credentials.server");
+    const credential = await getUserCredential(context.userId, "asana");
+    if (!credential?.token) return { connected: false as const, projects: [] };
     try {
-      return { connected: true as const, projects: await listAsanaProjects() };
+      const { listAsanaProjects } = await import("@/lib/integrations/asana.server");
+      return { connected: true as const, projects: await listAsanaProjects(credential.token) };
     } catch (err) {
       console.error("[export] asana project list failed:", err);
       return { connected: true as const, projects: [] };
     }
   });
+
 
 /**
  * Queues exported Blueprint rows for delivery to a record destination.
@@ -104,9 +114,15 @@ export const pushExportRows = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { getAdapter } = await import("@/lib/integrations/outbox.server");
     const adapter = getAdapter(data.provider);
-    if (!adapter?.isConfigured()) {
-      throw new Error("That destination is not connected yet.");
+    const ready = adapter
+      ? adapter.isConfiguredForUser
+        ? await adapter.isConfiguredForUser(context.userId)
+        : adapter.isConfigured()
+      : false;
+    if (!ready) {
+      throw new Error("Connect that destination in Settings first.");
     }
+
 
     const { data: target } = await context.supabase
       .from("export_targets")

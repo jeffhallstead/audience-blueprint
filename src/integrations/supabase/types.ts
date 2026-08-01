@@ -966,6 +966,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_integration_credentials: {
+        Row: {
+          account_label: string | null
+          airtable_base_id: string | null
+          created_at: string
+          id: string
+          provider: string
+          token_ciphertext: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_label?: string | null
+          airtable_base_id?: string | null
+          created_at?: string
+          id?: string
+          provider: string
+          token_ciphertext: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_label?: string | null
+          airtable_base_id?: string | null
+          created_at?: string
+          id?: string
+          provider?: string
+          token_ciphertext?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

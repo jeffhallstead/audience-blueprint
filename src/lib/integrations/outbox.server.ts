@@ -88,7 +88,13 @@ export async function dispatchOutbox(limit = 25): Promise<DispatchResult> {
 
   for (const row of rows ?? []) {
     const adapter = getAdapter(row.provider as IntegrationProvider);
-    if (!adapter || !adapter.isConfigured()) {
+    const available = adapter
+      ? adapter.isConfiguredForUser
+        ? await adapter.isConfiguredForUser(row.user_id)
+        : adapter.isConfigured()
+      : false;
+    if (!available) {
+
       result.skipped += 1;
       await supabaseAdmin
         .from("integration_outbox")
@@ -98,7 +104,7 @@ export async function dispatchOutbox(limit = 25): Promise<DispatchResult> {
     }
 
     try {
-      await adapter.send(row.payload as unknown as IntegrationEvent);
+      await adapter!.send(row.payload as unknown as IntegrationEvent);
       result.delivered += 1;
       await supabaseAdmin
         .from("integration_outbox")
