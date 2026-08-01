@@ -718,11 +718,11 @@ export const RESOURCE_RULES: ResourceRule[] = [
   },
   {
     id: "ai-toolkit-preview",
-    title: "The Future AI Toolkit",
-    description: "Where generative tooling belongs — and does not belong — in an editorial operation.",
+    title: "Publisher Copilot™ in practice",
+    description: "How to brief the AI strategist, and where generative tooling belongs in an editorial operation.",
     kind: "Reference",
     readingMinutes: 10,
-    ctaLabel: "Preview the toolkit",
+    ctaLabel: "Open Copilot",
     tiers: ["scaling", "advanced"],
   },
 ];
