@@ -112,7 +112,7 @@ function CopilotHome() {
   const busy = runObjective.isPending;
 
   // Documents come back newest-first, so the first match per kind is the latest report.
-  const latestByKind = new Map<string, (typeof documents)[number]>();
+  const latestByKind = new Map<string, DocumentRow>();
   for (const document of documents ?? []) {
     if (!latestByKind.has(document.kind)) latestByKind.set(document.kind, document);
   }
