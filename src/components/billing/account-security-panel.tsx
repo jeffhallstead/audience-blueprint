@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { deleteAccount } from "@/lib/commerce/account.functions";
+import { getPaddleEnvironment } from "@/lib/paddle";
 import { useAuth } from "@/hooks/use-auth";
 
 const passwordSchema = z.string().min(8, "Use at least 8 characters");
@@ -76,7 +77,7 @@ export function AccountSecurityPanel() {
     }
     setBusy("delete");
     try {
-      await deleteAccount();
+      await deleteAccount({ data: { environment: getPaddleEnvironment() } });
       await supabase.auth.signOut();
       toast.success("Your account has been deleted.");
       void navigate({ to: "/" });
