@@ -1,40 +1,31 @@
 ## What's actually happening
 
-Your two $99 test payments went through fine at Paddle (both `completed`, both carrying your user id). The problem is on our side, after payment:
+The button does save. I checked the database: six actions you clicked are stored (most recently "Launch Weekly Consolidated Flagship Newsletter" at 16:07 today), each linked to the document it came from.
 
-- The `purchases` table is empty — no rows at all.
-- The payment notification reached our app and returned success, but the log says:
-  `[payments] skipping purchase: unknown catalog item` (15:33 and 15:38 today).
-
-So the handler received the payment, failed to recognise which product was bought, and silently skipped recording it. With no purchase row, your tier stays `free` and the Blueprint stays locked.
-
-The catalog names themselves are correct (`publisher_blueprint_onetime` → `publisher_blueprint`), so the failure is in reading the product identifier out of the notification payload — that field is present when we query Paddle directly but is not arriving in the notification the same way. The exact field shape is unconfirmed, so step 1 below is to confirm it before changing logic.
+The problem is that nothing ever displays them. The list query that reads saved actions exists in the code but is not used by a single page — the Blueprint, dashboard and roadmap never read it. So "Add to Blueprint" adds to a list nobody can see, and the button looks identical before and after clicking.
 
 ## Plan
 
-1. **Confirm the payload shape.** Log the incoming line item for one payment (or replay a stored notification) to see exactly where the product identifier lives in the notification body. Diagnosis of the precise field is currently unconfirmed — this step settles it.
+1. **Add a "Saved from Copilot" section to the Blueprint page.** Below the recommendations/roadmap content, list every saved action with its title, category, impact/effort, source document link, and the date added. Empty state explains where they come from.
 
-2. **Make product resolution robust.** Resolve the purchased product in this order:
-   - the human-readable id in the notification, if present;
-   - otherwise look the internal Paddle price id up against Paddle's API and map it back to our catalog.
-   This removes the dependency on one optional field in the notification body.
+2. **Let you act on them there.** Each saved item gets: mark done, archive/remove, and a link back to the originating strategy document. Done/archived items drop out of the active list.
 
-3. **Stop silently skipping.** When a purchase can't be matched, record the failure loudly (error log with the transaction id, plus a queued alert) instead of returning success with a warning, so an unmatched payment is never invisible again.
+3. **Show the same items on the 90-day roadmap page** as an "Added from Copilot" column/section, so actions you pushed in sit alongside the generated plan rather than in a separate silo.
 
-4. **Backfill your two test payments.** Insert the matching purchase rows for the two completed sandbox transactions so your account flips to Publisher Blueprint™ immediately and you can test the unlocked experience without paying again.
+4. **Fix the button feedback.** In the strategy document view, an action already saved shows "Added" with a check and is disabled, instead of looking un-clicked. Clicking again on an unsaved action shows the toast plus a "View in Blueprint" link.
 
-5. **Tighten the post-checkout wait.** The success page already polls for a few seconds; extend the poll window slightly and show a clear "still confirming" state with a retry link, so a slow notification looks like waiting rather than a failure.
+5. **Prevent duplicates.** Right now the same action can be added repeatedly (your data has "Launch Consolidated Flagship Newsletter Infrastructure" twice). Add a uniqueness guard per document + title so re-clicking is a no-op, and clean up the existing duplicate row.
 
 ## Technical notes
 
-- Handler: `src/routes/api/public/payments/webhook.ts`, `resolveCatalog()` returning `null` for `transaction.completed`.
-- Catalog map: `src/lib/commerce/plans.ts` (`PRICE_PRODUCT`, `PRODUCT_TIER`) — correct, no change expected.
-- Price lookup fallback via `gatewayFetch` in `src/lib/paddle.server.ts` (`GET /prices/{id}`), with a small in-memory cache.
-- Backfill via a data insert into `public.purchases` for `txn_01kyyzj035e0e8c1xmdfrz5p5h` and `txn_01kyyz92s1wshd7f550p8b5s1n`, environment `sandbox`, including the bundled one-month OS access.
-- Entitlement resolution in `src/lib/commerce/entitlement.server.ts` needs no change — it will pick up the rows.
+- `useSavedRecommendations` in `src/lib/copilot/queries.ts` is defined but unreferenced — wire it into `src/routes/_authenticated/blueprint.tsx` and `roadmap.tsx`.
+- New presentational component `src/components/blueprint/saved-actions.tsx`; reuse `useToggleSavedStatus` for done/archive.
+- `DocumentView` (`src/components/copilot/document-view.tsx`) reads the saved list to derive per-action saved state by `document_id` + `title`.
+- Migration: partial unique index on `saved_recommendations (user_id, document_id, title)` where status is not archived, after removing the one duplicate row.
+- Grants and RLS on `saved_recommendations` are already correct — no change needed there.
 
-## How to test afterwards
+## How to test
 
-1. Reload `/blueprint` — with the backfill, tier should already read Publisher Blueprint™ and the roadmap/dashboard/AI briefs unlock.
-2. For a clean end-to-end run, refund the backfilled test purchase (or use a second test account) and buy again with card `4242 4242 4242 4242`, CVC `123`, any future expiry.
-3. Expect the success page to flip to "unlocked" within a few seconds; if it doesn't, the new error logging will name the transaction and reason.
+1. Open a strategy document, click "Add to Blueprint" — the button flips to "Added".
+2. Go to `/blueprint`, scroll to "Saved from Copilot" — your six existing saved actions should already be listed.
+3. Mark one done and archive another; both leave the active list and the roadmap section updates.
