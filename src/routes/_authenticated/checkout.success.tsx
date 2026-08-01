@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, ArrowRight } from "lucide-react";
-import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { useEntitlement, entitlementQueryKey } from "@/lib/commerce/use-entitlement";
 import { trackCommerceEvent } from "@/lib/commerce/analytics";
@@ -44,7 +43,7 @@ function CheckoutSuccessPage() {
   const unlocked = tier !== "free";
 
   return (
-    <AppShell>
+    <>
       <div className="mx-auto max-w-2xl space-y-8 py-10 text-center">
         <CheckCircle2 className="mx-auto size-12 text-primary" aria-hidden />
         <div className="space-y-3">
@@ -72,6 +71,6 @@ function CheckoutSuccessPage() {
           time from Settings.
         </p>
       </div>
-    </AppShell>
+    </>
   );
 }

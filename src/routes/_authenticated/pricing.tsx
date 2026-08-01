@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { AppShell } from "@/components/layout/app-shell";
 import { PricingTable } from "@/components/billing/pricing-table";
 import { PaymentTestModeBanner } from "@/components/billing/payment-test-mode-banner";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
@@ -38,7 +37,7 @@ function PricingPage() {
   }, []);
 
   return (
-    <AppShell>
+    <>
       <PaymentTestModeBanner />
       <div className="space-y-10">
         <header className="max-w-2xl space-y-3">
@@ -64,6 +63,6 @@ function PricingPage() {
           period.
         </p>
       </div>
-    </AppShell>
+    </>
   );
 }
