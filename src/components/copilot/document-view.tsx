@@ -221,7 +221,8 @@ export function DocumentView({
                       ) : null}
                     </dl>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           ) : null}
