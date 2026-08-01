@@ -6,7 +6,8 @@ export type CommerceEvent =
   | "checkout_started"
   | "purchase_confirmed"
   | "upgrade_prompt_viewed"
-  | "portal_opened";
+  | "portal_opened"
+  | "cancel_started";
 
 /** Fire-and-forget funnel analytics. Never blocks the UI. */
 export async function trackCommerceEvent(
