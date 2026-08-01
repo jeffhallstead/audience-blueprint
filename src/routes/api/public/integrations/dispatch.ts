@@ -1,22 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { timingSafeEqual } from "node:crypto";
-
-function authorized(request: Request, secret: string) {
-  const header = request.headers.get("x-cron-secret") ?? "";
-  const a = Buffer.from(header);
-  const b = Buffer.from(secret);
-  return a.length === b.length && timingSafeEqual(a, b);
-}
 
 export const Route = createFileRoute("/api/public/integrations/dispatch")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const secret = process.env["INTEGRATIONS_CRON_SECRET"];
-        if (!secret) {
-          return new Response("Not configured", { status: 503 });
-        }
-        if (!authorized(request, secret)) {
+        // Scheduled caller authenticates with the project's publishable key.
+        const expected =
+          process.env["SUPABASE_ANON_KEY"] ?? process.env["SUPABASE_PUBLISHABLE_KEY"];
+        const provided = request.headers.get("apikey");
+        if (!expected || provided !== expected) {
           return new Response("Unauthorized", { status: 401 });
         }
 
