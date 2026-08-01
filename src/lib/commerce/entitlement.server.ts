@@ -1,0 +1,84 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
+import { FEATURE_MINIMUM, TIER_RANK, type Feature, type Tier } from "@/lib/commerce/plans";
+import type { PaddleEnv } from "@/lib/paddle.server";
+
+type Client = SupabaseClient<Database>;
+
+export function isPaddleEnv(value: unknown): PaddleEnv {
+  return value === "live" ? "live" : "sandbox";
+}
+
+function subscriptionIsActive(row: { status: string; current_period_end: string | null }) {
+  const endsInFuture = !row.current_period_end || new Date(row.current_period_end) > new Date();
+  if (["active", "trialing", "past_due"].includes(row.status)) return endsInFuture;
+  // Canceled subscriptions keep access until the paid period ends.
+  if (row.status === "canceled") return endsInFuture && !!row.current_period_end;
+  return false;
+}
+
+export type ResolvedEntitlement = {
+  tier: Tier;
+  includedOsUntil: string | null;
+  subscriptions: Database["public"]["Tables"]["subscriptions"]["Row"][];
+  purchases: Database["public"]["Tables"]["purchases"]["Row"][];
+};
+
+/** Authoritative tier resolution. Runs with the caller's RLS-scoped client. */
+export async function resolveEntitlement(
+  supabase: Client,
+  userId: string,
+  env: PaddleEnv,
+): Promise<ResolvedEntitlement> {
+  const [{ data: subs }, { data: purchaseRows }] = await Promise.all([
+    supabase
+      .from("subscriptions")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("environment", env)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("purchases")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("environment", env)
+      .order("created_at", { ascending: false }),
+  ]);
+
+  const subscriptions = subs ?? [];
+  const purchases = (purchaseRows ?? []).filter((row) => row.status === "completed");
+
+  const activeSub = subscriptions.find(subscriptionIsActive) ?? null;
+  const includedOsUntil =
+    purchases
+      .map((row) => row.included_os_access_until)
+      .filter((value): value is string => !!value && new Date(value) > new Date())
+      .sort()
+      .at(-1) ?? null;
+
+  let tier: Tier = "free";
+  if (purchases.length > 0) tier = "blueprint";
+  if (activeSub || includedOsUntil) tier = "os";
+
+  return { tier, includedOsUntil: activeSub ? null : includedOsUntil, subscriptions, purchases };
+}
+
+export function tierMeets(tier: Tier, feature: Feature) {
+  return TIER_RANK[tier] >= TIER_RANK[FEATURE_MINIMUM[feature]];
+}
+
+/** Throws when the caller is not entitled. Use before returning any paid payload. */
+export async function requireFeature(
+  supabase: Client,
+  userId: string,
+  env: PaddleEnv,
+  feature: Feature,
+): Promise<Tier> {
+  const { tier } = await resolveEntitlement(supabase, userId, env);
+  if (!tierMeets(tier, feature)) {
+    throw new Error(
+      `Upgrade required: this feature is part of ${FEATURE_MINIMUM[feature] === "os" ? "Publisher OS™" : "Publisher Blueprint™"}.`,
+    );
+  }
+  return tier;
+}
