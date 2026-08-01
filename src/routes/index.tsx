@@ -50,18 +50,31 @@ function Landing() {
   const [signedIn, setSignedIn] = useState(false);
 
   // OAuth returns the browser here (a public URL). Forward an authenticated
-  // visitor to the right in-app surface instead of showing marketing copy.
+  // visitor to the right in-app surface instead of showing marketing copy —
+  // both on mount and if the session lands a moment later.
   useEffect(() => {
-    let cancelled = false;
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (cancelled || !data.session) return;
+    let navigated = false;
+    const forward = async () => {
+      if (navigated) return;
+      navigated = true;
       setSignedIn(true);
       navigate({ to: await resolvePostAuthPath(), replace: true });
-    });
-    return () => {
-      cancelled = true;
     };
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) void forward();
+    });
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) return;
+      if (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED") {
+        void forward();
+      }
+    });
+
+    return () => subscription.subscription.unsubscribe();
   }, [navigate]);
+
 
   return (
     <div className="min-h-screen bg-background">

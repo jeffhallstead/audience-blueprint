@@ -188,9 +188,15 @@ function AuthPage() {
                 </h1>
               </div>
 
-              <Button variant="outline" className="w-full" onClick={handleGoogle} disabled={pending}>
-                Continue with Google
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={handleGoogle}
+                disabled={googlePending || pending}
+              >
+                {googlePending ? "Connecting to Google…" : "Continue with Google"}
               </Button>
+
 
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                 <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
