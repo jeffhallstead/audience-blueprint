@@ -114,9 +114,15 @@ export const pushExportRows = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { getAdapter } = await import("@/lib/integrations/outbox.server");
     const adapter = getAdapter(data.provider);
-    if (!adapter?.isConfigured()) {
-      throw new Error("That destination is not connected yet.");
+    const ready = adapter
+      ? adapter.isConfiguredForUser
+        ? await adapter.isConfiguredForUser(context.userId)
+        : adapter.isConfigured()
+      : false;
+    if (!ready) {
+      throw new Error("Connect that destination in Settings first.");
     }
+
 
     const { data: target } = await context.supabase
       .from("export_targets")
