@@ -87,7 +87,7 @@ async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
   const userId = data.customData?.userId;
   if (!userId) return console.error("[payments] subscription.created without customData.userId");
 
-  const catalog = resolveCatalog(data.items?.[0]);
+  const catalog = await resolveCatalog(data.items?.[0], env);
   if (!catalog) {
     console.warn("[payments] skipping subscription: unknown catalog item");
     return;
@@ -120,7 +120,7 @@ async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
  * the same subscription entity on each, with `status` reflecting the change.
  */
 async function handleSubscriptionStateChange(data: any, env: PaddleEnv) {
-  const catalog = resolveCatalog(data.items?.[0]);
+  const catalog = await resolveCatalog(data.items?.[0], env);
 
   await getSupabase()
     .from("subscriptions")
@@ -164,7 +164,7 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
   const userId = data.customData?.userId;
   if (!userId) return console.error("[payments] transaction.completed without customData.userId");
 
-  const catalog = resolveCatalog(data.items?.[0]);
+  const catalog = await resolveCatalog(data.items?.[0], env);
   if (!catalog) {
     console.warn("[payments] skipping purchase: unknown catalog item");
     return;
