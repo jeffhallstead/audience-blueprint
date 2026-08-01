@@ -10,6 +10,8 @@ import { BlueprintEmptyState } from "@/components/blueprint/blueprint-empty-stat
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBlueprint } from "@/lib/blueprint/use-blueprint";
+import { useEntitlement } from "@/lib/commerce/use-entitlement";
+import { LockedFeature } from "@/components/billing/feature-gate";
 import { trackBlueprintEvent } from "@/lib/blueprint/analytics";
 
 export const Route = createFileRoute("/_authenticated/roadmap")({
@@ -37,6 +39,7 @@ export const Route = createFileRoute("/_authenticated/roadmap")({
 
 function RoadmapPage() {
   const { data: blueprint, isLoading } = useBlueprint();
+  const { can, isLoading: entitlementLoading } = useEntitlement();
 
   useEffect(() => {
     if (blueprint) void trackBlueprintEvent("roadmap_viewed", { tier: blueprint.tier });
@@ -89,6 +92,16 @@ function RoadmapPage() {
         }
       />
 
+      {!entitlementLoading && !can("roadmap") ? (
+        <LockedFeature
+          feature="roadmap"
+          title="Unlock your 90-day implementation plan"
+          description="The full roadmap sequences three phases of objectives, activities, owners, and success metrics — calibrated to your Publisher Index™ result."
+        />
+      ) : null}
+
+      {can("roadmap") ? (
+      <>
       <ExportableSection id="roadmap-phases" eyebrow="Phases" title="Month by month">
         <div className="space-y-5">
           {blueprint.roadmap.map((phase) => (
@@ -114,6 +127,8 @@ function RoadmapPage() {
       >
         <ActionList items={blueprint.longTerm} variant="long" />
       </ExportableSection>
+      </>
+      ) : null}
     </div>
   );
 }
