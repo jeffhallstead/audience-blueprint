@@ -1,37 +1,21 @@
-## What's happening
+## Google sign-in recovery plan
 
-Your backend auth log shows the Google login itself **succeeded** at 07:05:54 (HTTP 200, `login_method: oidc`). So the failure is on the app side after the token comes back — the sign-in page never moves you off it.
+The backend logs confirm Google authentication completed successfully, and the preview has reached `/welcome` in one viewer. The remaining issue is the original sign-in page: its `Connecting to Google…` state only clears after the OAuth helper promise settles, but the popup flow has no timeout and can remain unresolved if its completion message is missed.
 
-"Please wait…" is the auth page's submit-button label, shown whenever a shared `pending` flag is true. `handleGoogle` sets `pending = true` and only ever clears it on an explicit error. In the preview, Google runs in a popup: if the popup result resolves in a path the current code doesn't handle (or the redirect back lands while the promise is still awaited), nothing clears `pending` and nothing navigates — so the page sits on "Please wait…" even though you are now signed in.
+1. **Make the Google flow recoverable**
+   - Add a bounded timeout around the popup-based OAuth promise.
+   - When it expires, re-check the authenticated user/session before showing an error.
+   - If authentication succeeded, route to `/welcome` or `/dashboard`; otherwise restore the button and provide a retry message.
 
-Secondary issue: both `/auth` and `/` check the session exactly once on mount. If the session is set a moment later (popup completing, token exchange finishing), there is no listener to react, so the page stays put.
+2. **Reconcile the session when the user returns**
+   - Re-check auth when the sign-in page regains focus or becomes visible after the Google tab/popup.
+   - Clear the pending state when no session exists, so the user is never left with a permanently disabled button.
+   - Keep the existing auth-state listener as the immediate success path.
 
-## Fix
+3. **Preserve correct routing**
+   - Continue using the public origin as the OAuth return URL.
+   - Keep first-time users routed through the existing post-auth resolver to `/welcome`, and returning users to `/dashboard`.
 
-**1. Session-driven navigation instead of promise-driven (`src/routes/auth.tsx`)**
-- Register a `supabase.auth.onAuthStateChange` listener on mount; on `SIGNED_IN` (or `INITIAL_SESSION` with a session), resolve the post-auth path and navigate. This makes the redirect fire whenever the session actually appears, regardless of which OAuth path completed it.
-- Guard against double navigation with a ref.
-
-**2. Make the Google button honest about its own state**
-- Give Google its own `googlePending` state so it no longer hijacks the email/password button's label.
-- Wrap the call in `try/finally` so the flag always clears.
-- Add a ~20s safety timeout: if no session has arrived, clear the flag and show a "Sign-in didn't complete — try again" toast instead of a permanent spinner.
-
-**3. Same session-awareness on the landing page (`src/routes/index.tsx`)**
-- Add the same `onAuthStateChange` listener alongside the existing one-shot `getSession` check, so an OAuth return to `/` forwards you even if the session lands after mount.
-
-**4. Keep the OAuth contract correct**
-- `redirect_uri` stays `window.location.origin` (a public URL) — no change needed there; the protected route is reached only after the session is confirmed.
-
-## Technical notes
-
-- No database, schema, or auth-provider configuration changes; Google is already enabled and working server-side.
-- No changes to the generated `src/integrations/lovable/index.ts` or Supabase client files.
-- `resolvePostAuthPath` logic is unchanged: first-timers → `/welcome`, returning users → `/dashboard`.
-
-## How to test
-
-1. Sign out fully (or use a private window) and open the preview.
-2. Go to **Sign in → Continue with Google**, pick `jeffhallstead@gmail.com`.
-3. Expect: popup closes, you land on `/welcome` the first time and `/dashboard` thereafter — no lingering "Please wait…".
-4. Also verify email/password sign-in still shows "Please wait…" only on its own submit, and that visiting `/` while signed in forwards you into the app.
+4. **Verify the flow**
+   - Test successful Google authentication, cancellation/closed popup, and a missed or delayed popup response.
+   - Confirm the loading label always resolves and a successful session reaches the correct destination without requiring a refresh.
