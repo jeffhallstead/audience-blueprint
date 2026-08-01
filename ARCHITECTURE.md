@@ -61,3 +61,25 @@ defined and ready; no toggle is shipped yet.
 - PDF export → the "Export PDF" buttons currently emit a toast.
 - Stripe payments, email automation, CRM sync, benchmarking, team collaboration
   → add server functions under `src/lib/*.functions.ts`.
+
+## Phase 4 — Publisher Copilot™ (AI strategy engine)
+
+Every AI request rebuilds an organizational briefing server-side, so the user
+never re-explains their business and the client cannot spoof context.
+
+- `src/lib/ai-gateway.server.ts` — Lovable AI Gateway provider (`google/gemini-3.6-flash`).
+  Structured deliverables build the provider with `structuredOutputs: true`; without
+  strict `json_schema` the model omits required fields.
+- `src/lib/copilot/context.server.ts` — assembles scores, blueprint, roadmap, answers,
+  saved recommendations, and prior documents into the briefing.
+- `src/lib/copilot/prompts.server.ts` — persona, per-objective instructions, and the
+  honesty rules (state assumptions, never guarantee outcomes, no invented figures).
+- `src/lib/copilot/copilot.functions.ts` — structured generation: documents (versioned,
+  regenerable), scenario simulations, and tailored prompt packs.
+- `src/routes/api/chat.ts` — streaming conversation; authenticates from the bearer token,
+  verifies session ownership, and persists both sides of each exchange.
+- Surfaces: `/copilot`, `/copilot/chat/$sessionId`, `/copilot/documents`,
+  `/copilot/documents/$documentId`, `/copilot/simulator`, `/copilot/prompts`.
+
+The simulator is deliberately directional (up/down/flat × magnitude) — it never
+predicts a numeric score, because only a re-assessment produces one.
