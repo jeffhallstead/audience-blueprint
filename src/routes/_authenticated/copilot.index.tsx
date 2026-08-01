@@ -225,6 +225,7 @@ function CopilotHome() {
         {secondary.map((objective) => {
           const Icon = objectiveIcon(objective.icon);
           const to = objective.id === "simulator" ? "/copilot/simulator" : objective.id === "prompts" ? "/copilot/prompts" : null;
+          const existing = to ? undefined : latestByKind.get(objective.id);
           const card = (
             <div className="surface-panel flex h-full flex-col gap-3 p-5 transition-colors hover:border-brass/40">
               <Icon className="size-4.5 text-brass" aria-hidden />
@@ -239,11 +240,39 @@ function CopilotHome() {
               </Link>
             );
           }
+          if (existing) {
+            return (
+              <div key={objective.id} className="space-y-2">
+                <Link to="/copilot/documents/$documentId" params={{ documentId: existing.id }} className="block">
+                  {card}
+                </Link>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground/80">
+                    View my report · {formatGenerated(existing.created_at)}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 text-xs"
+                    disabled={busy}
+                    onClick={() => runObjective.mutate(objective.id)}
+                  >
+                    {runningObjective === objective.id ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <RefreshCw className="size-3.5" />
+                    )}
+                    Regenerate
+                  </Button>
+                </div>
+              </div>
+            );
+          }
           return (
             <button
               key={objective.id}
               className="text-left"
-              disabled={busy}
+              disabled={busy || documentsLoading}
               onClick={() => runObjective.mutate(objective.id)}
             >
               {card}
