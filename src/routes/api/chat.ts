@@ -63,18 +63,18 @@ export const Route = createFileRoute("/api/chat")({
 
         const latest = uiMessages[uiMessages.length - 1];
         if (latest?.role === "user") {
-          const { error } = await supabase.from("ai_messages").upsert(
-            {
-              session_id: sessionId,
-              user_id: userId,
-              role: "user",
-              message_key: latest.id,
-              parts: latest.parts as never,
-              content: textOf(latest),
-            },
-            { onConflict: "session_id,message_key" },
-          );
-          if (error) console.error("[copilot] failed to persist user message", error);
+          const { error } = await supabase.from("ai_messages").insert({
+            session_id: sessionId,
+            user_id: userId,
+            role: "user",
+            message_key: latest.id,
+            parts: latest.parts as never,
+            content: textOf(latest),
+          });
+          // 23505 = the same message id was already stored (a retry); not an error.
+          if (error && error.code !== "23505") {
+            console.error("[copilot] failed to persist user message", error);
+          }
         }
 
         let gateway;
@@ -94,18 +94,18 @@ export const Route = createFileRoute("/api/chat")({
           originalMessages: uiMessages,
           onFinish: async ({ responseMessage }) => {
             try {
-              await supabase.from("ai_messages").upsert(
-                {
-                  session_id: sessionId,
-                  user_id: userId,
-                  role: "assistant",
-                  message_key: responseMessage.id,
-                  parts: responseMessage.parts as never,
-                  content: textOf(responseMessage),
-                  model: COPILOT_MODEL,
-                },
-                { onConflict: "session_id,message_key" },
-              );
+              const { error } = await supabase.from("ai_messages").insert({
+                session_id: sessionId,
+                user_id: userId,
+                role: "assistant",
+                message_key: responseMessage.id,
+                parts: responseMessage.parts as never,
+                content: textOf(responseMessage),
+                model: COPILOT_MODEL,
+              });
+              if (error && error.code !== "23505") {
+                console.error("[copilot] failed to persist assistant message", error);
+              }
               await supabase
                 .from("ai_sessions")
                 .update({ updated_at: new Date().toISOString() })

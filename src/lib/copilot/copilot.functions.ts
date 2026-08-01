@@ -52,7 +52,7 @@ function friendlyAiError(error: unknown): Error {
 
 export const generateStrategyDocument = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => generateDocumentInput.parse(input))
+  .validator((input: unknown) => generateDocumentInput.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const briefing = await buildCopilotContext(supabase, userId);
@@ -131,7 +131,7 @@ const simulateInput = z.object({
 
 export const simulateScenario = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => simulateInput.parse(input))
+  .validator((input: unknown) => simulateInput.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const briefing = await buildCopilotContext(supabase, userId);
@@ -227,7 +227,7 @@ export const generatePromptPack = createServerFn({ method: "POST" })
 /** Naming a conversation from its first exchange — cheap, non-blocking. */
 export const nameSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ sessionId: z.string().uuid(), firstMessage: z.string() }).parse(input))
+  .validator((input: unknown) => z.object({ sessionId: z.string().uuid(), firstMessage: z.string() }).parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const gateway = createLovableAiGatewayProvider(requireLovableApiKey());
