@@ -26,13 +26,22 @@ export function AccountSecurityPanel() {
   async function changePassword(event: React.FormEvent) {
     event.preventDefault();
     const parsed = passwordSchema.safeParse(password);
-    if (!parsed.success) return toast.error(parsed.error.issues[0]!.message);
-    if (password !== confirm) return toast.error("Passwords do not match");
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]!.message);
+      return;
+    }
+    if (password !== confirm) {
+      toast.error("Passwords do not match");
+      return;
+    }
 
     setBusy("password");
     const { error } = await supabase.auth.updateUser({ password });
     setBusy(null);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setPassword("");
     setConfirm("");
     toast.success("Password updated");
@@ -41,7 +50,10 @@ export function AccountSecurityPanel() {
   async function changeEmail(event: React.FormEvent) {
     event.preventDefault();
     const parsed = emailSchema.safeParse(email);
-    if (!parsed.success) return toast.error(parsed.error.issues[0]!.message);
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]!.message);
+      return;
+    }
 
     setBusy("email");
     const { error } = await supabase.auth.updateUser(
@@ -49,13 +61,19 @@ export function AccountSecurityPanel() {
       { emailRedirectTo: `${window.location.origin}/settings` },
     );
     setBusy(null);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setEmail("");
     toast.success("Check your new inbox — confirm the change to finish.");
   }
 
   async function removeAccount() {
-    if (confirmDelete !== "DELETE") return toast.error('Type DELETE to confirm');
+    if (confirmDelete !== "DELETE") {
+      toast.error("Type DELETE to confirm");
+      return;
+    }
     setBusy("delete");
     try {
       await deleteAccount();
