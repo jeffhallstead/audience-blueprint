@@ -46,10 +46,12 @@ export const sendWelcomeEmail = createServerFn({ method: "POST" })
         idempotencyKey: `welcome-${userId}`,
       });
     } catch (error) {
+      // Keep the stamp: a delivery failure must not trap the user in a
+      // permanent "not yet welcomed" state on every sign-in.
       console.error("welcome email failed", error);
-      await supabase.from("profiles").update({ welcome_email_sent_at: null }).eq("id", userId);
       return { sent: false as const };
     }
+
 
     // First-touch CRM sync — never blocks the welcome flow.
     const { enqueueIntegrationEvent } = await import("@/lib/integrations/outbox.server");
