@@ -60,7 +60,11 @@ export const generateStrategyDocument = createServerFn({ method: "POST" })
       throw new Error("Complete the Publisher Index™ assessment before generating strategy documents.");
     }
 
-    const gateway = createLovableAiGatewayProvider(requireLovableApiKey());
+    // Strict json_schema mode: without it the gateway falls back to json_object
+    // and the model silently omits required fields.
+    const gateway = createLovableAiGatewayProvider(requireLovableApiKey(), undefined, {
+      structuredOutputs: true,
+    });
     const objective = data.objective as ObjectiveId;
 
     let document: StrategyDocument;
@@ -135,7 +139,9 @@ export const simulateScenario = createServerFn({ method: "POST" })
       throw new Error("Complete the Publisher Index™ assessment before running scenarios.");
     }
 
-    const gateway = createLovableAiGatewayProvider(requireLovableApiKey());
+    const gateway = createLovableAiGatewayProvider(requireLovableApiKey(), undefined, {
+      structuredOutputs: true,
+    });
 
     let simulation: Simulation;
     try {
@@ -182,7 +188,9 @@ export const generatePromptPack = createServerFn({ method: "POST" })
       throw new Error("Complete the Publisher Index™ assessment before generating a prompt pack.");
     }
 
-    const gateway = createLovableAiGatewayProvider(requireLovableApiKey());
+    const gateway = createLovableAiGatewayProvider(requireLovableApiKey(), undefined, {
+      structuredOutputs: true,
+    });
 
     let prompts;
     try {
