@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/page-header";
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
+import { ExportMenu } from "@/components/blueprint/export-menu";
 import { ExportableSection } from "@/components/blueprint/exportable-section";
 import { ScoreRing } from "@/components/blueprint/score-ring";
 import { CategoryCard } from "@/components/blueprint/category-card";
