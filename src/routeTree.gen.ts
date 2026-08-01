@@ -24,6 +24,8 @@ import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedWizardRouteImport } from './routes/_authenticated/wizard'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedCopilotIndexRouteImport } from './routes/_authenticated/copilot.index'
+import { Route as AuthenticatedCopilotPromptsRouteImport } from './routes/_authenticated/copilot.prompts'
+import { Route as AuthenticatedCopilotSimulatorRouteImport } from './routes/_authenticated/copilot.simulator'
 import { Route as AuthenticatedCopilotChatSessionIdRouteImport } from './routes/_authenticated/copilot.chat.$sessionId'
 import { Route as AuthenticatedCopilotDocumentsIndexRouteImport } from './routes/_authenticated/copilot.documents.index'
 import { Route as AuthenticatedCopilotDocumentsDocumentIdRouteImport } from './routes/_authenticated/copilot.documents.$documentId'
@@ -103,6 +105,18 @@ const AuthenticatedCopilotIndexRoute =
     path: '/copilot/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCopilotPromptsRoute =
+  AuthenticatedCopilotPromptsRouteImport.update({
+    id: '/copilot/prompts',
+    path: '/copilot/prompts',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCopilotSimulatorRoute =
+  AuthenticatedCopilotSimulatorRouteImport.update({
+    id: '/copilot/simulator',
+    path: '/copilot/simulator',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCopilotChatSessionIdRoute =
   AuthenticatedCopilotChatSessionIdRouteImport.update({
     id: '/copilot/chat/$sessionId',
@@ -136,6 +150,8 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
+  '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
   '/copilot/': typeof AuthenticatedCopilotIndexRoute
   '/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
   '/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
@@ -155,6 +171,8 @@ export interface FileRoutesByTo {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
+  '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
   '/copilot': typeof AuthenticatedCopilotIndexRoute
   '/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
   '/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
@@ -176,6 +194,8 @@ export interface FileRoutesById {
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/_authenticated/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/_authenticated/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
+  '/_authenticated/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
   '/_authenticated/copilot/': typeof AuthenticatedCopilotIndexRoute
   '/_authenticated/copilot/chat/$sessionId': typeof AuthenticatedCopilotChatSessionIdRoute
   '/_authenticated/copilot/documents/$documentId': typeof AuthenticatedCopilotDocumentsDocumentIdRoute
@@ -197,6 +217,8 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wizard'
     | '/api/chat'
+    | '/copilot/prompts'
+    | '/copilot/simulator'
     | '/copilot/'
     | '/copilot/chat/$sessionId'
     | '/copilot/documents/$documentId'
@@ -216,6 +238,8 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wizard'
     | '/api/chat'
+    | '/copilot/prompts'
+    | '/copilot/simulator'
     | '/copilot'
     | '/copilot/chat/$sessionId'
     | '/copilot/documents/$documentId'
@@ -236,6 +260,8 @@ export interface FileRouteTypes {
     | '/_authenticated/welcome'
     | '/_authenticated/wizard'
     | '/api/chat'
+    | '/_authenticated/copilot/prompts'
+    | '/_authenticated/copilot/simulator'
     | '/_authenticated/copilot/'
     | '/_authenticated/copilot/chat/$sessionId'
     | '/_authenticated/copilot/documents/$documentId'
@@ -356,6 +382,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCopilotIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/copilot/prompts': {
+      id: '/_authenticated/copilot/prompts'
+      path: '/copilot/prompts'
+      fullPath: '/copilot/prompts'
+      preLoaderRoute: typeof AuthenticatedCopilotPromptsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/copilot/simulator': {
+      id: '/_authenticated/copilot/simulator'
+      path: '/copilot/simulator'
+      fullPath: '/copilot/simulator'
+      preLoaderRoute: typeof AuthenticatedCopilotSimulatorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/copilot/chat/$sessionId': {
       id: '/_authenticated/copilot/chat/$sessionId'
       path: '/copilot/chat/$sessionId'
@@ -391,6 +431,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedWelcomeRoute: typeof AuthenticatedWelcomeRoute
   AuthenticatedWizardRoute: typeof AuthenticatedWizardRoute
+  AuthenticatedCopilotPromptsRoute: typeof AuthenticatedCopilotPromptsRoute
+  AuthenticatedCopilotSimulatorRoute: typeof AuthenticatedCopilotSimulatorRoute
   AuthenticatedCopilotIndexRoute: typeof AuthenticatedCopilotIndexRoute
   AuthenticatedCopilotChatSessionIdRoute: typeof AuthenticatedCopilotChatSessionIdRoute
   AuthenticatedCopilotDocumentsDocumentIdRoute: typeof AuthenticatedCopilotDocumentsDocumentIdRoute
@@ -408,6 +450,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedWelcomeRoute: AuthenticatedWelcomeRoute,
   AuthenticatedWizardRoute: AuthenticatedWizardRoute,
+  AuthenticatedCopilotPromptsRoute: AuthenticatedCopilotPromptsRoute,
+  AuthenticatedCopilotSimulatorRoute: AuthenticatedCopilotSimulatorRoute,
   AuthenticatedCopilotIndexRoute: AuthenticatedCopilotIndexRoute,
   AuthenticatedCopilotChatSessionIdRoute:
     AuthenticatedCopilotChatSessionIdRoute,
