@@ -211,7 +211,8 @@ export function useSaveRecommendation() {
         session_id: input.sessionId ?? null,
         source: "copilot",
       });
-      if (error) throw error;
+      // A duplicate means it is already in the Blueprint — treat as success.
+      if (error && error.code !== "23505") throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: copilotKeys.saved }),
   });
