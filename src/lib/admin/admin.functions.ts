@@ -1,66 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-
-export type AdminMetrics = {
-  users: number;
-  newUsers7d: number;
-  assessmentsStarted: number;
-  assessmentsCompleted: number;
-  avgIndexScore: number | null;
-  blueprintCustomers: number;
-  activeSubscriptions: number;
-  revenueCents: number;
-  aiSessions: number;
-  documentsGenerated: number;
-};
-
-export type AdminUserRow = {
-  userId: string;
-  email: string;
-  fullName: string | null;
-  createdAt: string;
-  organization: string | null;
-  indexScore: number | null;
-  maturityLevel: number | null;
-  tier: "free" | "blueprint" | "os";
-  isAdmin: boolean;
-};
-
-export type AdminOutboxRow = {
-  id: string;
-  provider: string;
-  eventName: string;
-  status: string;
-  attempts: number;
-  lastError: string | null;
-  nextAttemptAt: string;
-  createdAt: string;
-};
-
-export type AdminOverview = {
-  metrics: AdminMetrics;
-  scoreDistribution: { level: number; label: string; count: number }[];
-  users: AdminUserRow[];
-  outbox: AdminOutboxRow[];
-  outboxCounts: Record<string, number>;
-};
-
-const MATURITY_LABELS: Record<number, string> = {
-  1: "Ad Hoc",
-  2: "Emerging",
-  3: "Structured",
-  4: "Scaling",
-  5: "Publisher-Grade",
-};
-
-/** Throws unless the caller holds the `admin` role. Never trust client claims. */
-async function assertAdmin(context: { supabase: { rpc: Function }; userId: string }) {
-  const { data, error } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "admin",
-  });
-  if (error || data !== true) throw new Error("Forbidden");
-}
+import { assertAdmin, isAdminContext, MATURITY_LABELS, type AdminOverview, type AdminUserRow } from "@/lib/admin/shared";
 
 /** Internal-only operations snapshot. Admin role required. */
 export const getAdminOverview = createServerFn({ method: "GET" })
@@ -69,7 +9,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     await assertAdmin(context as never);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const [{ data: authUsers }, profiles, orgs, assessments, scores, purchases, subs, sessions, docs, outbox, roles] =
+    const [authUsersRes, profiles, orgs, assessments, scores, purchases, subs, sessions, docs, outbox, roles] =
       await Promise.all([
         supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 }),
         supabaseAdmin.from("profiles").select("id, full_name, created_at"),
@@ -91,18 +31,15 @@ export const getAdminOverview = createServerFn({ method: "GET" })
         supabaseAdmin.from("user_roles").select("user_id, role"),
       ]);
 
-    const users = authUsers?.users ?? [];
+    const users = authUsersRes.data?.users ?? [];
     const profileById = new Map((profiles.data ?? []).map((p) => [p.id, p]));
     const orgByOwner = new Map((orgs.data ?? []).map((o) => [o.owner_id, o.name]));
     const adminIds = new Set((roles.data ?? []).filter((r) => r.role === "admin").map((r) => r.user_id));
 
-    const latestScoreByUser = new Map<string, { overall_score: number; maturity_level: number }>();
+    const latestScoreByUser = new Map<string, { overall: number; level: number }>();
     for (const row of scores.data ?? []) {
       if (!latestScoreByUser.has(row.user_id)) {
-        latestScoreByUser.set(row.user_id, {
-          overall_score: row.overall_score,
-          maturity_level: row.maturity_level,
-        });
+        latestScoreByUser.set(row.user_id, { overall: row.overall_score, level: row.maturity_level });
       }
     }
 
@@ -121,35 +58,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
 
     const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     const assessmentRows = assessments.data ?? [];
-    const scoreValues = [...latestScoreByUser.values()].map((s) => s.overall_score);
-
-    const metrics: AdminMetrics = {
-      users: users.length,
-      newUsers7d: users.filter((u) => new Date(u.created_at).getTime() > weekAgo).length,
-      assessmentsStarted: assessmentRows.length,
-      assessmentsCompleted: assessmentRows.filter((a) => a.status === "completed").length,
-      avgIndexScore: scoreValues.length
-        ? Math.round(scoreValues.reduce((a, b) => a + b, 0) / scoreValues.length)
-        : null,
-      blueprintCustomers: completedPurchaseUsers.size,
-      activeSubscriptions: activeSubUsers.size,
-      revenueCents: (purchases.data ?? [])
-        .filter((p) => p.status === "completed")
-        .reduce((sum, p) => sum + (p.amount_cents ?? 0), 0),
-      aiSessions: (sessions.data ?? []).length,
-      documentsGenerated: (docs.data ?? []).length,
-    };
-
-    const scoreDistribution = [1, 2, 3, 4, 5].map((level) => ({
-      level,
-      label: MATURITY_LABELS[level] ?? `Level ${level}`,
-      count: [...latestScoreByUser.values()].filter((s) => s.maturity_level === level).length,
-    }));
-
-    const outboxCounts: Record<string, number> = {};
-    for (const row of outbox.data ?? []) {
-      outboxCounts[row.status] = (outboxCounts[row.status] ?? 0) + 1;
-    }
+    const scoreValues = [...latestScoreByUser.values()].map((s) => s.overall);
 
     const userRows: AdminUserRow[] = users
       .map((u) => {
@@ -165,17 +74,41 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           fullName: profileById.get(u.id)?.full_name ?? null,
           createdAt: u.created_at,
           organization: orgByOwner.get(u.id) ?? null,
-          indexScore: score?.overall_score ?? null,
-          maturityLevel: score?.maturity_level ?? null,
+          indexScore: score?.overall ?? null,
+          maturityLevel: score?.level ?? null,
           tier,
           isAdmin: adminIds.has(u.id),
         };
       })
       .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
+    const outboxCounts: Record<string, number> = {};
+    for (const row of outbox.data ?? []) {
+      outboxCounts[row.status] = (outboxCounts[row.status] ?? 0) + 1;
+    }
+
     return {
-      metrics,
-      scoreDistribution,
+      metrics: {
+        users: users.length,
+        newUsers7d: users.filter((u) => new Date(u.created_at).getTime() > weekAgo).length,
+        assessmentsStarted: assessmentRows.length,
+        assessmentsCompleted: assessmentRows.filter((a) => a.status === "completed").length,
+        avgIndexScore: scoreValues.length
+          ? Math.round(scoreValues.reduce((a, b) => a + b, 0) / scoreValues.length)
+          : null,
+        blueprintCustomers: completedPurchaseUsers.size,
+        activeSubscriptions: activeSubUsers.size,
+        revenueCents: (purchases.data ?? [])
+          .filter((p) => p.status === "completed")
+          .reduce((sum, p) => sum + (p.amount_cents ?? 0), 0),
+        aiSessions: (sessions.data ?? []).length,
+        documentsGenerated: (docs.data ?? []).length,
+      },
+      scoreDistribution: [1, 2, 3, 4, 5].map((level) => ({
+        level,
+        label: MATURITY_LABELS[level] ?? `Level ${level}`,
+        count: [...latestScoreByUser.values()].filter((s) => s.level === level).length,
+      })),
       users: userRows,
       outbox: (outbox.data ?? []).map((row) => ({
         id: row.id,
@@ -209,13 +142,7 @@ export const retryOutboxEvent = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-/** Whether the signed-in user holds the admin role. Safe for any user to call. */
+/** Whether the signed-in user holds the admin role. Safe for any signed-in user to call. */
 export const getIsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { data } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    return { isAdmin: data === true };
-  });
+  .handler(async ({ context }) => ({ isAdmin: await isAdminContext(context as never) }));
