@@ -43,10 +43,13 @@ function AuthPage() {
   const [googlePending, setGooglePending] = useState(false);
   const [checkEmail, setCheckEmail] = useState(false);
   const navigatedRef = useRef(false);
-  const googlePendingRef = useRef(false);
 
   const goToApp = useCallback(async () => {
     if (navigatedRef.current) return;
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) {
+      throw new Error("Your Google session could not be confirmed. Please try again.");
+    }
     navigatedRef.current = true;
     navigate({ to: await resolvePostAuthPath(), replace: true });
   }, [navigate]);
@@ -54,45 +57,18 @@ function AuthPage() {
   // Navigate off this page whenever a session actually exists — on mount, and
   // whenever one arrives later (OAuth popup completing, token exchange, etc.).
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) void goToApp();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) void goToApp();
     });
 
     const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) return;
-      if (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED") {
-        void goToApp();
+      if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
+        void goToApp().catch(() => undefined);
       }
     });
 
     return () => subscription.subscription.unsubscribe();
-  }, [goToApp]);
-
-  // OAuth can finish in a separate tab even when the popup response message is
-  // lost. Reconcile the real session whenever this page becomes active again,
-  // and release the button when no session was created.
-  useEffect(() => {
-    const reconcileGoogleSignIn = async () => {
-      if (!googlePendingRef.current || document.visibilityState === "hidden") return;
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        await goToApp();
-        return;
-      }
-      googlePendingRef.current = false;
-      setGooglePending(false);
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") void reconcileGoogleSignIn();
-    };
-
-    window.addEventListener("focus", reconcileGoogleSignIn);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      window.removeEventListener("focus", reconcileGoogleSignIn);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
   }, [goToApp]);
 
 
@@ -139,31 +115,15 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
-    googlePendingRef.current = true;
     setGooglePending(true);
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
     try {
-      // Full-page mobile OAuth redirects immediately. The timeout only guards
-      // the popup path when its completion message is lost; it must outlast the
-      // helper's own 120s in-app webview fallback.
-      const timeout = new Promise<never>((_, reject) => {
-        timeoutId = setTimeout(
-          () => reject(new Error("Google sign-in took too long. Please try again.")),
-          150_000,
-        );
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
       });
 
-      const result = await Promise.race([
-        lovable.auth.signInWithOAuth("google", {
-          redirect_uri: window.location.origin,
-        }),
-        timeout,
-      ]);
-
       if (result.error) {
-        // The session may still have landed via the auth-state listener.
-        const { data } = await supabase.auth.getSession();
-        if (data.session) {
+        const { data } = await supabase.auth.getUser();
+        if (data.user) {
           await goToApp();
           return;
         }
@@ -173,8 +133,8 @@ function AuthPage() {
       if (result.redirected) return;
       await goToApp();
     } catch (error) {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
+      const { data } = await supabase.auth.getUser();
+      if (data.user) {
         await goToApp();
         return;
       }
@@ -182,8 +142,6 @@ function AuthPage() {
         error instanceof Error ? error.message : "Google sign-in failed. Please try again.",
       );
     } finally {
-      if (timeoutId) clearTimeout(timeoutId);
-      googlePendingRef.current = false;
       if (!navigatedRef.current) setGooglePending(false);
     }
   }
