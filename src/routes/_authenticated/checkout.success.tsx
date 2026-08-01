@@ -27,14 +27,14 @@ function CheckoutSuccessPage() {
   const queryClient = useQueryClient();
   const { tier, isFetching } = useEntitlement();
 
-  // The webhook lands a moment after the overlay closes, so poll briefly.
+  // The webhook lands a moment after the overlay closes, so poll for a while.
   useEffect(() => {
     void trackCommerceEvent("purchase_confirmed", { tier });
     let attempts = 0;
     const timer = setInterval(() => {
       attempts += 1;
       void queryClient.invalidateQueries({ queryKey: entitlementQueryKey });
-      if (attempts >= 6) clearInterval(timer);
+      if (attempts >= 16) clearInterval(timer);
     }, 2500);
     return () => clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,11 +51,20 @@ function CheckoutSuccessPage() {
           <p className="text-sm leading-relaxed text-muted-foreground">
             {unlocked
               ? "Your full blueprint, 90-day roadmap and Publisher Copilot™ deliverables are unlocked."
-              : isFetching
-                ? "Finalising your account…"
-                : "We're confirming your payment. This usually takes a few seconds — refresh if this message persists."}
+              : "We're confirming your payment — this usually takes a few seconds."}
           </p>
+          {!unlocked ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void queryClient.invalidateQueries({ queryKey: entitlementQueryKey })}
+              disabled={isFetching}
+            >
+              {isFetching ? "Checking…" : "Check again"}
+            </Button>
+          ) : null}
         </div>
+
         <div className="flex flex-wrap justify-center gap-3">
           <Button asChild size="lg">
             <Link to="/dashboard">

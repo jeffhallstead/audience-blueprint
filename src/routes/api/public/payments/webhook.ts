@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
-import { verifyWebhook, EventName, type PaddleEnv } from "@/lib/paddle.server";
+import { verifyWebhook, gatewayFetch, EventName, type PaddleEnv } from "@/lib/paddle.server";
 import { PRICE_PRODUCT, PRODUCT_TIER } from "@/lib/commerce/plans";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -25,21 +25,69 @@ async function logEvent(userId: string, eventName: string, metadata: Record<stri
   });
 }
 
-/** Resolve the catalog product for a line item, or null when it is unknown. */
-function resolveCatalog(item: any): { priceId: string; productId: string } | null {
-  const priceId = item?.price?.importMeta?.externalId;
-  if (!priceId) return null;
-  const productId = item?.product?.importMeta?.externalId ?? PRICE_PRODUCT[priceId] ?? null;
+/** Paddle internal price id → human-readable external id, cached per worker. */
+const priceExternalIdCache = new Map<string, string>();
+
+async function lookupPriceExternalId(paddlePriceId: string, env: PaddleEnv): Promise<string | null> {
+  const cached = priceExternalIdCache.get(paddlePriceId);
+  if (cached) return cached;
+  try {
+    const response = await gatewayFetch(env, `/prices/${encodeURIComponent(paddlePriceId)}`);
+    if (!response.ok) return null;
+    const result: any = await response.json();
+    const externalId: string | undefined =
+      result?.data?.import_meta?.external_id ?? result?.data?.importMeta?.externalId;
+    if (!externalId) return null;
+    priceExternalIdCache.set(paddlePriceId, externalId);
+    return externalId;
+  } catch (err) {
+    console.error("[payments] price lookup failed:", paddlePriceId, err);
+    return null;
+  }
+}
+
+/**
+ * Resolve the catalog product for a line item, or null when it is unknown.
+ *
+ * Notification payloads do not always carry `importMeta` on the price (and
+ * transaction events carry no product object at all), so fall back to looking
+ * the Paddle internal price id up through the API.
+ */
+async function resolveCatalog(
+  item: any,
+  env: PaddleEnv,
+): Promise<{ priceId: string; productId: string } | null> {
+  const rawPriceId: string | undefined = item?.price?.id ?? item?.priceId;
+  const priceId: string | null =
+    item?.price?.importMeta?.externalId ??
+    item?.price?.import_meta?.external_id ??
+    (rawPriceId ? await lookupPriceExternalId(rawPriceId, env) : null);
+
+  if (!priceId) {
+    console.error("[payments] could not resolve price external id", { rawPriceId });
+    return null;
+  }
+
+  const productId =
+    item?.product?.importMeta?.externalId ??
+    item?.product?.import_meta?.external_id ??
+    PRICE_PRODUCT[priceId] ??
+    null;
+
   // Never grant a tier for something that is not in our catalog.
-  if (!productId || !PRODUCT_TIER[productId]) return null;
+  if (!productId || !PRODUCT_TIER[productId]) {
+    console.error("[payments] price is not in the catalog", { priceId, productId, rawPriceId });
+    return null;
+  }
   return { priceId, productId };
 }
+
 
 async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
   const userId = data.customData?.userId;
   if (!userId) return console.error("[payments] subscription.created without customData.userId");
 
-  const catalog = resolveCatalog(data.items?.[0]);
+  const catalog = await resolveCatalog(data.items?.[0], env);
   if (!catalog) {
     console.warn("[payments] skipping subscription: unknown catalog item");
     return;
@@ -72,7 +120,7 @@ async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
  * the same subscription entity on each, with `status` reflecting the change.
  */
 async function handleSubscriptionStateChange(data: any, env: PaddleEnv) {
-  const catalog = resolveCatalog(data.items?.[0]);
+  const catalog = await resolveCatalog(data.items?.[0], env);
 
   await getSupabase()
     .from("subscriptions")
@@ -116,11 +164,23 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
   const userId = data.customData?.userId;
   if (!userId) return console.error("[payments] transaction.completed without customData.userId");
 
-  const catalog = resolveCatalog(data.items?.[0]);
+  const catalog = await resolveCatalog(data.items?.[0], env);
   if (!catalog) {
-    console.warn("[payments] skipping purchase: unknown catalog item");
+    // A paid transaction we cannot attribute must never disappear quietly.
+    console.error("[payments] UNMATCHED PURCHASE — no catalog item", {
+      transactionId: data.id,
+      userId,
+      environment: env,
+      rawPriceId: data.items?.[0]?.price?.id ?? data.items?.[0]?.priceId ?? null,
+    });
+    await logEvent(userId, "purchase_unmatched", {
+      transactionId: data.id,
+      environment: env,
+      rawPriceId: data.items?.[0]?.price?.id ?? data.items?.[0]?.priceId ?? null,
+    });
     return;
   }
+
 
   // Buying the Blueprint includes one month of Publisher OS™ access.
   const includedUntil = new Date();
