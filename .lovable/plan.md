@@ -1,44 +1,37 @@
-## What's happening now
+## What's happening
 
-Two separate things are blocking the flow you expected:
+Your backend auth log shows the Google login itself **succeeded** at 07:05:54 (HTTP 200, `login_method: oidc`). So the failure is on the app side after the token comes back — the sign-in page never moves you off it.
 
-1. **Google sign-in never lands on Welcome.** The sign-in button asks the OAuth broker to return the browser to the site root (`/`). `/` is the public marketing landing page and has no session awareness, so after Google succeeds you're dropped back on the homepage looking signed-out. In the popup path (editor preview) the code sends you to `/dashboard` — never `/welcome`, regardless of whether you clicked "Sign in" or "Create account".
-   - Confirmed in the data: both accounts have `welcome_email_sent_at` empty, meaning nobody has ever reached the Welcome screen — so the welcome email has never sent either.
-2. **Email + password signup requires an emailed confirmation link**, so it shows a "Check your inbox" screen instead of signing you in.
+"Please wait…" is the auth page's submit-button label, shown whenever a shared `pending` flag is true. `handleGoogle` sets `pending = true` and only ever clears it on an explicit error. In the preview, Google runs in a popup: if the popup result resolves in a path the current code doesn't handle (or the redirect back lands while the promise is still awaited), nothing clears `pending` and nothing navigates — so the page sits on "Please wait…" even though you are now signed in.
 
-## The plan
+Secondary issue: both `/auth` and `/` check the session exactly once on mount. If the session is set a moment later (popup completing, token exchange finishing), there is no listener to react, so the page stays put.
 
-### 1. Turn on immediate sign-in for email signup
-Enable auto-confirm on the backend so `signUp()` returns a live session. The "Check your inbox" screen becomes unreachable for normal signups and new users go straight into the app.
+## Fix
 
-Trade-off to be aware of: email addresses are no longer proven to belong to the person signing up. Password reset still works normally.
+**1. Session-driven navigation instead of promise-driven (`src/routes/auth.tsx`)**
+- Register a `supabase.auth.onAuthStateChange` listener on mount; on `SIGNED_IN` (or `INITIAL_SESSION` with a session), resolve the post-auth path and navigate. This makes the redirect fire whenever the session actually appears, regardless of which OAuth path completed it.
+- Guard against double navigation with a ref.
 
-### 2. Send new users to Welcome, returning users to Dashboard
-Introduce one shared "where do I go after auth?" rule used by every sign-in path:
-- First time in (no Welcome visit recorded yet) → `/welcome`
-- Otherwise → `/dashboard`
+**2. Make the Google button honest about its own state**
+- Give Google its own `googlePending` state so it no longer hijacks the email/password button's label.
+- Wrap the call in `try/finally` so the flag always clears.
+- Add a ~20s safety timeout: if no session has arrived, clear the flag and show a "Sign-in didn't complete — try again" toast instead of a permanent spinner.
 
-Applied to: email signup, email sign-in, and Google (both the popup path used in the editor preview and the full-page redirect path used on the live site).
+**3. Same session-awareness on the landing page (`src/routes/index.tsx`)**
+- Add the same `onAuthStateChange` listener alongside the existing one-shot `getSession` check, so an OAuth return to `/` forwards you even if the session lands after mount.
 
-### 3. Make the OAuth return actually complete
-Google must return to a public URL, so it will keep returning to `/`. The landing page gets session awareness: when a session exists on load it immediately forwards to Welcome or Dashboard by the rule above, instead of showing the marketing page to a signed-in user. The header also switches from "Sign in / Create account" to a signed-in state so a completed login is visibly a completed login.
-
-### 4. Record the Welcome visit reliably
-The Welcome screen already stamps `welcome_email_sent_at` when it fires the welcome email. That stamp becomes the "has been welcomed" marker used in step 2, so a second login goes to the dashboard rather than looping through Welcome. It will be set even if email delivery fails, so a failed send can't trap someone on Welcome forever.
+**4. Keep the OAuth contract correct**
+- `redirect_uri` stays `window.location.origin` (a public URL) — no change needed there; the protected route is reached only after the session is confirmed.
 
 ## Technical notes
 
-- `supabase--configure_auth` with `auto_confirm_email: true` (other settings unchanged — signups stay open, anonymous users stay off).
-- New `src/lib/auth/post-auth.ts`: `resolvePostAuthPath()` reads the current user's `profiles.welcome_email_sent_at` via the browser client and returns `/welcome` or `/dashboard`.
-- `src/routes/auth.tsx`: replace the three hardcoded `navigate({ to: "/dashboard" })` calls (and the `/welcome` one) with `resolvePostAuthPath()`; drop the `checkEmail` branch's role as the default signup outcome; keep `redirect_uri: window.location.origin` for Google.
-- `src/routes/index.tsx`: add a client-side session check on mount; if a session exists, `navigate({ to: resolved, replace: true })`. Keep the route public/SSR so SEO and the shareable landing page are unaffected.
-- `src/lib/email/welcome.functions.ts`: stamp `welcome_email_sent_at` regardless of send outcome (still send once per account).
+- No database, schema, or auth-provider configuration changes; Google is already enabled and working server-side.
+- No changes to the generated `src/integrations/lovable/index.ts` or Supabase client files.
+- `resolvePostAuthPath` logic is unchanged: first-timers → `/welcome`, returning users → `/dashboard`.
 
-## How to test in the preview
+## How to test
 
-1. **Google, brand-new account** — open the preview, Create account → Continue with Google, pick a Google account that has never signed in here. Expect to land on Welcome, with the welcome email queued.
-2. **Google, returning account** — sign out, sign in with the same account. Expect Dashboard, no second Welcome.
-3. **Email signup** — Create account with an email + 8+ character password. Expect to be signed in instantly and land on Welcome, with no "check your inbox" screen.
-4. **Sign out** — confirm the header returns to signed-out state and the landing page shows again rather than bouncing.
-
-Your two existing accounts have never been marked as welcomed, so both will route to Welcome once on their next sign-in, then to Dashboard afterwards.
+1. Sign out fully (or use a private window) and open the preview.
+2. Go to **Sign in → Continue with Google**, pick `jeffhallstead@gmail.com`.
+3. Expect: popup closes, you land on `/welcome` the first time and `/dashboard` thereafter — no lingering "Please wait…".
+4. Also verify email/password sign-in still shows "Please wait…" only on its own submit, and that visiting `/` while signed in forwards you into the app.
