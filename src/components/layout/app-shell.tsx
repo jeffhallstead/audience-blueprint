@@ -12,6 +12,7 @@ import {
   Settings as SettingsIcon,
   Menu,
   LogOut,
+  ShieldCheck,
 } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { PaymentTestModeBanner } from "@/components/billing/payment-test-mode-banner";
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useIsAdmin } from "@/hooks/use-is-admin";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -34,13 +36,17 @@ const NAV_ITEMS = [
 
 function NavList({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const isAdmin = useIsAdmin();
+  const items = isAdmin
+    ? [...NAV_ITEMS, { to: "/admin", label: "Admin Console", icon: ShieldCheck } as const]
+    : NAV_ITEMS;
 
   return (
     <nav className="space-y-1" aria-label="Primary">
-      {NAV_ITEMS.map((item) => {
+      {items.map((item) => {
         // Longest matching prefix wins so nested Copilot routes highlight the
         // specific entry rather than both it and its parent.
-        const matches = NAV_ITEMS.filter(
+        const matches = items.filter(
           (candidate) => pathname === candidate.to || pathname.startsWith(`${candidate.to}/`),
         );
         const best = matches.reduce<string | null>(
