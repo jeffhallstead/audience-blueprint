@@ -81,9 +81,8 @@ function RoadmapPage() {
         description={`Three sequenced phases calibrated to a ${blueprint.maturity.title} operating level. Each phase carries an objective, the activities that deliver it, and the metrics that prove it worked.`}
         actions={
           <>
-            <Button variant="outline" onClick={() => toast.info("PDF export arrives in a later phase.")}>
-              <Download className="size-4" aria-hidden /> Export
-            </Button>
+            <ExportMenu blueprint={blueprint} defaultScopes={["roadmap", "saved"]} />
+
             <Button asChild>
               <Link to="/resources">
                 Supporting resources <ArrowRight className="size-4" aria-hidden />
