@@ -10,11 +10,13 @@ import { useSaveRecommendation, useUpdateDocument, type DocumentRow } from "@/li
 import type { StrategyDocument } from "@/lib/copilot/schema";
 import { DOCUMENT_KIND_LABELS } from "@/lib/copilot/objectives";
 
-const EFFORT_TONE: Record<string, string> = {
-  low: "border-emerald-500/40 text-emerald-400",
-  medium: "border-amber-500/40 text-amber-400",
-  high: "border-destructive/40 text-destructive",
-};
+/** The model returns effort as free text ("low — 2 weeks"), so match loosely. */
+function effortTone(effort: string): string {
+  const value = effort.toLowerCase();
+  if (value.includes("low")) return "border-emerald-500/40 text-emerald-400";
+  if (value.includes("high")) return "border-destructive/40 text-destructive";
+  return "border-amber-500/40 text-amber-400";
+}
 
 /**
  * Renders a saved strategy deliverable: structured view, inline markdown
@@ -155,8 +157,8 @@ export function DocumentView({
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <h3 className="text-sm font-semibold text-foreground">{action.title}</h3>
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="outline" className={`text-[10px] uppercase ${EFFORT_TONE[action.effort] ?? ""}`}>
-                          {action.effort} effort
+                        <Badge variant="outline" className={`text-[10px] uppercase ${effortTone(action.effort)}`}>
+                          {action.effort}
                         </Badge>
                         <Button
                           variant="ghost"
@@ -167,7 +169,7 @@ export function DocumentView({
                             saveRecommendation.mutate(
                               {
                                 title: action.title,
-                                body: `${action.description}\n\nImpact: ${action.impact}\nEffort: ${action.effort} (${action.timeEstimate})\nOwner: ${action.owner}\nDependencies: ${action.dependencies.join(", ") || "None"}`,
+                                body: `${action.description}\n\nImpact: ${action.impact}\nEffort: ${action.effort}\nOwner: ${action.owner}\nDependencies: ${action.dependencies.join(", ") || "None"}`,
                                 category: document.kind,
                                 effort: action.effort,
                                 documentId: document.id,
@@ -192,7 +194,7 @@ export function DocumentView({
                       <div>
                         <dt className="font-mono uppercase tracking-wider text-muted-foreground">Owner</dt>
                         <dd className="mt-1 text-foreground/85">
-                          {action.owner} · {action.timeEstimate}
+                          {action.owner}
                         </dd>
                       </div>
                       {action.dependencies.length ? (
