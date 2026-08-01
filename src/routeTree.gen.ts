@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedAiToolkitRouteImport } from './routes/_authenticated/ai-toolkit'
 import { Route as AuthenticatedBlueprintRouteImport } from './routes/_authenticated/blueprint'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedProcessingRouteImport } from './routes/_authenticated/processing'
@@ -43,11 +42,6 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedAiToolkitRoute = AuthenticatedAiToolkitRouteImport.update({
-  id: '/ai-toolkit',
-  path: '/ai-toolkit',
-  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedBlueprintRoute = AuthenticatedBlueprintRouteImport.update({
   id: '/blueprint',
@@ -139,7 +133,6 @@ const AuthenticatedCopilotDocumentsDocumentIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/ai-toolkit': typeof AuthenticatedAiToolkitRoute
   '/blueprint': typeof AuthenticatedBlueprintRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/processing': typeof AuthenticatedProcessingRoute
@@ -160,7 +153,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/ai-toolkit': typeof AuthenticatedAiToolkitRoute
   '/blueprint': typeof AuthenticatedBlueprintRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/processing': typeof AuthenticatedProcessingRoute
@@ -183,7 +175,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/ai-toolkit': typeof AuthenticatedAiToolkitRoute
   '/_authenticated/blueprint': typeof AuthenticatedBlueprintRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/processing': typeof AuthenticatedProcessingRoute
@@ -206,7 +197,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/ai-toolkit'
     | '/blueprint'
     | '/dashboard'
     | '/processing'
@@ -227,7 +217,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
-    | '/ai-toolkit'
     | '/blueprint'
     | '/dashboard'
     | '/processing'
@@ -249,7 +238,6 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/_authenticated/ai-toolkit'
     | '/_authenticated/blueprint'
     | '/_authenticated/dashboard'
     | '/_authenticated/processing'
@@ -297,13 +285,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/ai-toolkit': {
-      id: '/_authenticated/ai-toolkit'
-      path: '/ai-toolkit'
-      fullPath: '/ai-toolkit'
-      preLoaderRoute: typeof AuthenticatedAiToolkitRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/blueprint': {
       id: '/_authenticated/blueprint'
@@ -421,7 +402,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAiToolkitRoute: typeof AuthenticatedAiToolkitRoute
   AuthenticatedBlueprintRoute: typeof AuthenticatedBlueprintRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProcessingRoute: typeof AuthenticatedProcessingRoute
@@ -440,7 +420,6 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAiToolkitRoute: AuthenticatedAiToolkitRoute,
   AuthenticatedBlueprintRoute: AuthenticatedBlueprintRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProcessingRoute: AuthenticatedProcessingRoute,

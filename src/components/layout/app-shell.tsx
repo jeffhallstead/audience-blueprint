@@ -22,7 +22,8 @@ const NAV_ITEMS = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/blueprint", label: "My Blueprint", icon: FileText },
   { to: "/roadmap", label: "Roadmap", icon: MapIcon },
-  { to: "/ai-toolkit", label: "AI Toolkit", icon: Sparkles },
+  { to: "/copilot", label: "Publisher Copilot", icon: Sparkles },
+  { to: "/copilot/documents", label: "Strategy Library", icon: FolderOpen },
   { to: "/resources", label: "Resources", icon: BookOpen },
   { to: "/settings", label: "Settings", icon: SettingsIcon },
 ] as const;
