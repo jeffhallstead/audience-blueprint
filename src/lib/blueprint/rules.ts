@@ -22,7 +22,6 @@ export const BAND_THRESHOLDS: { band: PerformanceBand; minScore: number; label: 
 ];
 
 export interface CategoryRule {
-  id: CategoryId;
   /** Short executive framing of what the category governs. */
   meaning: string;
   band: Record<PerformanceBand, { status: string; explanation: string }>;
