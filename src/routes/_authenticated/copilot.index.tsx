@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, FileText, Loader2, MessageSquare, Sparkles } from "lucide-react";
+import { ArrowRight, FileText, Loader2, MessageSquare, RefreshCw, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/page-header";
 import { BlueprintEmptyState } from "@/components/blueprint/blueprint-empty-state";
@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { objectiveIcon } from "@/components/copilot/utils";
 import { OBJECTIVES, PRIMARY_OBJECTIVES, DOCUMENT_KIND_LABELS } from "@/lib/copilot/objectives";
 import { generateStrategyDocument } from "@/lib/copilot/copilot.functions";
-import { copilotKeys, useCreateSession, useDocuments, useSessions } from "@/lib/copilot/queries";
+import { copilotKeys, useCreateSession, useDocuments, useSessions, type DocumentRow } from "@/lib/copilot/queries";
 import { useBlueprint } from "@/lib/blueprint/use-blueprint";
 
 export const Route = createFileRoute("/_authenticated/copilot/")({
@@ -49,7 +49,7 @@ function CopilotHome() {
   const queryClient = useQueryClient();
   const { data: blueprint, isLoading } = useBlueprint();
   const { data: sessions } = useSessions();
-  const { data: documents } = useDocuments();
+  const { data: documents, isLoading: documentsLoading } = useDocuments();
   const createSession = useCreateSession();
   const generateDocument = useServerFn(generateStrategyDocument);
   const [runningObjective, setRunningObjective] = useState<string | null>(null);
@@ -111,6 +111,14 @@ function CopilotHome() {
   const secondary = OBJECTIVES.filter((objective) => !objective.primary && objective.id !== "ask");
   const busy = runObjective.isPending;
 
+  // Documents come back newest-first, so the first match per kind is the latest report.
+  const latestByKind = new Map<string, DocumentRow>();
+  for (const document of documents ?? []) {
+    if (!latestByKind.has(document.kind)) latestByKind.set(document.kind, document);
+  }
+  const formatGenerated = (value: string) =>
+    new Date(value).toLocaleDateString(undefined, { dateStyle: "medium" });
+
   return (
     <div className="space-y-12">
       <PageHeader
@@ -133,6 +141,7 @@ function CopilotHome() {
             const Icon = objectiveIcon(objective.icon);
             const running = runningObjective === objective.id;
             const isAsk = objective.id === "ask";
+            const existing = isAsk ? undefined : latestByKind.get(objective.id);
             return (
               <article
                 key={objective.id}
@@ -150,16 +159,42 @@ function CopilotHome() {
                     Delivers: {objective.deliverable}
                   </p>
                 </div>
-                <Button
-                  size="sm"
-                  variant={isAsk ? "outline" : "default"}
-                  className="w-fit"
-                  disabled={busy}
-                  onClick={() => (isAsk ? void startConversation() : runObjective.mutate(objective.id))}
-                >
-                  {running ? <Loader2 className="size-4 animate-spin" /> : <ArrowRight className="size-4" />}
-                  {running ? "Generating…" : isAsk ? "Start a conversation" : "Generate"}
-                </Button>
+                {existing ? (
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button size="sm" asChild>
+                        <Link to="/copilot/documents/$documentId" params={{ documentId: existing.id }}>
+                          <FileText className="size-4" aria-hidden />
+                          View my report
+                        </Link>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-xs"
+                        disabled={busy}
+                        onClick={() => runObjective.mutate(objective.id)}
+                      >
+                        {running ? <Loader2 className="size-3.5 animate-spin" /> : <RefreshCw className="size-3.5" />}
+                        {running ? "Regenerating…" : "Regenerate"}
+                      </Button>
+                    </div>
+                    <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground/80">
+                      Generated {formatGenerated(existing.created_at)}
+                    </p>
+                  </div>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant={isAsk ? "outline" : "default"}
+                    className="w-fit"
+                    disabled={busy || (!isAsk && documentsLoading)}
+                    onClick={() => (isAsk ? void startConversation() : runObjective.mutate(objective.id))}
+                  >
+                    {running ? <Loader2 className="size-4 animate-spin" /> : <ArrowRight className="size-4" />}
+                    {running ? "Generating…" : isAsk ? "Start a conversation" : "Generate"}
+                  </Button>
+                )}
               </article>
             );
           })}
@@ -190,6 +225,7 @@ function CopilotHome() {
         {secondary.map((objective) => {
           const Icon = objectiveIcon(objective.icon);
           const to = objective.id === "simulator" ? "/copilot/simulator" : objective.id === "prompts" ? "/copilot/prompts" : null;
+          const existing = to ? undefined : latestByKind.get(objective.id);
           const card = (
             <div className="surface-panel flex h-full flex-col gap-3 p-5 transition-colors hover:border-brass/40">
               <Icon className="size-4.5 text-brass" aria-hidden />
@@ -204,11 +240,39 @@ function CopilotHome() {
               </Link>
             );
           }
+          if (existing) {
+            return (
+              <div key={objective.id} className="space-y-2">
+                <Link to="/copilot/documents/$documentId" params={{ documentId: existing.id }} className="block">
+                  {card}
+                </Link>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground/80">
+                    View my report · {formatGenerated(existing.created_at)}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 text-xs"
+                    disabled={busy}
+                    onClick={() => runObjective.mutate(objective.id)}
+                  >
+                    {runningObjective === objective.id ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <RefreshCw className="size-3.5" />
+                    )}
+                    Regenerate
+                  </Button>
+                </div>
+              </div>
+            );
+          }
           return (
             <button
               key={objective.id}
               className="text-left"
-              disabled={busy}
+              disabled={busy || documentsLoading}
               onClick={() => runObjective.mutate(objective.id)}
             >
               {card}
