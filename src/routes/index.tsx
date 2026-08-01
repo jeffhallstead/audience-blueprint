@@ -46,6 +46,23 @@ const PILLARS = [
 ];
 
 function Landing() {
+  const navigate = useNavigate();
+  const [signedIn, setSignedIn] = useState(false);
+
+  // OAuth returns the browser here (a public URL). Forward an authenticated
+  // visitor to the right in-app surface instead of showing marketing copy.
+  useEffect(() => {
+    let cancelled = false;
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (cancelled || !data.session) return;
+      setSignedIn(true);
+      navigate({ to: await resolvePostAuthPath(), replace: true });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
@@ -54,17 +71,27 @@ function Landing() {
           <Button asChild variant="ghost" size="sm">
             <Link to="/pricing">Pricing</Link>
           </Button>
-          <Button asChild variant="ghost" size="sm">
-            <Link to="/auth">Sign in</Link>
-          </Button>
+          {signedIn ? (
+            <Button asChild size="sm">
+              <Link to="/dashboard">Go to dashboard</Link>
+            </Button>
+          ) : (
+            <>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/auth">Sign in</Link>
+              </Button>
 
-          <Button asChild size="sm">
-            <Link to="/auth" search={{ mode: "signup" }}>
-              Create account
-            </Link>
-          </Button>
+              <Button asChild size="sm">
+                <Link to="/auth" search={{ mode: "signup" }}>
+                  Create account
+                </Link>
+              </Button>
+            </>
+          )}
         </div>
       </header>
+
+
 
       <main>
         <section className="mx-auto max-w-6xl px-6 pb-24 pt-16 sm:pt-24">
