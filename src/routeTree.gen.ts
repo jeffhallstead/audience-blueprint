@@ -27,6 +27,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
 import { Route as AuthenticatedWizardRouteImport } from './routes/_authenticated/wizard'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedCheckoutSuccessRouteImport } from './routes/_authenticated/checkout.success'
 import { Route as AuthenticatedCopilotIndexRouteImport } from './routes/_authenticated/copilot.index'
 import { Route as AuthenticatedCopilotPromptsRouteImport } from './routes/_authenticated/copilot.prompts'
@@ -127,6 +128,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthenticatedCheckoutSuccessRoute =
   AuthenticatedCheckoutSuccessRouteImport.update({
     id: '/checkout/success',
@@ -190,7 +196,7 @@ const LovableEmailTransactionalPreviewRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
@@ -219,7 +226,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
@@ -250,7 +258,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -266,6 +274,7 @@ export interface FileRoutesById {
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/_authenticated/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/_authenticated/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/_authenticated/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/_authenticated/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
@@ -297,6 +306,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wizard'
     | '/api/chat'
+    | '/auth/callback'
     | '/checkout/success'
     | '/copilot/prompts'
     | '/copilot/simulator'
@@ -326,6 +336,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wizard'
     | '/api/chat'
+    | '/auth/callback'
     | '/checkout/success'
     | '/copilot/prompts'
     | '/copilot/simulator'
@@ -356,6 +367,7 @@ export interface FileRouteTypes {
     | '/_authenticated/welcome'
     | '/_authenticated/wizard'
     | '/api/chat'
+    | '/auth/callback'
     | '/_authenticated/checkout/success'
     | '/_authenticated/copilot/prompts'
     | '/_authenticated/copilot/simulator'
@@ -371,7 +383,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
@@ -510,6 +522,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_authenticated/checkout/success': {
       id: '/_authenticated/checkout/success'
       path: '/checkout/success'
@@ -629,10 +648,20 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AuthRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   RefundPolicyRoute: RefundPolicyRoute,
