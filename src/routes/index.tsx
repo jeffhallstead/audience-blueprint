@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, LineChart, Layers } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
@@ -47,7 +47,6 @@ const PILLARS = [
 ];
 
 function Landing() {
-  const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
 
   // Session-aware header only. OAuth completion and navigation are owned by
