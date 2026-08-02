@@ -9,6 +9,10 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { resolvePostAuthPath } from "@/lib/auth/post-auth";
+import {
+  beginOAuthFlow,
+  recordOAuthStage,
+} from "@/lib/auth/oauth-diagnostics";
 
 
 const searchSchema = z.object({ mode: z.enum(["signin", "signup"]).optional() });
@@ -27,6 +31,8 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Access your executive owned-audience readiness blueprint and roadmap." },
       { property: "og:title", content: "Sign in — Publisher Blueprint" },
       { property: "og:description", content: "Access your executive owned-audience readiness blueprint." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AuthPage,
@@ -69,6 +75,27 @@ function AuthPage() {
     });
 
     return () => subscription.subscription.unsubscribe();
+  }, [goToApp]);
+
+  useEffect(() => {
+    const recoverFromPageRestore = () => {
+      if (document.visibilityState !== "visible") return;
+      recordOAuthStage("auth_page_restored");
+      void supabase.auth.getUser().then(({ data }) => {
+        if (data.user) {
+          void goToApp();
+          return;
+        }
+        setGooglePending(false);
+      });
+    };
+
+    window.addEventListener("pageshow", recoverFromPageRestore);
+    document.addEventListener("visibilitychange", recoverFromPageRestore);
+    return () => {
+      window.removeEventListener("pageshow", recoverFromPageRestore);
+      document.removeEventListener("visibilitychange", recoverFromPageRestore);
+    };
   }, [goToApp]);
 
 
@@ -115,8 +142,10 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
+    beginOAuthFlow();
     setGooglePending(true);
     const pendingTimeout = window.setTimeout(() => {
+      recordOAuthStage("helper_timeout");
       setGooglePending(false);
       toast.error("Google sign-in took too long. Please try again.");
     }, 45_000);
@@ -126,6 +155,7 @@ function AuthPage() {
       });
 
       if (result.error) {
+        recordOAuthStage("helper_error");
         const { data } = await supabase.auth.getUser();
         if (data.user) {
           await goToApp();
@@ -134,7 +164,11 @@ function AuthPage() {
         toast.error(result.error.message || "Google sign-in failed. Please try again.");
         return;
       }
-      if (result.redirected) return;
+      if (result.redirected) {
+        recordOAuthStage("helper_redirected");
+        return;
+      }
+      recordOAuthStage("helper_resolved");
       await goToApp();
     } catch (error) {
       const { data } = await supabase.auth.getUser();
