@@ -1,54 +1,71 @@
-## Why this keeps happening
+## Diagnosis
 
-The Google provider is completing authentication successfully; the failure is the browser-side handoff that follows it.
+**Do I know what the issue is? Yes.** Google accepts the login—the recurring failure is the browser handoff back into the app.
+
+There are two different managed-auth paths:
 
 ```text
-Mobile /auth page inside preview iframe
-  → managed auth helper detects “mobile + iframe”
-  → opens Google in a new tab
-  → requests response_mode=web_message
-  → Google login succeeds
-  → broker must postMessage tokens back to the original iframe
-  → message is not delivered on the affected mobile browser
-  → auth helper promise never resolves
-  → setSession() is never called
-  → no SIGNED_IN event occurs
-  → user remains on /auth until the UI timeout
+Standalone mobile browser
+  → full-page redirect to Google
+  → returns to /oauth/callback
+  → backend client must detect and persist the returned session
+  → callback validates the user
+  → protected route opens
+
+Mobile Lovable preview / iframe
+  → Google opens in a new tab
+  → broker must postMessage tokens to the original iframe
+  → mobile browser may lose the opener/message
+  → managed helper never resolves
+  → app’s 45-second timeout fires
 ```
 
-### Confirmed failure points
+The dedicated callback cannot repair the second branch because the iframe flow uses `web_message` rather than navigating the original app to `/oauth/callback`. This is why repeated changes to callback polling, auth listeners, and route guards have not fixed mobile preview sign-in.
 
-- `@lovable.dev/cloud-auth-js` v1.1.2 selects a special **mobile-in-iframe** branch: it opens `_blank` and waits for a cross-window message (`dist/index.js:118–157`).
-- Unlike its native-app fallback, that popup/new-tab branch has **no elapsed-time timeout**; it waits until a message arrives or the child window is detected as closed (`dist/index.js:180–200`). Mobile tab and iframe opener behavior makes that handoff unreliable.
-- The app only calls `supabase.auth.setSession(result.tokens)` after that promise resolves (`src/integrations/lovable/index.ts:22–35`). Therefore a successful Google login still produces no local app session when the message is lost.
-- The app’s 45-second timer only changes the button/toast (`src/routes/auth.tsx:117–151`). It does not cancel or recover the unresolved managed-auth promise.
-- The new `/oauth/callback` page does not fix this failing branch. In the mobile preview iframe, the helper requests `web_message`; it does not use the callback as the session handoff route. The callback currently just polls for a session that was never established (`src/routes/oauth.callback.tsx:40–64`).
-- The protected-route guard is behaving correctly: it redirects because no session exists (`src/routes/_authenticated/route.tsx:8–11`). It is an effect, not the root cause.
+The standalone redirect branch also has two timing weaknesses: `/oauth/callback` currently allows only about 10 seconds for session hydration, and the protected-route guard redirects after one unsuccessful user check. Mobile storage/network delays can therefore bounce an otherwise successful login back to `/auth`.
 
-This also explains why repeated changes to listeners, `getUser()`, callback polling, and route guards have not fixed it: those all run **after** the missing token handoff.
+The provider refresh additionally regenerated `src/integrations/lovable/index.ts` with an optional `redirect_uri`, causing a confirmed TypeScript error under the project’s strict optional-property rules.
 
 ## Implementation plan
 
-1. **Add stage-level auth diagnostics**
-   - Record non-sensitive milestones only: flow started, redirected/new-tab path, helper resolved, tokens accepted, session validated, callback mounted, and route entered.
-   - Add `pageshow`, visibility, and child-window lifecycle handling so a mobile return can be distinguished from a provider failure.
+1. **Repair the generated auth wrapper contract**
+   - Ensure every managed OAuth call receives a concrete same-origin `redirect_uri`.
+   - Keep using the managed Google helper; do not introduce a second OAuth implementation.
 
-2. **Replace polling with one supported completion path**
-   - Keep the managed Google helper as required, but remove callback logic that merely waits for a session that cannot appear.
-   - Reconcile the helper result exactly once, persist the returned session, validate it, and only then navigate.
-   - Avoid competing `getUser()` calls and auth listeners during the handoff.
+2. **Make `/oauth/callback` the authoritative standalone return path**
+   - Detect explicit provider errors from the callback URL and show a recoverable message immediately.
+   - Wait for the backend client’s URL-session detection, then validate with `getUser()` before navigating.
+   - Replace the fixed 10-second polling race with one bounded completion routine and a realistic mobile timeout.
+   - Prevent concurrent listener and polling executions from navigating twice.
 
-3. **Make mobile return recoverable**
-   - On return from the Google tab, re-check the session and reset stale `Connecting to Google…` state.
-   - Add a bounded failure state that actually ends the attempt and allows an immediate retry.
-   - Preserve `/oauth/callback` only for the genuine top-level redirect path, with explicit URL-result handling rather than blind polling.
+3. **Handle mobile page restoration**
+   - Add `pageshow`/visibility recovery on `/auth` so a page restored from mobile bfcache checks for an authenticated user and clears stale “Connecting…” state.
+   - Do the same on the callback route so returning from Google cannot leave a frozen screen.
 
-4. **Synchronize managed auth configuration**
-   - Refresh the Google provider/generated integration after the client changes so redirect and broker configuration remain aligned.
-   - Do not introduce a second custom OAuth implementation or expose tokens.
+4. **Harden the protected-route transition**
+   - Allow a short, bounded retry only during the immediate OAuth completion window before redirecting to `/auth`.
+   - Continue validating access with `getUser()`; do not weaken route protection or trust browser storage alone.
 
-5. **Verify each execution branch**
-   - Desktop preview popup: tokens are received, session is persisted, and navigation succeeds.
-   - Mobile preview iframe/new tab: returning from account selection completes or presents a recoverable error—never an indefinite spinner.
-   - Standalone mobile/top-level redirect: `/oauth/callback` establishes and validates the session.
-   - Refresh and protected-route entry retain the authenticated session without bouncing to `/auth`.
+5. **Add non-sensitive stage diagnostics**
+   - Record only milestones: auth started, helper redirected/resolved, callback mounted, provider error detected, session found, user validated, and protected route entered.
+   - Include elapsed time and execution context (standalone versus iframe), but never tokens, callback fragments, email addresses, or credentials.
+   - These signals will distinguish a managed iframe `postMessage` loss from an app callback or route-guard failure on the next mobile attempt.
+
+6. **Remove competing completion behavior**
+   - Keep the root auth subscriber for router/cache synchronization.
+   - Restrict navigation ownership to the initiating auth page or `/oauth/callback`; remove redundant OAuth-forwarding races where they overlap.
+
+7. **Verify each branch**
+   - Confirm the project compiles after correcting the regenerated wrapper.
+   - Test desktop preview popup completion.
+   - Test standalone mobile-style full-page return through `/oauth/callback` and protected-route entry.
+   - Test bfcache restoration and callback/provider-error states.
+   - For the Lovable mobile preview iframe branch, verify either successful session receipt or a clean recoverable timeout with diagnostics; if the broker message is still lost, the remaining defect is provider-side rather than fixable by callback code.
+
+<presentation-actions>
+  <presentation-open-history>View History</presentation-open-history>
+</presentation-actions>
+
+<presentation-actions>
+<presentation-link url="https://docs.lovable.dev/tips-tricks/troubleshooting">Troubleshooting docs</presentation-link>
+</presentation-actions>
