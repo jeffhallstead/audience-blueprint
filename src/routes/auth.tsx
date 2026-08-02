@@ -116,9 +116,13 @@ function AuthPage() {
 
   async function handleGoogle() {
     setGooglePending(true);
+    const pendingTimeout = window.setTimeout(() => {
+      setGooglePending(false);
+      toast.error("Google sign-in took too long. Please try again.");
+    }, 45_000);
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: `${window.location.origin}/auth/callback`,
       });
 
       if (result.error) {
@@ -142,6 +146,7 @@ function AuthPage() {
         error instanceof Error ? error.message : "Google sign-in failed. Please try again.",
       );
     } finally {
+      window.clearTimeout(pendingTimeout);
       if (!navigatedRef.current) setGooglePending(false);
     }
   }
