@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { resolvePostAuthPath } from "@/lib/auth/post-auth";
 
-export const Route = createFileRoute("/auth/callback")({
+export const Route = createFileRoute("/oauth/callback")({
   ssr: false,
   head: () => ({
     meta: [
