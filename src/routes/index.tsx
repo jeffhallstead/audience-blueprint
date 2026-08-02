@@ -4,7 +4,6 @@ import { ArrowRight, ShieldCheck, LineChart, Layers } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { resolvePostAuthPath } from "@/lib/auth/post-auth";
 
 
 export const Route = createFileRoute("/")({
@@ -22,6 +21,8 @@ export const Route = createFileRoute("/")({
         content:
           "A premium executive assessment that turns owned-audience ambition into a sequenced, accountable roadmap.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Landing,
@@ -49,33 +50,19 @@ function Landing() {
   const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
 
-  // OAuth returns the browser here (a public URL). Forward an authenticated
-  // visitor to the right in-app surface instead of showing marketing copy —
-  // both on mount and if the session lands a moment later.
+  // Session-aware header only. OAuth completion and navigation are owned by
+  // /auth and /oauth/callback so this public route cannot race them.
   useEffect(() => {
-    let navigated = false;
-    const forward = async () => {
-      if (navigated) return;
-      navigated = true;
-      setSignedIn(true);
-      navigate({ to: await resolvePostAuthPath(), replace: true });
-    };
-
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) void forward();
+      setSignedIn(Boolean(data.user));
     });
 
-    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) return;
-      if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
-        supabase.auth.getUser().then(({ data }) => {
-          if (data.user) void forward();
-        });
-      }
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSignedIn(Boolean(session?.user));
     });
 
     return () => subscription.subscription.unsubscribe();
-  }, [navigate]);
+  }, []);
 
 
   return (
