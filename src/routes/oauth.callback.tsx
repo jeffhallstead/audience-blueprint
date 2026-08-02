@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { resolvePostAuthPath } from "@/lib/auth/post-auth";
 import {
-  completeOAuthFlow,
   recordOAuthStage,
 } from "@/lib/auth/oauth-diagnostics";
 
@@ -73,7 +72,6 @@ function AuthCallbackPage() {
             completedRef.current = true;
             recordOAuthStage("callback_user_validated");
             const destination = await resolvePostAuthPath();
-            completeOAuthFlow();
             navigate({ to: destination, replace: true });
             return;
           }

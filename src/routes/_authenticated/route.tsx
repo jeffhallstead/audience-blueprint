@@ -1,7 +1,11 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { AppShell } from "@/components/layout/app-shell";
 import { supabase } from "@/integrations/supabase/client";
-import { isRecentOAuthFlow, recordOAuthStage } from "@/lib/auth/oauth-diagnostics";
+import {
+  completeOAuthFlow,
+  isRecentOAuthFlow,
+  recordOAuthStage,
+} from "@/lib/auth/oauth-diagnostics";
 
 const AUTH_RETRY_DELAYS_MS = [0, 300, 700, 1_200];
 
@@ -25,6 +29,7 @@ export const Route = createFileRoute("/_authenticated")({
       throw redirect({ to: "/auth" });
     }
     recordOAuthStage("protected_route_entered");
+    completeOAuthFlow();
     return { user };
   },
   component: () => (

@@ -11,7 +11,6 @@ import { lovable } from "@/integrations/lovable/index";
 import { resolvePostAuthPath } from "@/lib/auth/post-auth";
 import {
   beginOAuthFlow,
-  completeOAuthFlow,
   recordOAuthStage,
 } from "@/lib/auth/oauth-diagnostics";
 
@@ -83,7 +82,6 @@ function AuthPage() {
       recordOAuthStage("auth_page_restored");
       void supabase.auth.getUser().then(({ data }) => {
         if (data.user) {
-          completeOAuthFlow();
           void goToApp();
           return;
         }
@@ -170,7 +168,6 @@ function AuthPage() {
         return;
       }
       recordOAuthStage("helper_resolved");
-      completeOAuthFlow();
       await goToApp();
     } catch (error) {
       const { data } = await supabase.auth.getUser();
