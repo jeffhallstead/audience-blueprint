@@ -1,42 +1,57 @@
-## Confirmed current state
+## Goal
 
-- The app uses Lovable Cloud’s managed Google OAuth helper, not a direct `supabase.auth.signInWithOAuth` call (`src/routes/auth.tsx:167`, `src/integrations/lovable/index.ts:14`).
-- In the installed mobile wrapper, that helper already:
-  - detects the `LovableApp/` user agent,
-  - changes the callback to `lovable://oauth-callback`,
-  - opens the authorization URL with `window.open(url, "_blank")`, and
-  - waits for the wrapper’s validated authorization response before the app persists the returned session.
-- Its public API does **not** expose Supabase’s `skipBrowserRedirect` option. Replacing it with raw Supabase OAuth would bypass the managed broker and break the supported Lovable preview flow.
-- The login page currently declares failure after 20 seconds even though the managed mobile bridge waits up to 120 seconds (`src/routes/auth.tsx:154`). This can show a false timeout while the external-browser/deep-link handoff is still active.
-- Session synchronization already exists globally (`src/routes/__root.tsx:125`) and on the auth page (`src/routes/auth.tsx:69`), while the protected route validates the user with bounded retries (`src/routes/_authenticated/route.tsx:10`).
+Produce **Publisher Blueprint™ — Product Specification v1.0**, documenting everything built across Phases 1–6, in two synchronized outputs:
 
-## Implementation plan
+1. `PRODUCT-SPEC.md` committed at the repo root (single source of truth, versioned alongside code)
+2. A formatted Word document delivered as a downloadable artifact
 
-1. **Keep the supported managed OAuth path**
-   - Continue invoking `lovable.auth.signInWithOAuth("google", ...)` from the original button gesture.
-   - Do not add raw `supabase.auth.signInWithOAuth`, a second popup, iframe detection workaround, or app-owned deep-link parser; the managed helper already performs the equivalent of `skipBrowserRedirect + external browser + deep-link return` for the Lovable mobile wrapper.
+Both use the same content, sectioned so an executive can read Parts 1–4 and stop, while engineering continues into Parts 5–8.
 
-2. **Remove the competing 20-second failure race**
-   - Refactor the Google click handler so the managed helper owns completion timing.
-   - Keep the button pending while the bridge is active and only show an error when the helper explicitly returns one, the popup is cancelled, or the wrapper’s own bounded timeout expires.
-   - Prevent stale timers or restored pages from overwriting a newly authenticated state.
+## Method
 
-3. **Make session completion idempotent**
-   - Consolidate auth-page completion through one guarded routine that validates with `getUser()`, resolves the post-auth destination, and navigates once.
-   - Let `SIGNED_IN`, page restoration, and the helper result all call that same routine without racing or producing duplicate navigation/errors.
+Before writing, I'll verify the spec against the live system rather than from memory:
+- Read the assessment config, scoring, blueprint rule engine, copilot, commerce, and integration modules to state real weights, thresholds, entitlements, and provider behavior
+- Query the live database schema to list actual tables, columns, and RLS posture
+- Enumerate the actual route tree so the surface inventory matches what ships
 
-4. **Improve wrapper return recovery**
-   - On `pageshow`, visibility return, and window focus, re-check the authenticated user before clearing pending state.
-   - If the external browser returns without a session, restore the sign-in controls with a recoverable message instead of leaving “Connecting…” frozen.
-   - Preserve the existing standalone-browser fallback for users who choose “Open sign-in in browser.”
+Any item I can't confirm goes in the doc as an explicit open question rather than an assertion.
 
-5. **Keep diagnostics safe and useful**
-   - Record wrapper detection, external handoff started, app resumed, session observed, user validated, cancellation, and bridge timeout.
-   - Continue excluding tokens, callback fragments, email addresses, and credentials.
+## Document outline
 
-6. **Verify the supported branches**
-   - Confirm desktop preview popup sign-in still works.
-   - Confirm Lovable mobile preview opens Google outside the embedded webview and returns through the managed `lovable://oauth-callback` bridge.
-   - Confirm return/resume produces one authenticated navigation and no false 20-second timeout.
-   - Confirm cancellation and genuine timeout return the UI to a retryable state.
-   - Confirm standalone mobile Safari/Chrome still completes through the public `/oauth/callback` route.
+**Part 1 — Executive summary**
+Product definition, the problem it solves, who it's for, the value proposition, and a one-page "what exists today" snapshot.
+
+**Part 2 — Product surface**
+Every user-facing surface: landing, auth, wizard, results, dashboard, blueprint, roadmap, Copilot (chat, documents, simulator, prompts), strategy library, settings, pricing, legal pages, admin console. Each with purpose, entry point, and gating state.
+
+**Part 3 — The Publisher Index™**
+The seven assessment sections, question types, the six scoring categories with their weights, how 0–100 rolls up, and the five maturity levels with thresholds and strategic framing.
+
+**Part 4 — Commercial model**
+Publisher Blueprint™ $99 one-time and Publisher OS™ $49/month, what each unlocks, the entitlement boundary (what's free vs. gated), refunds, and the customer account lifecycle.
+
+**Part 5 — Architecture (technical)**
+Stack, routing model, server-function boundaries, the SSR/edge runtime constraints, and the design-token system.
+
+**Part 6 — Data model (technical)**
+Table-by-table reference: profiles, organizations, assessments, answers, scores, events, blueprints, roadmaps, recommendations, copilot sessions/messages/documents, entitlements/transactions, user roles, integration credentials and outbox. Ownership, RLS posture, and grants.
+
+**Part 7 — Integrations & AI (technical)**
+The AI gateway and Copilot context-assembly pipeline; payments webhook flow and its fallback path; email infrastructure on notify.jeffhallstead.com; per-user Airtable / Asana / HubSpot credentials with encryption; CSV/XLSX export.
+
+**Part 8 — Known gaps and roadmap**
+A candid open-items table (each with impact and suggested priority) covering the areas we've hit in practice — mobile OAuth handoff in embedded previews, PDF export still being a stub, HubSpot wired but unused, benchmarking and team collaboration not yet built — followed by proposed Phase 7+ direction.
+
+**Appendix** — glossary, version history, document control.
+
+## Formatting
+
+The Word document uses US Letter, Arial throughout, styled headings with an outline level so the table of contents works, and real tables (not text grids) for the data model, entitlement matrix, and gaps register. Colors pull from the existing brand — navy surfaces with the cyan/orange accents already in `src/styles.css` — so it reads as a Publisher Blueprint™ artifact rather than a generic export.
+
+## Quality check
+
+After generating the .docx I'll convert every page to an image and inspect each one for clipped text, broken tables, overflow, and bad page breaks, fix and re-render until clean, then report what I verified.
+
+## Note
+
+There's an unrelated hydration warning on the auth page in the current preview. It doesn't affect this document; say the word and I'll fold the fix into this run or handle it separately.
