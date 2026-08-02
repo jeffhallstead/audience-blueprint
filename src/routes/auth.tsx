@@ -79,6 +79,7 @@ function AuthPage() {
 
   useEffect(() => {
     const recoverFromPageRestore = () => {
+      if (document.visibilityState !== "visible") return;
       recordOAuthStage("auth_page_restored");
       void supabase.auth.getUser().then(({ data }) => {
         if (data.user) {

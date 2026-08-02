@@ -94,6 +94,7 @@ function AuthCallbackPage() {
     void finishSignIn();
 
     const resume = () => {
+      if (document.visibilityState !== "visible") return;
       recordOAuthStage("callback_resumed");
       void finishSignIn();
     };
