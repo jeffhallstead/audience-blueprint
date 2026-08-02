@@ -158,8 +158,18 @@ function AuthPage() {
       toast.error("The mobile preview could not finish Google sign-in. Open sign-in in your browser to continue.");
     }, 20_000);
     try {
+      let embedded = true;
+      try {
+        embedded = window.self !== window.top;
+      } catch {
+        embedded = true;
+      }
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/oauth/callback`,
+        // Embedded previews complete through the managed web-message relay.
+        // Standalone tabs use the dedicated callback route instead.
+        redirect_uri: embedded
+          ? window.location.origin
+          : `${window.location.origin}/oauth/callback`,
       });
 
       if (result.error) {
