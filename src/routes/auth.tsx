@@ -48,8 +48,13 @@ function AuthPage() {
   const [pending, setPending] = useState(false);
   const [googlePending, setGooglePending] = useState(false);
   const [showStandaloneRecovery, setShowStandaloneRecovery] = useState(false);
+  const [isEmbeddedPreview, setIsEmbeddedPreview] = useState(false);
   const [checkEmail, setCheckEmail] = useState(false);
   const navigatedRef = useRef(false);
+
+  useEffect(() => {
+    setIsEmbeddedPreview(window.self !== window.top);
+  }, []);
 
   const goToApp = useCallback(async () => {
     if (navigatedRef.current) return;
@@ -246,10 +251,12 @@ function AuthPage() {
                 {googlePending ? "Connecting to Google…" : "Continue with Google"}
               </Button>
 
-              {showStandaloneRecovery ? (
+              {isEmbeddedPreview || showStandaloneRecovery ? (
                 <div className="space-y-3 border border-border bg-muted/40 p-4 text-sm">
                   <p className="leading-relaxed text-muted-foreground">
-                    Google approved the login, but the mobile preview could not receive it.
+                    {showStandaloneRecovery
+                      ? "Google approved the login, but the mobile preview could not receive it."
+                      : "On mobile, open sign-in in your browser so Google can return securely."}
                   </p>
                   <Button asChild className="w-full">
                     <a href="/auth" target="_blank" rel="noreferrer">
