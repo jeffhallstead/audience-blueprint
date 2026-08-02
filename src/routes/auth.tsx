@@ -47,6 +47,7 @@ function AuthPage() {
   const [fullName, setFullName] = useState("");
   const [pending, setPending] = useState(false);
   const [googlePending, setGooglePending] = useState(false);
+  const [showStandaloneRecovery, setShowStandaloneRecovery] = useState(false);
   const [checkEmail, setCheckEmail] = useState(false);
   const navigatedRef = useRef(false);
 
@@ -143,12 +144,14 @@ function AuthPage() {
 
   async function handleGoogle() {
     beginOAuthFlow();
+    setShowStandaloneRecovery(false);
     setGooglePending(true);
     const pendingTimeout = window.setTimeout(() => {
       recordOAuthStage("helper_timeout");
       setGooglePending(false);
-      toast.error("Google sign-in took too long. Please try again.");
-    }, 45_000);
+      setShowStandaloneRecovery(true);
+      toast.error("The mobile preview could not finish Google sign-in. Open sign-in in your browser to continue.");
+    }, 20_000);
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: `${window.location.origin}/oauth/callback`,
@@ -242,6 +245,19 @@ function AuthPage() {
               >
                 {googlePending ? "Connecting to Google…" : "Continue with Google"}
               </Button>
+
+              {showStandaloneRecovery ? (
+                <div className="space-y-3 border border-border bg-muted/40 p-4 text-sm">
+                  <p className="leading-relaxed text-muted-foreground">
+                    Google approved the login, but the mobile preview could not receive it.
+                  </p>
+                  <Button asChild className="w-full">
+                    <a href="/auth" target="_blank" rel="noreferrer">
+                      Open sign-in in browser
+                    </a>
+                  </Button>
+                </div>
+              ) : null}
 
 
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
