@@ -1,31 +1,28 @@
-## Confirmed diagnosis
+## Mobile Google sign-in fix
 
-The current workaround targets the wrong completion mechanism for the failing context. The installed managed-auth helper detects a mobile browser inside the preview iframe, opens Google in a separate tab, and waits for an `authorization_response` message before setting the app session (`@lovable.dev/cloud-auth-js`, installed v1.1.2). It does not return the session to the iframe as URL tokens in that path. Therefore `consumeOAuthRedirect()` in `src/lib/auth/oauth-redirect.ts` cannot repair this mobile-preview flow.
+The backend auth log confirms Google accepts the login, so the failure is in the browser session handoff after account selection. The current `/auth` page starts the managed OAuth flow but has no dedicated return route or recoverable callback state; protected routes immediately reject any session that has not finished hydrating.
 
-The app also has multiple competing completion paths—root token consumption, `/auth` session listeners, focus reconciliation, a 150-second timeout, and immediate protected-route navigation. This makes session hydration and navigation timing fragile even though the backend logs confirm Google authentication itself succeeds.
+### Implementation
+1. **Refresh managed Google auth configuration**
+   - Re-run the managed Google provider configuration so the generated auth integration and provider settings are synchronized.
+   - Keep using the supported `lovable.auth.signInWithOAuth` helper rather than adding a second custom token parser.
 
-## Implementation plan
+2. **Add a public OAuth callback route**
+   - Create `/auth/callback` as the single full-page return target for Google.
+   - Wait for the auth client to restore the returned session, validate the user, then route to `/welcome` or `/dashboard` through the existing `resolvePostAuthPath()` logic.
+   - Show a short completion state while hydrating and a clear retry link if no valid session arrives within a bounded timeout.
 
-1. **Refresh the managed Google auth integration**
-   - Re-run the Lovable Cloud Google provider configuration so the generated integration and supported auth package are current.
-   - Keep Google OAuth routed through the generated `lovable.auth.signInWithOAuth` helper; do not replace it with a raw provider call or custom popup.
+3. **Simplify the sign-in page flow**
+   - Point Google’s `redirect_uri` to the public callback route.
+   - Keep the managed popup behavior for desktop, but reconcile the session when the popup result returns.
+   - Always clear `googlePending` when authentication fails or is cancelled so “Connecting to Google…” cannot remain indefinitely.
+   - Remove redundant or silently swallowed session checks that compete with the callback.
 
-2. **Remove the incorrect redirect workaround**
-   - Remove the custom URL-token consumer from the root route and delete its helper if it has no remaining callers.
-   - Stop relying on focus/visibility events or a competing app-level timeout to infer whether OAuth completed.
-
-3. **Make `/auth` session-confirmed and deterministic**
-   - Call the managed helper directly from the Google button with the public same-origin return URL.
-   - Treat `redirected` as a handoff and otherwise wait for the helper to finish setting the session.
-   - Confirm the authenticated identity with `auth.getUser()` before navigating.
-   - Navigate only after identity confirmation; otherwise keep the user on `/auth`, restore the button, and show a useful error rather than silently looping.
-   - Preserve one guarded post-auth navigation so duplicate auth events cannot race each other.
-
-4. **Harden the public return landing**
-   - On `/`, forward users only after a validated authenticated user is available, rather than using a locally cached session as sufficient proof.
-   - Resolve the correct destination (`/welcome` or `/dashboard`) only after that confirmation so the protected layout does not bounce the user back to `/auth` during hydration.
+4. **Make protected-route entry resilient**
+   - Ensure navigation into the authenticated route occurs only after callback validation completes, preventing the route guard from bouncing a legitimate but still-hydrating login back to `/auth`.
+   - Preserve the existing server-validated `getUser()` security check once the local session is established.
 
 5. **Verify the complete flow**
-   - Check that signed-out users remain on `/auth` and the Google button recovers after cancellation/error.
-   - Verify successful Google completion establishes a persisted session, reaches `/welcome` or `/dashboard`, and survives refresh.
-   - Test both desktop popup behavior and mobile/full-page behavior, and inspect browser/auth signals for any remaining redirect or session errors.
+   - Check the public callback and auth page for runtime errors.
+   - Test desktop popup behavior and a mobile-sized full-page redirect path.
+   - Confirm successful login leaves `/auth`, reaches the correct post-auth page, survives refresh, and that cancellation/failure restores the Google button instead of leaving it pending.

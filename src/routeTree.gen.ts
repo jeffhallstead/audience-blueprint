@@ -27,6 +27,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
 import { Route as AuthenticatedWizardRouteImport } from './routes/_authenticated/wizard'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as OauthCallbackRouteImport } from './routes/oauth.callback'
 import { Route as AuthenticatedCheckoutSuccessRouteImport } from './routes/_authenticated/checkout.success'
 import { Route as AuthenticatedCopilotIndexRouteImport } from './routes/_authenticated/copilot.index'
 import { Route as AuthenticatedCopilotPromptsRouteImport } from './routes/_authenticated/copilot.prompts'
@@ -127,6 +128,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OauthCallbackRoute = OauthCallbackRouteImport.update({
+  id: '/oauth/callback',
+  path: '/oauth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedCheckoutSuccessRoute =
   AuthenticatedCheckoutSuccessRouteImport.update({
     id: '/checkout/success',
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/oauth/callback': typeof OauthCallbackRoute
   '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/oauth/callback': typeof OauthCallbackRoute
   '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
@@ -266,6 +274,7 @@ export interface FileRoutesById {
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/_authenticated/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
+  '/oauth/callback': typeof OauthCallbackRoute
   '/_authenticated/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/_authenticated/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/_authenticated/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
@@ -297,6 +306,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wizard'
     | '/api/chat'
+    | '/oauth/callback'
     | '/checkout/success'
     | '/copilot/prompts'
     | '/copilot/simulator'
@@ -326,6 +336,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wizard'
     | '/api/chat'
+    | '/oauth/callback'
     | '/checkout/success'
     | '/copilot/prompts'
     | '/copilot/simulator'
@@ -356,6 +367,7 @@ export interface FileRouteTypes {
     | '/_authenticated/welcome'
     | '/_authenticated/wizard'
     | '/api/chat'
+    | '/oauth/callback'
     | '/_authenticated/checkout/success'
     | '/_authenticated/copilot/prompts'
     | '/_authenticated/copilot/simulator'
@@ -377,6 +389,7 @@ export interface RootRouteChildren {
   RefundPolicyRoute: typeof RefundPolicyRoute
   TermsRoute: typeof TermsRoute
   ApiChatRoute: typeof ApiChatRoute
+  OauthCallbackRoute: typeof OauthCallbackRoute
   ApiPublicIntegrationsDispatchRoute: typeof ApiPublicIntegrationsDispatchRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -510,6 +523,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/oauth/callback': {
+      id: '/oauth/callback'
+      path: '/oauth/callback'
+      fullPath: '/oauth/callback'
+      preLoaderRoute: typeof OauthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/checkout/success': {
       id: '/_authenticated/checkout/success'
       path: '/checkout/success'
@@ -638,6 +658,7 @@ const rootRouteChildren: RootRouteChildren = {
   RefundPolicyRoute: RefundPolicyRoute,
   TermsRoute: TermsRoute,
   ApiChatRoute: ApiChatRoute,
+  OauthCallbackRoute: OauthCallbackRoute,
   ApiPublicIntegrationsDispatchRoute: ApiPublicIntegrationsDispatchRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
@@ -645,13 +666,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
