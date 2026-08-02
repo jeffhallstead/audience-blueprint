@@ -51,6 +51,7 @@ function AuthPage() {
   const [isEmbeddedPreview, setIsEmbeddedPreview] = useState(false);
   const [checkEmail, setCheckEmail] = useState(false);
   const navigatedRef = useRef(false);
+  const oauthActiveRef = useRef(false);
 
   useEffect(() => {
     setIsEmbeddedPreview(window.self !== window.top);
@@ -76,6 +77,7 @@ function AuthPage() {
     const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) return;
       if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
+        recordOAuthStage("session_observed", { event });
         void goToApp().catch(() => undefined);
       }
     });
@@ -84,22 +86,32 @@ function AuthPage() {
   }, [goToApp]);
 
   useEffect(() => {
-    const recoverFromPageRestore = () => {
+    const recoverFromPageRestore = async () => {
       if (document.visibilityState !== "visible") return;
       recordOAuthStage("auth_page_restored");
-      void supabase.auth.getUser().then(({ data }) => {
-        if (data.user) {
-          void goToApp();
-          return;
-        }
+      const { data } = await supabase.auth.getUser();
+      if (data.user) {
+        recordOAuthStage("resume_session_found");
+        await goToApp();
+        return;
+      }
+
+      // The managed mobile bridge owns the external-browser/deep-link wait.
+      // Do not clear its pending state merely because the webview briefly
+      // regains focus before the authorization response has arrived.
+      if (!oauthActiveRef.current) {
         setGooglePending(false);
-      });
+      } else {
+        recordOAuthStage("resume_waiting_for_bridge");
+      }
     };
 
     window.addEventListener("pageshow", recoverFromPageRestore);
+    window.addEventListener("focus", recoverFromPageRestore);
     document.addEventListener("visibilitychange", recoverFromPageRestore);
     return () => {
       window.removeEventListener("pageshow", recoverFromPageRestore);
+      window.removeEventListener("focus", recoverFromPageRestore);
       document.removeEventListener("visibilitychange", recoverFromPageRestore);
     };
   }, [goToApp]);
@@ -149,14 +161,9 @@ function AuthPage() {
 
   async function handleGoogle() {
     beginOAuthFlow();
+    oauthActiveRef.current = true;
     setShowStandaloneRecovery(false);
     setGooglePending(true);
-    const pendingTimeout = window.setTimeout(() => {
-      recordOAuthStage("helper_timeout");
-      setGooglePending(false);
-      setShowStandaloneRecovery(true);
-      toast.error("The mobile preview could not finish Google sign-in. Open sign-in in your browser to continue.");
-    }, 20_000);
     try {
       let embedded = true;
       try {
@@ -164,21 +171,29 @@ function AuthPage() {
       } catch {
         embedded = true;
       }
+      const mobileWrapper = /LovableApp\//i.test(navigator.userAgent);
+      recordOAuthStage("external_handoff_started", {
+        embedded,
+        mobileWrapper,
+      });
       const result = await lovable.auth.signInWithOAuth("google", {
-        // Embedded previews complete through the managed web-message relay.
-        // Standalone tabs use the dedicated callback route instead.
+        // The managed helper overrides this with lovable://oauth-callback in
+        // the Lovable mobile wrapper and opens Google in the external browser.
+        // Standalone tabs use the dedicated public callback route.
         redirect_uri: embedded
           ? window.location.origin
           : `${window.location.origin}/oauth/callback`,
       });
 
       if (result.error) {
-        recordOAuthStage("helper_error");
+        const timedOut = /timed out|timeout/i.test(result.error.message);
+        recordOAuthStage(timedOut ? "bridge_timeout" : "helper_error");
         const { data } = await supabase.auth.getUser();
         if (data.user) {
           await goToApp();
           return;
         }
+        if (mobileWrapper || embedded) setShowStandaloneRecovery(true);
         toast.error(result.error.message || "Google sign-in failed. Please try again.");
         return;
       }
@@ -189,16 +204,18 @@ function AuthPage() {
       recordOAuthStage("helper_resolved");
       await goToApp();
     } catch (error) {
+      recordOAuthStage("helper_exception");
       const { data } = await supabase.auth.getUser();
       if (data.user) {
         await goToApp();
         return;
       }
+      setShowStandaloneRecovery(true);
       toast.error(
         error instanceof Error ? error.message : "Google sign-in failed. Please try again.",
       );
     } finally {
-      window.clearTimeout(pendingTimeout);
+      oauthActiveRef.current = false;
       if (!navigatedRef.current) setGooglePending(false);
     }
   }
