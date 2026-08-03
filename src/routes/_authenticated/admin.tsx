@@ -7,6 +7,9 @@ import { toast } from "sonner";
 import { getAdminOverview, retryOutboxEvent } from "@/lib/admin/admin.functions";
 import { LifecyclePanel } from "@/components/admin/lifecycle-panel";
 import { QualificationPanel } from "@/components/admin/qualification-panel";
+import { OrganizationsPanel } from "@/components/admin/organizations-panel";
+import { EventsPanel } from "@/components/admin/events-panel";
+
 
 
 import { Badge } from "@/components/ui/badge";
@@ -145,11 +148,21 @@ function AdminConsole() {
       <Tabs defaultValue="users">
         <TabsList>
           <TabsTrigger value="users">Accounts</TabsTrigger>
+          <TabsTrigger value="organizations">Organizations</TabsTrigger>
+          <TabsTrigger value="events">Events</TabsTrigger>
           <TabsTrigger value="lifecycle">Lifecycle</TabsTrigger>
           <TabsTrigger value="qualification">Qualification</TabsTrigger>
           <TabsTrigger value="maturity">Maturity mix</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="organizations" className="mt-6">
+          <OrganizationsPanel />
+        </TabsContent>
+
+        <TabsContent value="events" className="mt-6">
+          <EventsPanel />
+        </TabsContent>
 
         <TabsContent value="lifecycle" className="mt-6">
           <LifecyclePanel />
@@ -158,6 +171,7 @@ function AdminConsole() {
         <TabsContent value="qualification" className="mt-6">
           <QualificationPanel />
         </TabsContent>
+
 
 
 

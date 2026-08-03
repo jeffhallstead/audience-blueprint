@@ -11,10 +11,11 @@ import { LIFECYCLE_TRIGGERS } from "@/lib/lifecycle/stages";
 import { QUALIFICATION_TRIGGERS } from "@/lib/qualification/tiers";
 
 /**
- * Keeps the derived lifecycle stage and qualification tier in step with the
- * event that just landed. Only progress-bearing events trigger a recompute,
- * and neither `lifecycle.stage_changed` nor `qualification.scored` is itself a
- * qualification trigger, so a transition can't cascade indefinitely.
+ * Fans out the derived work that hangs off an event: lifecycle stage,
+ * qualification tier, and the CRM push. Only progress-bearing events trigger a
+ * recompute, and neither `lifecycle.stage_changed` nor `qualification.scored`
+ * is itself a qualification trigger, so a transition can't cascade
+ * indefinitely.
  */
 async function syncDerivedFor(input: PlatformEventInput) {
   if (!input.userId) return;
@@ -27,7 +28,10 @@ async function syncDerivedFor(input: PlatformEventInput) {
     const { syncQualification } = await import("@/lib/qualification/score.server");
     await syncQualification(input.userId, { organizationId });
   }
+  const { crmEventNameFor, syncCrmFor } = await import("@/lib/integrations/crm-sync.server");
+  if (crmEventNameFor(input.type)) await syncCrmFor(input);
 }
+
 
 
 export async function emitPlatformEvent(input: PlatformEventInput): Promise<void> {
@@ -114,6 +118,12 @@ export async function emitPlatformEvents(inputs: PlatformEventInput[]): Promise<
         await syncQualification(userId, { organizationId: entry.organizationId });
       }
     }
+    // CRM pushes are per event, not per user: each transition is its own record.
+    const { crmEventNameFor, syncCrmFor } = await import("@/lib/integrations/crm-sync.server");
+    for (const input of inputs) {
+      if (input.userId && crmEventNameFor(input.type)) await syncCrmFor(input);
+    }
+
   } catch (error) {
     console.error(
       `platform_events batch emit threw: ${error instanceof Error ? error.message : String(error)}`,
