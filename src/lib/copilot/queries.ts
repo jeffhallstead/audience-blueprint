@@ -213,6 +213,13 @@ export function useSaveRecommendation() {
       });
       // A duplicate means it is already in the Blueprint — treat as success.
       if (error && error.code !== "23505") throw error;
+      const { trackRecommendation } = await import("@/lib/analytics/recommendation-metadata");
+      await trackRecommendation({
+        title: input.title,
+        action: "saved",
+        category: input.category ?? "strategy",
+        source: "copilot",
+      });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: copilotKeys.saved }),
   });

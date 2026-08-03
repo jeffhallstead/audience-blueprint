@@ -9,7 +9,12 @@ export type IntegrationEventName =
   | "assessment.completed"
   | "purchase.completed"
   | "subscription.changed"
-  | "records.exported";
+  | "records.exported"
+  // Derived-state pushes, mapped from the canonical platform_events stream.
+  | "lifecycle.stage_changed"
+  | "qualification.tier_changed"
+  | "organization.updated";
+
 
 /** Normalized contact/event record every adapter receives. */
 export interface IntegrationEvent {
@@ -66,3 +71,18 @@ export const RECORD_PROVIDER_LABELS: Record<string, string> = {
 
 /** Max delivery attempts before an outbox row is marked failed. */
 export const MAX_ATTEMPTS = 5;
+
+/**
+ * Max rows delivered to each provider in a single dispatch run.
+ *
+ * Providers rate-limit per account (Airtable ~5 req/s per base, HubSpot burst
+ * caps), so a backlog for one destination must not starve or throttle the
+ * others. Anything over the cap stays pending and is picked up next run.
+ */
+export const PROVIDER_DISPATCH_LIMIT: Record<IntegrationProvider, number> = {
+  airtable: 10,
+  hubspot: 8,
+  airtable_records: 5,
+  asana: 5,
+};
+

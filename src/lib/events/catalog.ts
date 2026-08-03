@@ -54,6 +54,12 @@ export const PLATFORM_EVENTS = {
   "copilot.document_generated": 1,
   "copilot.recommendation_saved": 1,
 
+  // Acquisition & recommendation analytics
+  "analytics.acquisition_captured": 1,
+  "recommendation.viewed": 1,
+  "recommendation.exported": 1,
+  "recommendation.completed": 1,
+
   // Lifecycle & qualification (emitted from E3/E4)
   "lifecycle.stage_changed": 1,
   "qualification.scored": 1,

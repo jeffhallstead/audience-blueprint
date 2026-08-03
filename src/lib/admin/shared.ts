@@ -67,3 +67,75 @@ export async function isAdminContext(context: RoleContext): Promise<boolean> {
 export async function assertAdmin(context: RoleContext): Promise<void> {
   if (!(await isAdminContext(context))) throw new Error("Forbidden");
 }
+
+/* ---------- E7: organizations, events, audit ---------- */
+
+export type AdminOrgRow = {
+  id: string;
+  name: string;
+  ownerId: string;
+  ownerEmail: string | null;
+  domain: string | null;
+  industry: string | null;
+  region: string | null;
+  businessModel: string | null;
+  revenueRange: string | null;
+  teamSize: string | null;
+  completeness: number;
+  memberCount: number;
+  archivedAt: string | null;
+  createdAt: string;
+};
+
+export type AdminOrgMember = {
+  userId: string;
+  email: string | null;
+  role: string;
+  createdAt: string;
+};
+
+export type AdminAuditRow = {
+  id: string;
+  organizationId: string;
+  organizationName: string | null;
+  actorId: string | null;
+  actorEmail: string | null;
+  field: string;
+  oldValue: string | null;
+  newValue: string | null;
+  createdAt: string;
+};
+
+export type AdminOrgAssessment = {
+  id: string;
+  status: string;
+  overallScore: number | null;
+  maturityLevel: number | null;
+  createdAt: string;
+  completedAt: string | null;
+};
+
+export type AdminOrgDetail = {
+  organization: AdminOrgRow;
+  members: AdminOrgMember[];
+  audit: AdminAuditRow[];
+  assessments: AdminOrgAssessment[];
+};
+
+export type AdminEventRow = {
+  id: string;
+  eventType: string;
+  userId: string | null;
+  userEmail: string | null;
+  organizationId: string | null;
+  source: string;
+  environment: string;
+  occurredAt: string;
+  /** Pre-serialized payload JSON — the RPC boundary only carries plain values. */
+  payloadJson: string;
+};
+
+export type AdminEventFeed = {
+  events: AdminEventRow[];
+  types: { type: string; count: number }[];
+};

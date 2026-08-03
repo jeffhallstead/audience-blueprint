@@ -3,7 +3,13 @@ import type {
   IntegrationEvent,
   IntegrationProvider,
 } from "./types";
-import { CONTACT_PROVIDERS, INTEGRATION_PROVIDERS, MAX_ATTEMPTS } from "./types";
+import {
+  CONTACT_PROVIDERS,
+  INTEGRATION_PROVIDERS,
+  MAX_ATTEMPTS,
+  PROVIDER_DISPATCH_LIMIT,
+} from "./types";
+
 import { airtableAdapter } from "./airtable.server";
 import { airtableRecordsAdapter } from "./airtable-records.server";
 import { asanaAdapter } from "./asana.server";
@@ -84,10 +90,21 @@ export async function dispatchOutbox(limit = 25): Promise<DispatchResult> {
     .limit(limit);
   if (error) throw new Error(error.message);
 
-  const result: DispatchResult = { claimed: rows?.length ?? 0, delivered: 0, failed: 0, skipped: 0 };
+  const result: DispatchResult = { claimed: 0, delivered: 0, failed: 0, skipped: 0 };
+
+  // Per-provider throughput cap: a backlog for one destination can't consume
+  // the whole run or trip that provider's rate limit. Overflow stays pending.
+  const perProvider = new Map<string, number>();
 
   for (const row of rows ?? []) {
-    const adapter = getAdapter(row.provider as IntegrationProvider);
+    const provider = row.provider as IntegrationProvider;
+    const used = perProvider.get(provider) ?? 0;
+    if (used >= (PROVIDER_DISPATCH_LIMIT[provider] ?? 10)) continue;
+    perProvider.set(provider, used + 1);
+    result.claimed += 1;
+
+    const adapter = getAdapter(provider);
+
     const available = adapter
       ? adapter.isConfiguredForUser
         ? await adapter.isConfiguredForUser(row.user_id)

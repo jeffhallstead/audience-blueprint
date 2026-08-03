@@ -14,6 +14,8 @@ import { BillingPanel } from "@/components/billing/billing-panel";
 import { AccountSecurityPanel } from "@/components/billing/account-security-panel";
 import { ConnectionsPanel } from "@/components/settings/connections-panel";
 import { OrganizationPanel } from "@/components/organization/organization-panel";
+import { ExtendedProfilePanel } from "@/components/organization/extended-profile-panel";
+
 import { LifecycleStatus } from "@/components/lifecycle/lifecycle-status";
 
 
@@ -117,7 +119,9 @@ function Settings() {
           Organization
         </h2>
         <OrganizationPanel />
+        <ExtendedProfilePanel />
       </section>
+
 
       <section aria-labelledby="connections-heading" className="space-y-5">
         <h2 id="connections-heading" className="text-display text-2xl">
