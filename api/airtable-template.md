@@ -7,12 +7,16 @@ This template defines the two Airtable tables used by the Publisher Blueprint™
 
 The machine-readable schema is in [`airtable-template.json`](./airtable-template.json).
 
-## Public Airtable base link
+## Airtable base link
 
-<!-- Replace with the actual public share URL once the base is created in Airtable and shared publicly -->
-**Public template:** *To be added after manual creation in the Airtable UI.*
+**Base:** `Publisher Blueprint Template` — https://airtable.com/appYrnFpbA3XUcXcK
+**Base ID:** `appYrnFpbA3XUcXcK`
 
-If you need the template now, create a new Airtable base using the schema and sample records below, then share it publicly and paste the link here. The workspace already has a base named **Publisher Blueprint CRM**, but it does not currently match this template (wrong field types on several fields and no `Publisher Blueprint Actions` table). Use the verification script below to confirm a new base matches before sharing it.
+This base was created programmatically with both tables, all field types, single-select options, and the sample records from the CSV files, and it passes `node api/verify-airtable-template.cjs appYrnFpbA3XUcXcK`.
+
+To turn it into a shareable/public template link (the Airtable API cannot create share links), open the base → **Share** → **Create a shareable link to this base**, then replace the URL above with the generated `https://airtable.com/app.../shr...` link.
+
+
 
 
 ## Why two tables?
