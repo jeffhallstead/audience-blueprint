@@ -50,7 +50,7 @@ export async function emitPlatformEvent(input: PlatformEventInput): Promise<void
       console.error(`platform_events emit failed [${input.type}]: ${error.message}`);
       return;
     }
-    if (!error) await syncLifecycleFor(input);
+    if (!error) await syncDerivedFor(input);
   } catch (error) {
     console.error(
       `platform_events emit threw [${input.type}]: ${error instanceof Error ? error.message : String(error)}`,
