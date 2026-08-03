@@ -107,6 +107,13 @@ function Settings() {
 
       </form>
 
+      <section aria-labelledby="organization-heading" className="space-y-5">
+        <h2 id="organization-heading" className="text-display text-2xl">
+          Organization
+        </h2>
+        <OrganizationPanel />
+      </section>
+
       <section aria-labelledby="connections-heading" className="space-y-5">
         <h2 id="connections-heading" className="text-display text-2xl">
           Connections
