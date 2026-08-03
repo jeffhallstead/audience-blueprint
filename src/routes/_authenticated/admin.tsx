@@ -6,6 +6,8 @@ import { RefreshCw, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { getAdminOverview, retryOutboxEvent } from "@/lib/admin/admin.functions";
 import { LifecyclePanel } from "@/components/admin/lifecycle-panel";
+import { QualificationPanel } from "@/components/admin/qualification-panel";
+
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
