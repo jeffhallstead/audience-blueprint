@@ -84,12 +84,16 @@ export async function emitPlatformEvents(inputs: PlatformEventInput[]): Promise<
       return;
     }
     // One recompute per user, however many of their events were in the batch.
-    for (const userId of new Set(
-      inputs.filter((i) => i.userId && LIFECYCLE_TRIGGERS.has(i.type)).map((i) => i.userId!),
-    )) {
-      const { syncLifecycle } = await import("@/lib/lifecycle/sync.server");
-      await syncLifecycle(userId);
+    const byUser = new Map<string, PlatformEventInput>();
+    for (const input of inputs) {
+      if (!input.userId) continue;
+      if (!LIFECYCLE_TRIGGERS.has(input.type) && !QUALIFICATION_TRIGGERS.has(input.type)) continue;
+      byUser.set(input.userId, input);
     }
+    for (const input of byUser.values()) {
+      await syncDerivedFor({ ...input, type: input.type });
+    }
+
 
   } catch (error) {
     console.error(
