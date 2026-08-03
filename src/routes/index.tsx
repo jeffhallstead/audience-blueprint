@@ -153,7 +153,7 @@ function Landing() {
 
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-xs text-muted-foreground sm:flex-row sm:justify-between">
-          <span>© {new Date().getFullYear()} Publisher Blueprint™</span>
+          <span>© {new Date().getFullYear()} Publisher Blueprint™ · by Jeff Hallstead</span>
           <nav className="flex flex-wrap gap-4">
             <Link to="/pricing" className="hover:text-foreground">
               Pricing
