@@ -23,6 +23,42 @@ function subscriptionIsLive(row: { status: string; current_period_end: string | 
   return false;
 }
 
+const EXTENDED_PROFILE_TABLES = [
+  "organization_audience_profile",
+  "organization_marketing_profile",
+  "organization_content_ops_profile",
+] as const;
+
+/**
+ * 0–100 depth across the three extended profiles. Each table counts equally and
+ * scores by the share of its non-note columns that carry a value.
+ */
+async function extendedDepthFor(organizationId: string): Promise<number> {
+  const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
+  const ignored = new Set(["id", "organization_id", "version", "created_at", "updated_at", "notes"]);
+
+  const scores = await Promise.all(
+    EXTENDED_PROFILE_TABLES.map(async (table) => {
+      const { data } = await admin
+        .from(table)
+        .select("*")
+        .eq("organization_id", organizationId)
+        .maybeSingle();
+      if (!data) return 0;
+      const entries = Object.entries(data as Record<string, unknown>).filter(
+        ([key]) => !ignored.has(key),
+      );
+      if (entries.length === 0) return 0;
+      const filled = entries.filter(([, value]) =>
+        Array.isArray(value) ? value.length > 0 : value !== null && value !== "",
+      ).length;
+      return Math.round((filled / entries.length) * 100);
+    }),
+  );
+
+  return Math.round(scores.reduce((total, score) => total + score, 0) / scores.length);
+}
+
 /** Gathers the facts a tier is derived from, for one user. */
 export async function collectQualificationFacts(
   admin: Admin,

@@ -129,7 +129,7 @@ const MODEL_FIT: Record<string, number> = {
   Nonprofit: 4,
 };
 
-export const MAX_FIT_SCORE = 20 + 14 + 16 + 10 + 10 + 10; // + marketers + completeness
+export const MAX_FIT_SCORE = 20 + 14 + 16 + 10 + 10 + 10 + 10; // + marketers + completeness + deep profile
 
 /** The facts a tier is derived from. */
 export interface QualificationFacts {
@@ -140,6 +140,8 @@ export interface QualificationFacts {
     businessModel: string | null;
     marketerCount: number | null;
     profileCompleteness: number;
+    /** 0–100 depth across the audience / marketing / content-ops profiles. */
+    extendedDepth?: number;
   } | null;
   /** Count of each qualifying event this user has produced. */
   eventCounts: Record<string, number>;
@@ -195,6 +197,10 @@ export function scoreFit(facts: QualificationFacts): {
 
   // A completed profile is itself a fit signal: it means they invested effort.
   score += add("Profile completeness", Math.round((org.profileCompleteness / 100) * 10));
+
+  // Deep profile depth (audience / marketing / content ops) is effort plus the
+  // operational detail a real buying conversation needs.
+  score += add("Deep profile depth", Math.round(((org.extendedDepth ?? 0) / 100) * 10));
 
   return { score: Math.min(score, MAX_FIT_SCORE), breakdown };
 }
