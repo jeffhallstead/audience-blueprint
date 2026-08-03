@@ -31,8 +31,8 @@ const WelcomeEmail = ({ name, welcomeUrl }: WelcomeEmailProps) => {
             {name ? `Welcome, ${name}.` : 'Welcome aboard.'}
           </Heading>
           <Text style={paragraph}>
-            Your account is ready. The Blueprint assesses seven dimensions of owned-audience
-            readiness and turns your answers into an executive score and a sequenced 90-day
+            Your account is ready. The Publisher Index™ assesses seven dimensions of publishing
+            maturity and turns your answers into an executive score and a sequenced 90-day
             roadmap.
           </Text>
           <Text style={paragraph}>
@@ -79,7 +79,7 @@ const container = {
 const eyebrow = {
   fontSize: '11px',
   letterSpacing: '0.18em',
-  color: '#8a6a3b',
+  color: '#6366f1',
   margin: '0 0 12px',
   fontWeight: 600 as const,
 }

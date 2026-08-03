@@ -28,9 +28,9 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in — Publisher Blueprint" },
-      { name: "description", content: "Access your executive owned-audience readiness blueprint and roadmap." },
+      { name: "description", content: "Access your Publisher Blueprint™ assessment, dashboard and 90-day roadmap." },
       { property: "og:title", content: "Sign in — Publisher Blueprint" },
-      { property: "og:description", content: "Access your executive owned-audience readiness blueprint." },
+      { property: "og:description", content: "Access your Publisher Blueprint™ assessment and strategic roadmap." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -231,14 +231,14 @@ function AuthPage() {
         </Link>
         <div className="max-w-md space-y-5">
           <h2 className="text-display text-4xl leading-tight text-sidebar-foreground">
-            The most valuable audience is the one you don't have to rent.
+            A Strategy Operating System for the Owned-Audience Economy
           </h2>
           <p className="text-sm leading-relaxed text-sidebar-foreground/70">
-            Seven diagnostic sections. One executive readiness score. A sequenced 90-day roadmap your leadership team
-            can act on immediately.
+            Seven diagnostic sections. One executive maturity score. A sequenced 90-day roadmap
+            your leadership team can act on immediately.
           </p>
         </div>
-        <p className="text-xs text-sidebar-foreground/50">Confidential · Executive strategy platform</p>
+        <p className="text-xs text-sidebar-foreground/50">by Jeff Hallstead · Confidential · Executive strategy platform</p>
       </div>
 
       <div className="flex items-center justify-center px-6 py-16">

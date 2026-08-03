@@ -11,9 +11,9 @@ export const Route = createFileRoute("/_authenticated/welcome")({
   head: () => ({
     meta: [
       { title: "Welcome — Publisher Blueprint" },
-      { name: "description", content: "Start your owned-audience readiness assessment in seven guided sections." },
+      { name: "description", content: "Start your Publisher Index™ assessment in seven guided sections." },
       { property: "og:title", content: "Welcome — Publisher Blueprint" },
-      { property: "og:description", content: "Start your owned-audience readiness assessment." },
+      { property: "og:description", content: "Start your Publisher Index™ assessment." },
     ],
   }),
   component: Welcome,
@@ -45,8 +45,9 @@ function Welcome() {
           Let's establish where your organization stands today.
         </h1>
         <p className="text-base leading-relaxed text-muted-foreground">
-          The Blueprint assesses seven dimensions of owned-audience readiness. Answer candidly — the roadmap is only
-          as useful as the honesty behind the inputs. You can revisit any section before submitting.
+          The Publisher Index™ assesses seven dimensions of publishing maturity. Answer candidly — the
+          roadmap is only as useful as the honesty behind the inputs. You can revisit any section before
+          submitting.
         </p>
       </div>
 

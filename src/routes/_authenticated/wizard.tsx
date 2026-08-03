@@ -32,10 +32,10 @@ export const Route = createFileRoute("/_authenticated/wizard")({
       { title: "Publisher Index Assessment — Publisher Blueprint" },
       {
         name: "description",
-        content: "A seven-section executive diagnostic that scores your organization's owned-audience readiness.",
+        content: "A seven-section executive diagnostic that scores your organization's publishing maturity.",
       },
       { property: "og:title", content: "Publisher Index™ Assessment" },
-      { property: "og:description", content: "Score your organization's owned-audience readiness in under 8 minutes." },
+      { property: "og:description", content: "Score your organization's publishing maturity in under 12 minutes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -281,9 +281,9 @@ function Introduction({ onStart, resumeStep }: { onStart: () => void; resumeStep
         <p className="text-eyebrow">The Publisher Index™</p>
         <h1 className="text-display text-4xl sm:text-5xl">A diagnostic, not a quiz.</h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Seven sections benchmark how ready your organization is to build and grow an owned audience. Your answers
-          produce a Publisher Index™ score, six category scores, and a maturity classification used throughout your
-          Blueprint.
+          Seven sections benchmark your organization's publishing maturity across company, audience, content,
+          distribution, operations, goals, and constraints. Your answers produce a Publisher Index™ score, six category
+          scores, and a maturity classification used throughout your Blueprint.
         </p>
       </div>
 

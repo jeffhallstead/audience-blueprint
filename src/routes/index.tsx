@@ -9,17 +9,17 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Publisher Blueprint — Executive Readiness Platform" },
+      { title: "Publisher Blueprint™ — Strategy Operating System for Marketing Leaders" },
       {
         name: "description",
         content:
-          "Assess your organization's readiness to build an owned audience through branded entertainment, and receive a personalized 90-day strategic roadmap.",
+          "Publisher Blueprint™ is a premium executive assessment that scores your publishing maturity and delivers a personalized 90-day strategic roadmap.",
       },
-      { property: "og:title", content: "Publisher Blueprint — Executive Readiness Platform" },
+      { property: "og:title", content: "Publisher Blueprint™ — Strategy Operating System for Marketing Leaders" },
       {
         property: "og:description",
         content:
-          "A premium executive assessment that turns owned-audience ambition into a sequenced, accountable roadmap.",
+          "A premium executive assessment that scores publishing maturity and delivers a sequenced 90-day roadmap.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -98,11 +98,14 @@ function Landing() {
         <section className="mx-auto max-w-6xl px-6 pb-24 pt-16 sm:pt-24">
           <p className="text-eyebrow">Publisher Blueprint™</p>
           <h1 className="text-display mt-6 max-w-3xl text-5xl leading-[1.05] sm:text-6xl">
-            Stop renting attention. <span className="italic">Build an audience you own.</span>
+            The Strategy Operating System for{" "}
+            <span className="bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
+              Marketing Leaders
+            </span>
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground">
-            A structured executive assessment that measures your organization's readiness to build an owned
-            audience through branded entertainment — and returns a personalized strategic roadmap.
+            A premium executive assessment that scores your publishing maturity, identifies the highest-leverage gap,
+            and returns a sequenced 90-day roadmap your leadership team can act on.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <Button asChild size="lg">
@@ -115,6 +118,7 @@ function Landing() {
             </Button>
           </div>
           <p className="mt-6 text-xs text-muted-foreground">Approximately 12 minutes · Seven sections · Confidential</p>
+          <p className="mt-3 text-xs text-muted-foreground">by Jeff Hallstead</p>
         </section>
 
         <section className="border-y border-border bg-surface">
@@ -149,7 +153,7 @@ function Landing() {
 
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-xs text-muted-foreground sm:flex-row sm:justify-between">
-          <span>© {new Date().getFullYear()} Publisher Blueprint™</span>
+          <span>© {new Date().getFullYear()} Publisher Blueprint™ · by Jeff Hallstead</span>
           <nav className="flex flex-wrap gap-4">
             <Link to="/pricing" className="hover:text-foreground">
               Pricing
