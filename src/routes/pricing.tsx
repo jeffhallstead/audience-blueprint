@@ -19,7 +19,7 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Choose the Publisher Blueprint™ plan that fits: free diagnostic, one-time strategic blueprint, or the monthly Publisher OS™ operating system.",
+          "Choose the Publisher Blueprint™ plan that fits: free Publisher Index™, one-time strategic blueprint, or the monthly Publisher OS™ operating system.",
       },
       { property: "og:title", content: "Plans & Pricing | Publisher Blueprint™" },
       {
