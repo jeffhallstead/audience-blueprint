@@ -117,7 +117,9 @@ function Settings() {
           Organization
         </h2>
         <OrganizationPanel />
+        <ExtendedProfilePanel />
       </section>
+
 
       <section aria-labelledby="connections-heading" className="space-y-5">
         <h2 id="connections-heading" className="text-display text-2xl">
