@@ -3,7 +3,7 @@ Pre-publish readiness & UAT
 Goal: publish the current Publisher Blueprint™ build to a public Lovable URL and begin structured user acceptance testing in the Paddle sandbox environment.
 
 1. Pre-publish readiness checks
-   - Run a fresh security scan. The most recent scan is from 2026-08-01 and is marked stale. The previous scan had no findings, but a fresh scan should complete before publishing.
+   - Run a fresh security scan. The most recent scan should be clean and not stale.
    - Verify the public policy pages (Terms, Refund Policy, Privacy) are accessible at the root routes `/terms`, `/refund-policy`, `/privacy` and include the correct seller identity (Momentive Ventures LLC) with the "by Jeff Hallstead" brand endorsement preserved on marketing surfaces.
    - Confirm the effective publish visibility is `public` (current setting). If this is not intentional, change visibility before publishing.
    - Confirm the build is green and the route tree is valid for a production deployment.
