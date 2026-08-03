@@ -2,6 +2,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { ASSESSMENT_VERSION, QUESTIONS, type AssessmentAnswers, type AnswerValue } from "./config";
 import { computePublisherIndex } from "./scoring";
 import { createOrganization, fetchMyOrganization, updateOrganization } from "@/lib/organization/store";
+import { trackEvent } from "@/lib/events/track.functions";
+import type { PlatformEventType } from "@/lib/events/catalog";
 
 export type AssessmentEventName =
   | "assessment_started"
@@ -10,7 +12,21 @@ export type AssessmentEventName =
   | "assessment_completed"
   | "assessment_abandoned";
 
-/** Fire-and-forget analytics. Never blocks or breaks the wizard. */
+/** Legacy wizard event name → canonical platform event type. */
+const CANONICAL: Record<AssessmentEventName, PlatformEventType> = {
+  assessment_started: "assessment.started",
+  section_completed: "assessment.section_completed",
+  question_answered: "assessment.question_answered",
+  assessment_completed: "assessment.completed",
+  assessment_abandoned: "assessment.abandoned",
+};
+
+/**
+ * Fire-and-forget analytics. Never blocks or breaks the wizard.
+ *
+ * Dual-writes to legacy `assessment_events` and the canonical `platform_events`
+ * store; the legacy write is removed one release after E2.
+ */
 export async function logEvent(
   userId: string,
   eventName: AssessmentEventName,
@@ -19,17 +35,32 @@ export async function logEvent(
   metadata: Record<string, unknown> = {},
 ) {
   try {
-    await supabase.from("assessment_events").insert({
-      user_id: userId,
-      assessment_id: assessmentId,
-      event_name: eventName,
-      section: section ?? null,
-      metadata: metadata as never,
-    });
+    await Promise.allSettled([
+      supabase.from("assessment_events").insert({
+        user_id: userId,
+        assessment_id: assessmentId,
+        event_name: eventName,
+        section: section ?? null,
+        metadata: metadata as never,
+      }),
+      trackEvent({
+        data: {
+          type: CANONICAL[eventName],
+          context: { assessmentId, section: section ?? null },
+          payload: metadata,
+          // One completion per assessment, no matter how often it is re-submitted.
+          dedupeKey:
+            eventName === "assessment_completed" && assessmentId
+              ? `assessment.completed:${assessmentId}`
+              : null,
+        },
+      }),
+    ]);
   } catch {
     /* analytics must never interrupt the assessment */
   }
 }
+
 
 export interface ActiveAssessment {
   id: string;
