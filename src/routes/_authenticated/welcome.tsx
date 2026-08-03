@@ -11,9 +11,9 @@ export const Route = createFileRoute("/_authenticated/welcome")({
   head: () => ({
     meta: [
       { title: "Welcome — Publisher Blueprint" },
-      { name: "description", content: "Start your owned-audience readiness assessment in seven guided sections." },
+      { name: "description", content: "Start your Publisher Index™ assessment in seven guided sections." },
       { property: "og:title", content: "Welcome — Publisher Blueprint" },
-      { property: "og:description", content: "Start your owned-audience readiness assessment." },
+      { property: "og:description", content: "Start your Publisher Index™ assessment." },
     ],
   }),
   component: Welcome,
