@@ -71,9 +71,10 @@ function PricingPage() {
           Turn your Publisher Index™ into an operating plan
         </h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Start free with the diagnostic. Upgrade when you want the full blueprint, the 90-day
+          Start free with the Publisher Index™ diagnostic. Upgrade when you want the full blueprint, the 90-day
           roadmap, and Publisher Copilot™ working alongside your team.
         </p>
+        <p className="text-xs text-muted-foreground">by Jeff Hallstead</p>
       </header>
 
       <PricingTable
@@ -93,8 +94,7 @@ function PricingPage() {
       />
 
       <p className="text-xs text-muted-foreground">
-        Payments, invoices and refunds are handled by our reseller and merchant of record, Paddle.
-        Cancel Publisher OS™ any time — access continues to the end of the billing period. See our{" "}
+        Payments, invoices and refunds are handled by our reseller and merchant of record, Paddle. Cancel Publisher OS™ any time — access continues to the end of the billing period. See our{" "}
         <Link to="/terms" className="underline">
           Terms
         </Link>
