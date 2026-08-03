@@ -8,17 +8,27 @@
 
 import { eventVersion, type PlatformEventInput } from "./catalog";
 import { LIFECYCLE_TRIGGERS } from "@/lib/lifecycle/stages";
+import { QUALIFICATION_TRIGGERS } from "@/lib/qualification/tiers";
 
 /**
- * Keeps the derived lifecycle stage in step with the event that just landed.
- * Only progress-bearing events trigger it, and `lifecycle.stage_changed` is
- * never a trigger, so a transition can't cascade into another recompute.
+ * Keeps the derived lifecycle stage and qualification tier in step with the
+ * event that just landed. Only progress-bearing events trigger a recompute,
+ * and neither `lifecycle.stage_changed` nor `qualification.scored` is itself a
+ * qualification trigger, so a transition can't cascade indefinitely.
  */
-async function syncLifecycleFor(input: PlatformEventInput) {
-  if (!input.userId || !LIFECYCLE_TRIGGERS.has(input.type)) return;
-  const { syncLifecycle } = await import("@/lib/lifecycle/sync.server");
-  await syncLifecycle(input.userId, { organizationId: input.organizationId ?? null });
+async function syncDerivedFor(input: PlatformEventInput) {
+  if (!input.userId) return;
+  const organizationId = input.organizationId ?? null;
+  if (LIFECYCLE_TRIGGERS.has(input.type)) {
+    const { syncLifecycle } = await import("@/lib/lifecycle/sync.server");
+    await syncLifecycle(input.userId, { organizationId });
+  }
+  if (QUALIFICATION_TRIGGERS.has(input.type)) {
+    const { syncQualification } = await import("@/lib/qualification/score.server");
+    await syncQualification(input.userId, { organizationId });
+  }
 }
+
 
 export async function emitPlatformEvent(input: PlatformEventInput): Promise<void> {
   try {
@@ -40,7 +50,7 @@ export async function emitPlatformEvent(input: PlatformEventInput): Promise<void
       console.error(`platform_events emit failed [${input.type}]: ${error.message}`);
       return;
     }
-    if (!error) await syncLifecycleFor(input);
+    if (!error) await syncDerivedFor(input);
   } catch (error) {
     console.error(
       `platform_events emit threw [${input.type}]: ${error instanceof Error ? error.message : String(error)}`,
@@ -74,16 +84,40 @@ export async function emitPlatformEvents(inputs: PlatformEventInput[]): Promise<
       return;
     }
     // One recompute per user, however many of their events were in the batch.
-    for (const userId of new Set(
-      inputs.filter((i) => i.userId && LIFECYCLE_TRIGGERS.has(i.type)).map((i) => i.userId!),
-    )) {
-      const { syncLifecycle } = await import("@/lib/lifecycle/sync.server");
-      await syncLifecycle(userId);
+    const byUser = new Map<
+      string,
+      { organizationId: string | null; lifecycle: boolean; qualification: boolean }
+    >();
+    for (const input of inputs) {
+      if (!input.userId) continue;
+      const lifecycle = LIFECYCLE_TRIGGERS.has(input.type);
+      const qualification = QUALIFICATION_TRIGGERS.has(input.type);
+      if (!lifecycle && !qualification) continue;
+      const entry = byUser.get(input.userId) ?? {
+        organizationId: null,
+        lifecycle: false,
+        qualification: false,
+      };
+      byUser.set(input.userId, {
+        organizationId: entry.organizationId ?? input.organizationId ?? null,
+        lifecycle: entry.lifecycle || lifecycle,
+        qualification: entry.qualification || qualification,
+      });
     }
-
+    for (const [userId, entry] of byUser) {
+      if (entry.lifecycle) {
+        const { syncLifecycle } = await import("@/lib/lifecycle/sync.server");
+        await syncLifecycle(userId, { organizationId: entry.organizationId });
+      }
+      if (entry.qualification) {
+        const { syncQualification } = await import("@/lib/qualification/score.server");
+        await syncQualification(userId, { organizationId: entry.organizationId });
+      }
+    }
   } catch (error) {
     console.error(
       `platform_events batch emit threw: ${error instanceof Error ? error.message : String(error)}`,
     );
+
   }
 }

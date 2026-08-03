@@ -6,6 +6,8 @@ import { RefreshCw, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { getAdminOverview, retryOutboxEvent } from "@/lib/admin/admin.functions";
 import { LifecyclePanel } from "@/components/admin/lifecycle-panel";
+import { QualificationPanel } from "@/components/admin/qualification-panel";
+
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -144,6 +146,7 @@ function AdminConsole() {
         <TabsList>
           <TabsTrigger value="users">Accounts</TabsTrigger>
           <TabsTrigger value="lifecycle">Lifecycle</TabsTrigger>
+          <TabsTrigger value="qualification">Qualification</TabsTrigger>
           <TabsTrigger value="maturity">Maturity mix</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
         </TabsList>
@@ -151,6 +154,11 @@ function AdminConsole() {
         <TabsContent value="lifecycle" className="mt-6">
           <LifecyclePanel />
         </TabsContent>
+
+        <TabsContent value="qualification" className="mt-6">
+          <QualificationPanel />
+        </TabsContent>
+
 
 
         <TabsContent value="users" className="mt-6 space-y-4">
