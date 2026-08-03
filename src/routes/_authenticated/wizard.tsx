@@ -24,6 +24,14 @@ import {
   saveAnswer,
   saveStep,
 } from "@/lib/assessment/persistence";
+import { OrgIntakeStep } from "@/components/organization/org-intake-step";
+import { createOrganization, fetchMyOrganization } from "@/lib/organization/store";
+import {
+  ORG_FIELDS,
+  missingIntakeFields,
+  type OrgProfilePatch,
+  type OrganizationProfile,
+} from "@/lib/organization/profile-schema";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/wizard")({
