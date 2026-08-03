@@ -39,7 +39,8 @@ export function LegalPage({
       </article>
 
       <footer className="border-t border-border pt-6 text-xs text-muted-foreground">
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <span className="text-foreground/60">Publisher Blueprint™ · by Jeff Hallstead</span>
           <Link to="/terms" className="hover:text-foreground">
             Terms
           </Link>
