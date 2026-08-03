@@ -122,13 +122,22 @@ function normalizePatch(patch: OrgProfilePatch): OrgProfilePatch {
 
 function buildRow(profile: OrgProfilePatch) {
   const normalized = normalizePatch(profile);
-  return {
-    ...normalized,
-    ...(normalized.name !== undefined ? { name: String(normalized.name ?? "").trim() || "Untitled organization" } : {}),
+  const text = (id: keyof OrgProfilePatch) =>
+    normalized[id] === undefined ? undefined : ((normalized[id] as string | null) ?? null);
+
+  const row: Record<string, string | number | null> = {
     domain: normalizeDomain(normalized.website as string | null),
     profile_completeness: computeCompleteness(normalized as Partial<OrganizationProfile>),
     updated_at: new Date().toISOString(),
   };
+  for (const id of ["name", "website", "industry", "revenue_range", "team_size", "region", "business_model"] as const) {
+    const value = text(id);
+    if (value !== undefined) row[id] = id === "name" ? (value?.trim() || "Untitled organization") : value;
+  }
+  if (normalized.marketer_count !== undefined) {
+    row["marketer_count"] = normalized.marketer_count === null ? null : Number(normalized.marketer_count);
+  }
+  return row;
 }
 
 /** Audit writes are best-effort — they must never block a profile save. */
