@@ -5,6 +5,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { RefreshCw, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { getAdminOverview, retryOutboxEvent } from "@/lib/admin/admin.functions";
+import { LifecyclePanel } from "@/components/admin/lifecycle-panel";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -141,9 +143,15 @@ function AdminConsole() {
       <Tabs defaultValue="users">
         <TabsList>
           <TabsTrigger value="users">Accounts</TabsTrigger>
+          <TabsTrigger value="lifecycle">Lifecycle</TabsTrigger>
           <TabsTrigger value="maturity">Maturity mix</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="lifecycle" className="mt-6">
+          <LifecyclePanel />
+        </TabsContent>
+
 
         <TabsContent value="users" className="mt-6 space-y-4">
           <Input

@@ -7,6 +7,18 @@
  */
 
 import { eventVersion, type PlatformEventInput } from "./catalog";
+import { LIFECYCLE_TRIGGERS } from "@/lib/lifecycle/stages";
+
+/**
+ * Keeps the derived lifecycle stage in step with the event that just landed.
+ * Only progress-bearing events trigger it, and `lifecycle.stage_changed` is
+ * never a trigger, so a transition can't cascade into another recompute.
+ */
+async function syncLifecycleFor(input: PlatformEventInput) {
+  if (!input.userId || !LIFECYCLE_TRIGGERS.has(input.type)) return;
+  const { syncLifecycle } = await import("@/lib/lifecycle/sync.server");
+  await syncLifecycle(input.userId, { organizationId: input.organizationId ?? null });
+}
 
 export async function emitPlatformEvent(input: PlatformEventInput): Promise<void> {
   try {
@@ -26,13 +38,16 @@ export async function emitPlatformEvent(input: PlatformEventInput): Promise<void
     // 23505 = unique violation on dedupe_key: the event is already recorded.
     if (error && error.code !== "23505") {
       console.error(`platform_events emit failed [${input.type}]: ${error.message}`);
+      return;
     }
+    if (!error) await syncLifecycleFor(input);
   } catch (error) {
     console.error(
       `platform_events emit threw [${input.type}]: ${error instanceof Error ? error.message : String(error)}`,
     );
   }
 }
+
 
 /** Emits many events in one round trip; duplicates are ignored. */
 export async function emitPlatformEvents(inputs: PlatformEventInput[]): Promise<void> {
@@ -54,7 +69,18 @@ export async function emitPlatformEvents(inputs: PlatformEventInput[]): Promise<
       })),
       { onConflict: "dedupe_key", ignoreDuplicates: true },
     );
-    if (error) console.error(`platform_events batch emit failed: ${error.message}`);
+    if (error) {
+      console.error(`platform_events batch emit failed: ${error.message}`);
+      return;
+    }
+    // One recompute per user, however many of their events were in the batch.
+    for (const userId of new Set(
+      inputs.filter((i) => i.userId && LIFECYCLE_TRIGGERS.has(i.type)).map((i) => i.userId!),
+    )) {
+      const { syncLifecycle } = await import("@/lib/lifecycle/sync.server");
+      await syncLifecycle(userId);
+    }
+
   } catch (error) {
     console.error(
       `platform_events batch emit threw: ${error instanceof Error ? error.message : String(error)}`,
