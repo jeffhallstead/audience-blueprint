@@ -675,6 +675,56 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_audience_profile: {
+        Row: {
+          audience_segments: string[]
+          created_at: string
+          email_list_size: string | null
+          first_party_data_maturity: string | null
+          id: string
+          newsletter_subscribers: number | null
+          notes: string | null
+          organization_id: string
+          primary_channels: string[]
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          audience_segments?: string[]
+          created_at?: string
+          email_list_size?: string | null
+          first_party_data_maturity?: string | null
+          id?: string
+          newsletter_subscribers?: number | null
+          notes?: string | null
+          organization_id: string
+          primary_channels?: string[]
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          audience_segments?: string[]
+          created_at?: string
+          email_list_size?: string | null
+          first_party_data_maturity?: string | null
+          id?: string
+          newsletter_subscribers?: number | null
+          notes?: string | null
+          organization_id?: string
+          primary_channels?: string[]
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_audience_profile_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_audit: {
         Row: {
           actor_id: string | null
@@ -708,6 +758,106 @@ export type Database = {
             foreignKeyName: "organization_audit_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_content_ops_profile: {
+        Row: {
+          content_types: string[]
+          created_at: string
+          governance_maturity: string | null
+          id: string
+          notes: string | null
+          organization_id: string
+          production_capacity: string | null
+          publishing_cadence: string | null
+          updated_at: string
+          version: number
+          workflow_tooling: string[]
+        }
+        Insert: {
+          content_types?: string[]
+          created_at?: string
+          governance_maturity?: string | null
+          id?: string
+          notes?: string | null
+          organization_id: string
+          production_capacity?: string | null
+          publishing_cadence?: string | null
+          updated_at?: string
+          version?: number
+          workflow_tooling?: string[]
+        }
+        Update: {
+          content_types?: string[]
+          created_at?: string
+          governance_maturity?: string | null
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          production_capacity?: string | null
+          publishing_cadence?: string | null
+          updated_at?: string
+          version?: number
+          workflow_tooling?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_content_ops_profile_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_marketing_profile: {
+        Row: {
+          attribution_maturity: string | null
+          created_at: string
+          id: string
+          martech_stack: string[]
+          notes: string | null
+          organization_id: string
+          paid_spend_range: string | null
+          primary_kpis: string[]
+          team_structure: string | null
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          attribution_maturity?: string | null
+          created_at?: string
+          id?: string
+          martech_stack?: string[]
+          notes?: string | null
+          organization_id: string
+          paid_spend_range?: string | null
+          primary_kpis?: string[]
+          team_structure?: string | null
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          attribution_maturity?: string | null
+          created_at?: string
+          id?: string
+          martech_stack?: string[]
+          notes?: string | null
+          organization_id?: string
+          paid_spend_range?: string | null
+          primary_kpis?: string[]
+          team_structure?: string | null
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_marketing_profile_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -863,8 +1013,14 @@ export type Database = {
       }
       profiles: {
         Row: {
+          acquisition_captured_at: string | null
           avatar_url: string | null
           created_at: string
+          first_touch_campaign: string | null
+          first_touch_landing_path: string | null
+          first_touch_medium: string | null
+          first_touch_referrer: string | null
+          first_touch_source: string | null
           full_name: string | null
           id: string
           job_title: string | null
@@ -872,8 +1028,14 @@ export type Database = {
           welcome_email_sent_at: string | null
         }
         Insert: {
+          acquisition_captured_at?: string | null
           avatar_url?: string | null
           created_at?: string
+          first_touch_campaign?: string | null
+          first_touch_landing_path?: string | null
+          first_touch_medium?: string | null
+          first_touch_referrer?: string | null
+          first_touch_source?: string | null
           full_name?: string | null
           id: string
           job_title?: string | null
@@ -881,8 +1043,14 @@ export type Database = {
           welcome_email_sent_at?: string | null
         }
         Update: {
+          acquisition_captured_at?: string | null
           avatar_url?: string | null
           created_at?: string
+          first_touch_campaign?: string | null
+          first_touch_landing_path?: string | null
+          first_touch_medium?: string | null
+          first_touch_referrer?: string | null
+          first_touch_source?: string | null
           full_name?: string | null
           id?: string
           job_title?: string | null
@@ -983,6 +1151,74 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      recommendation_metadata: {
+        Row: {
+          category: string | null
+          completed_at: string | null
+          created_at: string
+          export_count: number
+          exported_at: string | null
+          first_viewed_at: string | null
+          id: string
+          last_export_provider: string | null
+          last_viewed_at: string | null
+          recommendation_key: string
+          saved_at: string | null
+          saved_recommendation_id: string | null
+          source: string
+          title: string | null
+          updated_at: string
+          user_id: string
+          view_count: number
+        }
+        Insert: {
+          category?: string | null
+          completed_at?: string | null
+          created_at?: string
+          export_count?: number
+          exported_at?: string | null
+          first_viewed_at?: string | null
+          id?: string
+          last_export_provider?: string | null
+          last_viewed_at?: string | null
+          recommendation_key: string
+          saved_at?: string | null
+          saved_recommendation_id?: string | null
+          source?: string
+          title?: string | null
+          updated_at?: string
+          user_id: string
+          view_count?: number
+        }
+        Update: {
+          category?: string | null
+          completed_at?: string | null
+          created_at?: string
+          export_count?: number
+          exported_at?: string | null
+          first_viewed_at?: string | null
+          id?: string
+          last_export_provider?: string | null
+          last_viewed_at?: string | null
+          recommendation_key?: string
+          saved_at?: string | null
+          saved_recommendation_id?: string | null
+          source?: string
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendation_metadata_saved_recommendation_id_fkey"
+            columns: ["saved_recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "saved_recommendations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       recommendations: {
         Row: {
