@@ -38,12 +38,16 @@ export const PLATFORM_EVENTS = {
   "commerce.checkout_started": 1,
   "commerce.purchase_confirmed": 1,
   "commerce.purchase_completed": 1,
+  "commerce.purchase_unmatched": 1,
   "commerce.purchase_refunded": 1,
+  "commerce.payment_failed": 1,
   "commerce.subscription_activated": 1,
   "commerce.subscription_updated": 1,
+  "commerce.subscription_past_due": 1,
   "commerce.subscription_canceled": 1,
   "commerce.portal_opened": 1,
   "commerce.cancel_started": 1,
+
 
   // Copilot
   "copilot.session_started": 1,
