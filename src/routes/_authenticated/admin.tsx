@@ -144,6 +144,7 @@ function AdminConsole() {
         <TabsList>
           <TabsTrigger value="users">Accounts</TabsTrigger>
           <TabsTrigger value="lifecycle">Lifecycle</TabsTrigger>
+          <TabsTrigger value="qualification">Qualification</TabsTrigger>
           <TabsTrigger value="maturity">Maturity mix</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
         </TabsList>
@@ -151,6 +152,11 @@ function AdminConsole() {
         <TabsContent value="lifecycle" className="mt-6">
           <LifecyclePanel />
         </TabsContent>
+
+        <TabsContent value="qualification" className="mt-6">
+          <QualificationPanel />
+        </TabsContent>
+
 
 
         <TabsContent value="users" className="mt-6 space-y-4">
