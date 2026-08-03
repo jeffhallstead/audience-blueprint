@@ -1,14 +1,8 @@
-# Audience Blueprint
+# Publisher Blueprint™
 
-Build the Owned Audience Blueprint MVP
+A self-serve executive assessment and strategy platform for marketing leaders who want to evaluate their organization's publishing maturity, receive a consulting-grade strategic plan, and operate it quarter after quarter.
 
-You are an experienced senior product engineer and UX designer.
-
-Build the first production-ready version of a web application called Owned Audience Blueprint™.
-
-The application should feel like a premium executive strategy platform—not a quiz or marketing assessment.
-
-The goal is to help executives evaluate their organization's readiness to build an owned audience through branded entertainment and receive a personalized strategic roadmap.
+Built with TanStack Start, React 19, Tailwind CSS v4, and Lovable Cloud (Supabase).
 
 Technology
 
