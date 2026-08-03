@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { BillingPanel } from "@/components/billing/billing-panel";
 import { AccountSecurityPanel } from "@/components/billing/account-security-panel";
 import { ConnectionsPanel } from "@/components/settings/connections-panel";
+import { OrganizationPanel } from "@/components/organization/organization-panel";
 
 
 export const Route = createFileRoute("/_authenticated/settings")({
@@ -106,6 +107,13 @@ function Settings() {
         </DashboardCard>
 
       </form>
+
+      <section aria-labelledby="organization-heading" className="space-y-5">
+        <h2 id="organization-heading" className="text-display text-2xl">
+          Organization
+        </h2>
+        <OrganizationPanel />
+      </section>
 
       <section aria-labelledby="connections-heading" className="space-y-5">
         <h2 id="connections-heading" className="text-display text-2xl">

@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { ASSESSMENT_VERSION, QUESTIONS, type AssessmentAnswers, type AnswerValue } from "./config";
 import { computePublisherIndex } from "./scoring";
+import { createOrganization, fetchMyOrganization, updateOrganization } from "@/lib/organization/store";
 
 export type AssessmentEventName =
   | "assessment_started"
@@ -110,20 +111,21 @@ export async function saveStep(assessmentId: string, step: number) {
 export async function completeAssessment(userId: string, assessmentId: string, answers: AssessmentAnswers) {
   const index = computePublisherIndex(answers);
 
+  // The organization is created at intake; completion only refreshes it.
   const companyName = String(answers["company_name"] ?? "").trim() || "Untitled organization";
-  const { data: org } = await supabase
-    .from("organizations")
-    .insert({
-      owner_id: userId,
-      name: companyName,
-      website: answers["website"] ? String(answers["website"]) : null,
-      industry: answers["industry"] ? String(answers["industry"]) : null,
-      revenue_range: answers["revenue_range"] ? String(answers["revenue_range"]) : null,
-      team_size: answers["company_size"] ? String(answers["company_size"]) : null,
-      marketer_count: answers["marketing_team_size"] ? Number(answers["marketing_team_size"]) : null,
-    })
-    .select("id")
-    .single();
+  const patch = {
+    name: companyName,
+    website: answers["website"] ? String(answers["website"]) : null,
+    industry: answers["industry"] ? String(answers["industry"]) : null,
+    revenue_range: answers["revenue_range"] ? String(answers["revenue_range"]) : null,
+    team_size: answers["company_size"] ? String(answers["company_size"]) : null,
+    business_model: answers["business_model"] ? String(answers["business_model"]) : null,
+    marketer_count: answers["marketing_team_size"] ? Number(answers["marketing_team_size"]) : null,
+  };
+  const existingOrg = await fetchMyOrganization(userId).catch(() => null);
+  const org = existingOrg
+    ? await updateOrganization(userId, existingOrg, patch)
+    : await createOrganization(userId, patch);
 
   const score = (id: string) => index.categories.find((item) => item.id === id)?.score ?? 0;
 

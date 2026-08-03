@@ -551,38 +551,126 @@ export type Database = {
         }
         Relationships: []
       }
-      organizations: {
+      organization_audit: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          field: string
+          id: string
+          new_value: string | null
+          old_value: string | null
+          organization_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          field: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          organization_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          field?: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          organization_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_audit_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_members: {
         Row: {
           created_at: string
+          id: string
+          organization_id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          archived_at: string | null
+          business_model: string | null
+          created_at: string
+          domain: string | null
           id: string
           industry: string | null
           marketer_count: number | null
           name: string
           owner_id: string
+          profile_completeness: number
+          region: string | null
           revenue_range: string | null
           team_size: string | null
           updated_at: string
           website: string | null
         }
         Insert: {
+          archived_at?: string | null
+          business_model?: string | null
           created_at?: string
+          domain?: string | null
           id?: string
           industry?: string | null
           marketer_count?: number | null
           name: string
           owner_id: string
+          profile_completeness?: number
+          region?: string | null
           revenue_range?: string | null
           team_size?: string | null
           updated_at?: string
           website?: string | null
         }
         Update: {
+          archived_at?: string | null
+          business_model?: string | null
           created_at?: string
+          domain?: string | null
           id?: string
           industry?: string | null
           marketer_count?: number | null
           name?: string
           owner_id?: string
+          profile_completeness?: number
+          region?: string | null
           revenue_range?: string | null
           team_size?: string | null
           updated_at?: string
@@ -1038,6 +1126,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_org_member: {
+        Args: { _org_id: string; _user_id: string }
         Returns: boolean
       }
     }
