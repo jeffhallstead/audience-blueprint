@@ -8,6 +8,12 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import {
+  captureFirstTouch,
+  firstTouchFlushed,
+  markFirstTouchFlushed,
+  readFirstTouch,
+} from "@/lib/analytics/acquisition";
 
 import appCss from "../styles.css?url";
 import { Toaster } from "../components/ui/sonner";
