@@ -1,0 +1,456 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://publisher-blueprint.com/api/airtable-template.json",
+  "title": "Publisher Blueprint™ Airtable Template",
+  "description": "Schema and sample data for the two Airtable tables used by Publisher Blueprint™: lifecycle CRM contacts and exported action plans. Field names are case-sensitive and must match exactly so the Airtable integration adapters can write to them.",
+  "version": "1.0.0",
+  "product": "Publisher Blueprint™",
+  "company": "Momentive Ventures LLC",
+  "generated_at": "2026-08-03",
+  "source_code": {
+    "contacts_adapter": "src/lib/integrations/airtable.server.ts",
+    "records_adapter": "src/lib/integrations/airtable-records.server.ts",
+    "export_rows": "src/lib/export/rows.ts",
+    "types": "src/lib/integrations/types.ts"
+  },
+  "tables": [
+    {
+      "name": "Publisher Blueprint Contacts",
+      "purpose": "Destination for lifecycle and qualification events sent by the platform outbox. Each row is a normalized event for a user or organization.",
+      "default_table_name_in_code": "Publisher Blueprint Contacts",
+      "used_by_adapter": "airtable",
+      "event_names": [
+        "user.signed_up",
+        "assessment.completed",
+        "purchase.completed",
+        "subscription.changed",
+        "lifecycle.stage_changed",
+        "qualification.tier_changed",
+        "organization.updated"
+      ],
+      "fields": [
+        {
+          "name": "Name",
+          "airtable_type": "singleLineText",
+          "required": false,
+          "description": "Full name from the user profile. Maps to IntegrationEvent.fullName.",
+          "sample_values": ["Jeff Hallstead", "Alex Rivera", "Sample Org Admin"]
+        },
+        {
+          "name": "Email",
+          "airtable_type": "email",
+          "required": false,
+          "description": "User email address. Maps to IntegrationEvent.email.",
+          "sample_values": ["jeff@example.com", "alex@example.com"]
+        },
+        {
+          "name": "Event",
+          "airtable_type": "singleSelect",
+          "required": true,
+          "description": "The canonical event name. Maps to IntegrationEvent.eventName.",
+          "options": {
+            "choices": [
+              { "name": "user.signed_up", "color": "blueLight2" },
+              { "name": "assessment.completed", "color": "greenLight2" },
+              { "name": "purchase.completed", "color": "purpleLight2" },
+              { "name": "subscription.changed", "color": "orangeLight2" },
+              { "name": "lifecycle.stage_changed", "color": "cyanLight2" },
+              { "name": "qualification.tier_changed", "color": "yellowLight2" },
+              { "name": "organization.updated", "color": "grayLight2" }
+            ]
+          }
+        },
+        {
+          "name": "Occurred At",
+          "airtable_type": "dateTime",
+          "required": true,
+          "description": "ISO 8601 timestamp of the event. Maps to IntegrationEvent.occurredAt.",
+          "date_format": "ISO",
+          "time_zone": "UTC",
+          "include_time": true
+        },
+        {
+          "name": "Organization",
+          "airtable_type": "singleLineText",
+          "required": false,
+          "description": "Organization name when available. Maps to IntegrationEvent.organization.",
+          "sample_values": ["Momentive Ventures", "Acme Publishing", "One Sweet Dream"]
+        },
+        {
+          "name": "Publisher Index",
+          "airtable_type": "number",
+          "required": false,
+          "description": "0-100 overall assessment score. Maps to IntegrationEvent.score.",
+          "precision": 0,
+          "validation": { "min": 0, "max": 100 }
+        },
+        {
+          "name": "Maturity Level",
+          "airtable_type": "singleLineText",
+          "required": false,
+          "description": "Human-readable maturity title from the assessment. Maps to IntegrationEvent.maturityLevel.",
+          "sample_values": ["Observer", "Contributor", "Publisher", "Platform", "Monetizer"]
+        },
+        {
+          "name": "Tier",
+          "airtable_type": "singleLineText",
+          "required": false,
+          "description": "Entitlement or qualification tier. Maps to IntegrationEvent.tier.",
+          "sample_values": ["free", "blueprint", "os", "lead", "marketing_qualified", "sales_qualified", "customer"]
+        },
+        {
+          "name": "Amount",
+          "airtable_type": "currency",
+          "required": false,
+          "description": "Purchase or subscription amount in cents is converted to dollars by the app. Maps to IntegrationEvent.amount.",
+          "precision": 2,
+          "symbol": "$"
+        },
+        {
+          "name": "Currency",
+          "airtable_type": "singleLineText",
+          "required": false,
+          "description": "ISO 4217 currency code. Maps to IntegrationEvent.currency.",
+          "sample_values": ["USD"]
+        }
+      ],
+      "sample_records": [
+        {
+          "Name": "Jeff Hallstead",
+          "Email": "jeff@example.com",
+          "Event": "user.signed_up",
+          "Occurred At": "2026-08-01T14:30:00.000Z",
+          "Organization": "Momentive Ventures",
+          "Publisher Index": null,
+          "Maturity Level": null,
+          "Tier": "free",
+          "Amount": null,
+          "Currency": "USD"
+        },
+        {
+          "Name": "Jeff Hallstead",
+          "Email": "jeff@example.com",
+          "Event": "assessment.completed",
+          "Occurred At": "2026-08-01T15:15:00.000Z",
+          "Organization": "Momentive Ventures",
+          "Publisher Index": 72,
+          "Maturity Level": "Publisher",
+          "Tier": "free",
+          "Amount": null,
+          "Currency": "USD"
+        },
+        {
+          "Name": "Jeff Hallstead",
+          "Email": "jeff@example.com",
+          "Event": "purchase.completed",
+          "Occurred At": "2026-08-01T15:45:00.000Z",
+          "Organization": "Momentive Ventures",
+          "Publisher Index": 72,
+          "Maturity Level": "Publisher",
+          "Tier": "blueprint",
+          "Amount": 99.0,
+          "Currency": "USD"
+        },
+        {
+          "Name": "Alex Rivera",
+          "Email": "alex@example.com",
+          "Event": "subscription.changed",
+          "Occurred At": "2026-08-02T09:00:00.000Z",
+          "Organization": "Acme Publishing",
+          "Publisher Index": 68,
+          "Maturity Level": "Contributor",
+          "Tier": "os",
+          "Amount": 49.0,
+          "Currency": "USD"
+        },
+        {
+          "Name": "Sam Chen",
+          "Email": "sam@example.com",
+          "Event": "qualification.tier_changed",
+          "Occurred At": "2026-08-02T11:20:00.000Z",
+          "Organization": "One Sweet Dream",
+          "Publisher Index": 58,
+          "Maturity Level": "Contributor",
+          "Tier": "sales_qualified",
+          "Amount": null,
+          "Currency": "USD"
+        },
+        {
+          "Name": "Taylor Morgan",
+          "Email": "taylor@example.com",
+          "Event": "lifecycle.stage_changed",
+          "Occurred At": "2026-08-03T08:45:00.000Z",
+          "Organization": "Brief Growth",
+          "Publisher Index": 81,
+          "Maturity Level": "Platform",
+          "Tier": "os",
+          "Amount": null,
+          "Currency": "USD"
+        }
+      ]
+    },
+    {
+      "name": "Publisher Blueprint Actions",
+      "purpose": "Destination for exported plan rows from the Publisher Blueprint dashboard. Supports upsert by Key so re-exporting updates existing rows instead of duplicating them.",
+      "default_table_name_in_code": "Publisher Blueprint Actions",
+      "used_by_adapter": "airtable_records",
+      "upsert_key": ["Key"],
+      "export_scopes": ["saved", "roadmap", "recommendations", "kpis", "scores"],
+      "fields": [
+        {
+          "name": "Key",
+          "airtable_type": "singleLineText",
+          "required": true,
+          "primary": true,
+          "description": "Stable identifier used for upsert. Format varies by source: saved:{id}, opportunity:{id}, quick-win:{id}, long-term:{id}, roadmap:{phaseId}:{index}, roadmap-metric:{phaseId}:{index}, kpi:{id}, score:{categoryId}, score:overall.",
+          "sample_values": ["saved:rec_123", "opportunity:opp_001", "roadmap:phase_01:0", "score:overall"]
+        },
+        {
+          "name": "Type",
+          "airtable_type": "singleSelect",
+          "required": true,
+          "description": "The kind of row being exported.",
+          "options": {
+            "choices": [
+              { "name": "Saved action", "color": "blueLight2" },
+              { "name": "Opportunity", "color": "purpleLight2" },
+              { "name": "Quick win", "color": "greenLight2" },
+              { "name": "Long-term move", "color": "orangeLight2" },
+              { "name": "Roadmap activity", "color": "cyanLight2" },
+              { "name": "Roadmap metric", "color": "yellowLight2" },
+              { "name": "KPI", "color": "pinkLight2" },
+              { "name": "Score", "color": "grayLight2" }
+            ]
+          }
+        },
+        {
+          "name": "Category",
+          "airtable_type": "singleLineText",
+          "required": false,
+          "description": "Category label from the blueprint, recommendation category, or phase name.",
+          "sample_values": ["Audience", "Content", "Distribution", "Operations", "Strategy", "Alignment", "Foundation", "Growth", "Measurement"]
+        },
+        {
+          "name": "Title",
+          "airtable_type": "singleLineText",
+          "required": true,
+          "description": "Short title of the action, opportunity, metric, or score.",
+          "sample_values": ["Build a newsletter referral program", "Q1 content audit"]
+        },
+        {
+          "name": "Detail",
+          "airtable_type": "multilineText",
+          "required": false,
+          "description": "Full description, rationale, or additional context for the row.",
+          "sample_values": ["Launch a double-sided referral program to grow owned audience."]
+        },
+        {
+          "name": "Impact",
+          "airtable_type": "singleSelect",
+          "required": false,
+          "description": "Expected impact of the action. For KPIs and metrics this is set to Measure or Track.",
+          "options": {
+            "choices": [
+              { "name": "High", "color": "greenLight2" },
+              { "name": "Medium", "color": "yellowLight2" },
+              { "name": "Low", "color": "redLight2" },
+              { "name": "Track", "color": "blueLight2" },
+              { "name": "Measure", "color": "purpleLight2" }
+            ]
+          }
+        },
+        {
+          "name": "Effort",
+          "airtable_type": "singleSelect",
+          "required": false,
+          "description": "Estimated effort to complete the action.",
+          "options": {
+            "choices": [
+              { "name": "High", "color": "redLight2" },
+              { "name": "Medium", "color": "yellowLight2" },
+              { "name": "Low", "color": "greenLight2" }
+            ]
+          }
+        },
+        {
+          "name": "Phase",
+          "airtable_type": "singleLineText",
+          "required": false,
+          "description": "Priority rank, roadmap month, or KPI target. Format varies by source: Priority N, Month N, Target: value.",
+          "sample_values": ["Priority 1", "Month 1", "Target: 10% list growth"]
+        },
+        {
+          "name": "Owner",
+          "airtable_type": "singleLineText",
+          "required": false,
+          "description": "Person or team assigned to the action. Empty until the user assigns it in Airtable.",
+          "sample_values": ["Content Lead", "Growth Team"]
+        },
+        {
+          "name": "Status",
+          "airtable_type": "singleSelect",
+          "required": false,
+          "description": "Current status of the row. Exported actions default to To do; metrics default to Measure; KPIs default to Track.",
+          "options": {
+            "choices": [
+              { "name": "To do", "color": "grayLight2" },
+              { "name": "Done", "color": "greenLight2" },
+              { "name": "Measure", "color": "purpleLight2" },
+              { "name": "Track", "color": "blueLight2" },
+              { "name": "Strength", "color": "greenLight2" }
+            ]
+          }
+        },
+        {
+          "name": "Source",
+          "airtable_type": "singleLineText",
+          "required": false,
+          "description": "Origin of the recommendation. Publisher Blueprint for engine-generated items, Publisher Copilot for AI-generated saved actions.",
+          "sample_values": ["Publisher Blueprint", "Publisher Copilot"]
+        },
+        {
+          "name": "Created",
+          "airtable_type": "date",
+          "required": false,
+          "description": "ISO 8601 date string when the row was created. Stored as YYYY-MM-DD.",
+          "date_format": "YYYY-MM-DD"
+        }
+      ],
+      "sample_records": [
+        {
+          "Key": "score:overall",
+          "Type": "Score",
+          "Category": "Publisher Index",
+          "Title": "Overall Publisher Index™",
+          "Detail": "72/100 — Publisher",
+          "Impact": "Track",
+          "Effort": null,
+          "Phase": null,
+          "Owner": null,
+          "Status": "Publisher",
+          "Source": "Publisher Blueprint",
+          "Created": "2026-08-01"
+        },
+        {
+          "Key": "score:audience",
+          "Type": "Score",
+          "Category": "Audience",
+          "Title": "Audience score",
+          "Detail": "65/100 — Build",
+          "Impact": "Track",
+          "Effort": null,
+          "Phase": "Priority 1",
+          "Owner": null,
+          "Status": "Build",
+          "Source": "Publisher Blueprint",
+          "Created": "2026-08-01"
+        },
+        {
+          "Key": "opportunity:opp_001",
+          "Type": "Opportunity",
+          "Category": "Audience",
+          "Title": "Launch a newsletter referral program",
+          "Detail": "Double-sided referral rewards are the highest-ROI lever for owned list growth.",
+          "Impact": "High",
+          "Effort": "Medium",
+          "Phase": "Priority 1",
+          "Owner": null,
+          "Status": "To do",
+          "Source": "Publisher Blueprint",
+          "Created": "2026-08-01"
+        },
+        {
+          "Key": "quick-win:qw_001",
+          "Type": "Quick win",
+          "Category": "Content",
+          "Title": "Add a newsletter signup CTA to top 10 posts",
+          "Detail": "Place an inline email capture at the top-performing 10% of content pages.",
+          "Impact": "High",
+          "Effort": "Low",
+          "Phase": "Week 1-2",
+          "Owner": null,
+          "Status": "To do",
+          "Source": "Publisher Blueprint",
+          "Created": "2026-08-01"
+        },
+        {
+          "Key": "long-term:lt_001",
+          "Type": "Long-term move",
+          "Category": "Operations",
+          "Title": "Build a first-party data warehouse",
+          "Detail": "Consolidate email, web, and purchase signals into a unified owned data layer.",
+          "Impact": "High",
+          "Effort": "High",
+          "Phase": "Q2-Q3",
+          "Owner": null,
+          "Status": "To do",
+          "Source": "Publisher Blueprint",
+          "Created": "2026-08-01"
+        },
+        {
+          "Key": "roadmap:phase_01:0",
+          "Type": "Roadmap activity",
+          "Category": "Foundation",
+          "Title": "Audit current email capture points",
+          "Detail": "Map every existing email and lead capture surface across the website and social channels.",
+          "Impact": "High",
+          "Effort": "Low",
+          "Phase": "Month 1",
+          "Owner": "Growth Team",
+          "Status": "To do",
+          "Source": "Publisher Blueprint",
+          "Created": "2026-08-01"
+        },
+        {
+          "Key": "roadmap-metric:phase_01:0",
+          "Type": "Roadmap metric",
+          "Category": "Foundation",
+          "Title": "Email capture coverage",
+          "Detail": "Success metric for Foundation. Percentage of high-traffic pages with an email capture path.",
+          "Impact": "Measure",
+          "Effort": null,
+          "Phase": "Month 1",
+          "Owner": null,
+          "Status": "Measure",
+          "Source": "Publisher Blueprint",
+          "Created": "2026-08-01"
+        },
+        {
+          "Key": "kpi:kpi_001",
+          "Type": "KPI",
+          "Category": "Measurement",
+          "Title": "Owned list growth rate",
+          "Detail": "Month-over-month percentage growth in confirmed email subscribers.",
+          "Impact": "Track",
+          "Effort": null,
+          "Phase": "Target: 10%",
+          "Owner": null,
+          "Status": "Track",
+          "Source": "Publisher Blueprint",
+          "Created": "2026-08-01"
+        },
+        {
+          "Key": "saved:rec_123",
+          "Type": "Saved action",
+          "Category": "Distribution",
+          "Title": "Repurpose top 3 articles into a lead magnet series",
+          "Detail": "Use Publisher Copilot to draft a 3-part email series from the best-performing content.",
+          "Impact": "Medium",
+          "Effort": "Low",
+          "Phase": "Week 3-4",
+          "Owner": null,
+          "Status": "To do",
+          "Source": "Publisher Copilot",
+          "Created": "2026-08-02"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Airtable field names are case-sensitive and must match the values listed above.",
+    "The Contacts table receives one row per event from the platform outbox. The same user may appear multiple times with different Event values.",
+    "The Actions table uses PATCH with performUpsert on Key. Re-exporting the same plan updates existing rows rather than creating duplicates.",
+    "Currency amounts in the Actions table are not used; the Amount field only appears in the Contacts table for purchase/subscription events.",
+    "Date/time fields should be stored in ISO 8601 UTC format to avoid ambiguity."
+  ]
+}
