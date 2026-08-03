@@ -77,12 +77,12 @@ export function OrganizationPanel() {
 
   return (
     <div className="grid gap-5">
-      <DashboardCard
-        eyebrow="Organization"
-        title={organization?.name ?? "Your organization"}
-        description="Identity and segmentation details. These never change your Publisher Index™ score."
-      >
+      <DashboardCard eyebrow="Organization" title={organization?.name ?? "Your organization"}>
         <div className="space-y-8">
+          <p className="text-sm text-muted-foreground">
+            Identity and segmentation details. These never change your Publisher Index™ score.
+          </p>
+
           <div className="space-y-2">
             <div className="flex items-baseline justify-between text-xs text-muted-foreground">
               <span>Profile completeness</span>
