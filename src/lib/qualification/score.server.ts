@@ -66,9 +66,11 @@ export async function collectQualificationFacts(
         businessModel: org.business_model,
         marketerCount: org.marketer_count,
         profileCompleteness: org.profile_completeness ?? 0,
+        extendedDepth: await extendedDepthFor(organizationId),
       };
     }
   }
+
 
   const purchaseRows = purchases.data ?? [];
   const completedPurchases = purchaseRows.filter((row) => row.status === "completed");
