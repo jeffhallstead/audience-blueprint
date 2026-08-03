@@ -55,10 +55,8 @@ export async function trackRecommendation(input: RecommendationTrackInput): Prom
       title: input.title.slice(0, 300),
       category: input.category ?? null,
       source: input.source ?? "copilot",
-      saved_recommendation_id: input.savedRecommendationId ?? existing?.id ? undefined : null,
     };
     if (input.savedRecommendationId) row["saved_recommendation_id"] = input.savedRecommendationId;
-    else delete row["saved_recommendation_id"];
 
     if (input.action === "viewed") {
       row["view_count"] = (existing?.view_count ?? 0) + 1;
