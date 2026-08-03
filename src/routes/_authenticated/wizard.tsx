@@ -220,6 +220,16 @@ function Wizard() {
     return <Introduction onStart={() => setStarted(true)} resumeStep={step} />;
   }
 
+  if (!intakeComplete) {
+    return (
+      <OrgIntakeStep
+        initialValues={(organization ?? {}) as OrgProfilePatch}
+        saving={orgSaving}
+        onSubmit={(patch) => void handleIntake(patch)}
+      />
+    );
+  }
+
   return (
     <div className="space-y-8">
       <div className="space-y-5">
