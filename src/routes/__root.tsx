@@ -122,15 +122,45 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
+  // First-touch acquisition: capture before any account exists, flush once the
+  // session appears. Write-once server-side, so repeat flushes are harmless.
+  useEffect(() => {
+    const touch = captureFirstTouch();
+    if (!touch) return;
+
+    const flush = async () => {
+      if (firstTouchFlushed()) return;
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) return;
+      try {
+        const { recordAcquisition } = await import("@/lib/analytics/acquisition.functions");
+        await recordAcquisition({ data: touch });
+        markFirstTouchFlushed();
+      } catch {
+        /* retried on the next load */
+      }
+    };
+    void flush();
+  }, []);
+
   // Single global auth subscriber: keeps router/cache in sync with the session.
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      if (event === "SIGNED_IN") {
+        const touch = readFirstTouch();
+        if (!touch || firstTouchFlushed()) return;
+        void import("@/lib/analytics/acquisition.functions")
+          .then(({ recordAcquisition }) => recordAcquisition({ data: touch }))
+          .then(() => markFirstTouchFlushed())
+          .catch(() => undefined);
+      }
     });
     return () => data.subscription.unsubscribe();
   }, [router, queryClient]);
+
 
 
   return (
