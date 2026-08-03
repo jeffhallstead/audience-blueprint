@@ -388,6 +388,62 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_lifecycle: {
+        Row: {
+          churned_at: string | null
+          created_at: string
+          first_seen_at: string
+          highest_stage: Database["public"]["Enums"]["lifecycle_stage"]
+          id: string
+          last_active_at: string | null
+          organization_id: string | null
+          previous_stage: Database["public"]["Enums"]["lifecycle_stage"] | null
+          stage: Database["public"]["Enums"]["lifecycle_stage"]
+          stage_entered_at: string
+          stage_reason: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          churned_at?: string | null
+          created_at?: string
+          first_seen_at?: string
+          highest_stage?: Database["public"]["Enums"]["lifecycle_stage"]
+          id?: string
+          last_active_at?: string | null
+          organization_id?: string | null
+          previous_stage?: Database["public"]["Enums"]["lifecycle_stage"] | null
+          stage?: Database["public"]["Enums"]["lifecycle_stage"]
+          stage_entered_at?: string
+          stage_reason?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          churned_at?: string | null
+          created_at?: string
+          first_seen_at?: string
+          highest_stage?: Database["public"]["Enums"]["lifecycle_stage"]
+          id?: string
+          last_active_at?: string | null
+          organization_id?: string | null
+          previous_stage?: Database["public"]["Enums"]["lifecycle_stage"] | null
+          stage?: Database["public"]["Enums"]["lifecycle_stage"]
+          stage_entered_at?: string
+          stage_reason?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_lifecycle_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       export_targets: {
         Row: {
           airtable_table: string | null
@@ -1195,6 +1251,14 @@ export type Database = {
     Enums: {
       app_role: "admin" | "user"
       assessment_status: "draft" | "in_progress" | "completed"
+      lifecycle_stage:
+        | "visitor"
+        | "registered"
+        | "assessment_started"
+        | "assessment_completed"
+        | "blueprint_owner"
+        | "os_subscriber"
+        | "churned"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1324,6 +1388,15 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "user"],
       assessment_status: ["draft", "in_progress", "completed"],
+      lifecycle_stage: [
+        "visitor",
+        "registered",
+        "assessment_started",
+        "assessment_completed",
+        "blueprint_owner",
+        "os_subscriber",
+        "churned",
+      ],
     },
   },
 } as const
