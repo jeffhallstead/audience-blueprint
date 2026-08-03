@@ -28,7 +28,7 @@ The product combines a **Publisher Index™** assessment, an executive dashboard
 | `design/Design-System.md` | Executive Obsidian design system tokens and component rules. |
 | `api/Event-Schema.md` | Canonical platform event catalog and `platform_events` table reference. |
 | `api/Data-Model.md` | Full `public` schema data model, relationships, enums, and RLS boundary. |
-| `api/airtable-template.md` | Airtable template schema and setup guide for the Publisher Blueprint CRM and Actions tables. |
+| `api/airtable-template.md` | Airtable template schema and setup guide for the Publisher Blueprint CRM and Actions tables. **[Public template](https://airtable.com/appYrnFpbA3XUcXcK/shr9eae60oPEAb6xT)** |
 | `ARCHITECTURE.md` | Technical architecture overview and key module map. |
 | `AGENTS.md` | Project-level guidance for AI agents and contributors. |
 
