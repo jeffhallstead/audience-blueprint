@@ -12,7 +12,8 @@ The machine-readable schema is in [`airtable-template.json`](./airtable-template
 <!-- Replace with the actual public share URL once the base is created in Airtable and shared publicly -->
 **Public template:** *To be added after manual creation in the Airtable UI.*
 
-If you need the template now, create a new Airtable base using the schema and sample records below, then share it publicly and paste the link here.
+If you need the template now, create a new Airtable base using the schema and sample records below, then share it publicly and paste the link here. The workspace already has a base named **Publisher Blueprint CRM**, but it does not currently match this template (wrong field types on several fields and no `Publisher Blueprint Actions` table). Use the verification script below to confirm a new base matches before sharing it.
+
 
 ## Why two tables?
 
