@@ -9,12 +9,11 @@ The machine-readable schema is in [`airtable-template.json`](./airtable-template
 
 ## Airtable base link
 
-**Base:** `Publisher Blueprint Template` — https://airtable.com/appYrnFpbA3XUcXcK
-**Base ID:** `appYrnFpbA3XUcXcK`
+**Public template:** https://airtable.com/appYrnFpbA3XUcXcK/shr9eae60oPEAb6xT
+
+The link is read-only and has **Allow viewers to copy the base** enabled, so anyone can duplicate it into their own workspace. The base ID is `appYrnFpbA3XUcXcK`.
 
 This base was created programmatically with both tables, all field types, single-select options, and the sample records from the CSV files, and it passes `node api/verify-airtable-template.cjs appYrnFpbA3XUcXcK`.
-
-To turn it into a shareable/public template link (the Airtable API cannot create share links), open the base → **Share** → **Create a shareable link to this base**, then replace the URL above with the generated `https://airtable.com/app.../shr...` link.
 
 
 
