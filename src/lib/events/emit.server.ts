@@ -114,8 +114,10 @@ export async function emitPlatformEvents(inputs: PlatformEventInput[]): Promise<
         await syncQualification(userId, { organizationId: entry.organizationId });
       }
     }
-
+  } catch (error) {
+    console.error(
       `platform_events batch emit threw: ${error instanceof Error ? error.message : String(error)}`,
     );
+
   }
 }
