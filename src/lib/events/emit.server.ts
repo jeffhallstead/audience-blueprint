@@ -8,17 +8,27 @@
 
 import { eventVersion, type PlatformEventInput } from "./catalog";
 import { LIFECYCLE_TRIGGERS } from "@/lib/lifecycle/stages";
+import { QUALIFICATION_TRIGGERS } from "@/lib/qualification/tiers";
 
 /**
- * Keeps the derived lifecycle stage in step with the event that just landed.
- * Only progress-bearing events trigger it, and `lifecycle.stage_changed` is
- * never a trigger, so a transition can't cascade into another recompute.
+ * Keeps the derived lifecycle stage and qualification tier in step with the
+ * event that just landed. Only progress-bearing events trigger a recompute,
+ * and neither `lifecycle.stage_changed` nor `qualification.scored` is itself a
+ * qualification trigger, so a transition can't cascade indefinitely.
  */
-async function syncLifecycleFor(input: PlatformEventInput) {
-  if (!input.userId || !LIFECYCLE_TRIGGERS.has(input.type)) return;
-  const { syncLifecycle } = await import("@/lib/lifecycle/sync.server");
-  await syncLifecycle(input.userId, { organizationId: input.organizationId ?? null });
+async function syncDerivedFor(input: PlatformEventInput) {
+  if (!input.userId) return;
+  const organizationId = input.organizationId ?? null;
+  if (LIFECYCLE_TRIGGERS.has(input.type)) {
+    const { syncLifecycle } = await import("@/lib/lifecycle/sync.server");
+    await syncLifecycle(input.userId, { organizationId });
+  }
+  if (QUALIFICATION_TRIGGERS.has(input.type)) {
+    const { syncQualification } = await import("@/lib/qualification/score.server");
+    await syncQualification(input.userId, { organizationId });
+  }
 }
+
 
 export async function emitPlatformEvent(input: PlatformEventInput): Promise<void> {
   try {
