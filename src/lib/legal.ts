@@ -4,7 +4,7 @@
  * single constant if your legal name or contact address differs.
  */
 export const SELLER = {
-  legalName: "Jeff Hallstead",
+  legalName: "Momentive Ventures LLC",
   tradingName: "Publisher Blueprint™",
   supportEmail: "support@jeffhallstead.com",
   website: "https://jeffhallstead.com",
