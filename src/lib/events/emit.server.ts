@@ -84,19 +84,37 @@ export async function emitPlatformEvents(inputs: PlatformEventInput[]): Promise<
       return;
     }
     // One recompute per user, however many of their events were in the batch.
-    const byUser = new Map<string, PlatformEventInput>();
+    const byUser = new Map<
+      string,
+      { organizationId: string | null; lifecycle: boolean; qualification: boolean }
+    >();
     for (const input of inputs) {
       if (!input.userId) continue;
-      if (!LIFECYCLE_TRIGGERS.has(input.type) && !QUALIFICATION_TRIGGERS.has(input.type)) continue;
-      byUser.set(input.userId, input);
+      const lifecycle = LIFECYCLE_TRIGGERS.has(input.type);
+      const qualification = QUALIFICATION_TRIGGERS.has(input.type);
+      if (!lifecycle && !qualification) continue;
+      const entry = byUser.get(input.userId) ?? {
+        organizationId: null,
+        lifecycle: false,
+        qualification: false,
+      };
+      byUser.set(input.userId, {
+        organizationId: entry.organizationId ?? input.organizationId ?? null,
+        lifecycle: entry.lifecycle || lifecycle,
+        qualification: entry.qualification || qualification,
+      });
     }
-    for (const input of byUser.values()) {
-      await syncDerivedFor({ ...input, type: input.type });
+    for (const [userId, entry] of byUser) {
+      if (entry.lifecycle) {
+        const { syncLifecycle } = await import("@/lib/lifecycle/sync.server");
+        await syncLifecycle(userId, { organizationId: entry.organizationId });
+      }
+      if (entry.qualification) {
+        const { syncQualification } = await import("@/lib/qualification/score.server");
+        await syncQualification(userId, { organizationId: entry.organizationId });
+      }
     }
 
-
-  } catch (error) {
-    console.error(
       `platform_events batch emit threw: ${error instanceof Error ? error.message : String(error)}`,
     );
   }
