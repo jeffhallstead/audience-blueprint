@@ -21,6 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import type { Blueprint } from "@/lib/blueprint/engine";
 import { useSavedRecommendations } from "@/lib/copilot/queries";
 import { copyForSheets, downloadCsv, downloadXlsx } from "@/lib/export/file";
+import { trackRecommendationExport } from "@/lib/analytics/recommendation-metadata";
 import { ALL_SCOPES, EXPORT_SCOPES, buildExportRows, exportFilename, type ExportScope } from "@/lib/export/rows";
 import {
   getExportDestinations,
@@ -105,6 +106,10 @@ export function ExportMenu({
         await copyForSheets(rows);
         toast.success("Copied — paste into Google Sheets or Excel.");
       }
+      await trackRecommendationExport(
+        rows.map((row) => row.Title),
+        kind === "clipboard" ? "sheets" : kind,
+      );
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
@@ -129,6 +134,10 @@ export function ExportMenu({
       await saveTarget.mutateAsync({ provider, asanaProjectId: asanaProject, asanaProjectName: name });
     }
     push.mutate(provider);
+    void trackRecommendationExport(
+      rows.map((row) => row.Title),
+      provider,
+    );
   }
 
   return (
