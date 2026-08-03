@@ -45,8 +45,9 @@ function Welcome() {
           Let's establish where your organization stands today.
         </h1>
         <p className="text-base leading-relaxed text-muted-foreground">
-          The Blueprint assesses seven dimensions of owned-audience readiness. Answer candidly — the roadmap is only
-          as useful as the honesty behind the inputs. You can revisit any section before submitting.
+          The Publisher Index™ assesses seven dimensions of publishing maturity. Answer candidly — the
+          roadmap is only as useful as the honesty behind the inputs. You can revisit any section before
+          submitting.
         </p>
       </div>
 
