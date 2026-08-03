@@ -1,406 +1,72 @@
-# Audience Blueprint
+# Publisher Blueprint™
 
-Build the Owned Audience Blueprint MVP
+A self-serve executive assessment and strategy platform for marketing leaders who want to evaluate their organization's publishing maturity, receive a consulting-grade strategic plan, and operate it quarter after quarter.
 
-You are an experienced senior product engineer and UX designer.
+Built with TanStack Start, React 19, Tailwind CSS v4, and Lovable Cloud (Supabase).
 
-Build the first production-ready version of a web application called Owned Audience Blueprint™.
+---
 
-The application should feel like a premium executive strategy platform—not a quiz or marketing assessment.
+## Product
 
-The goal is to help executives evaluate their organization's readiness to build an owned audience through branded entertainment and receive a personalized strategic roadmap.
+Publisher Blueprint™ helps marketing, brand, and communications leaders answer three questions:
 
-Technology
+1. How mature is our publishing operation, honestly, relative to where it should be?
+2. Which gap is costing us the most right now?
+3. What specifically do we do in the next 90 days?
 
-Use Lovable best practices.
+The product combines a **Publisher Index™** assessment, an executive dashboard, a 90-day roadmap, and **Publisher Copilot™** — an AI strategist grounded in the user's own data. The commercial model is a $99 one-time purchase for the Blueprint and a $49/month **Publisher OS™** subscription for ongoing execution.
 
-Requirements:
+## Documentation
 
-Responsive web application
+| Document | Purpose |
+| --- | --- |
+| `Product-Constitution-v2.0.md` | Brand, taxonomy, naming, messaging, database, event, AI, and engineering standards. Every PRD must comply with this. |
+| `Product-Specification-v2.0.md` | Full product specification: executive summary, product surface, scoring, commercial model, architecture, data model, AI, integrations, and roadmap. |
+| `Product-Roadmap.md` | Horizon-based roadmap: shipped, now, next, later. |
+| `prd/Phase-01.md` through `prd/Phase-07.md` | Per-phase PRD-lite documents covering the shipped build and planned Phase 7. |
+| `adr/` | Architecture Decision Records covering the major technical and product decisions. |
+| `design/Design-System.md` | Executive Obsidian design system tokens and component rules. |
+| `api/Event-Schema.md` | Canonical platform event catalog and `platform_events` table reference. |
+| `api/Data-Model.md` | Full `public` schema data model, relationships, enums, and RLS boundary. |
+| `ARCHITECTURE.md` | Technical architecture overview and key module map. |
+| `AGENTS.md` | Project-level guidance for AI agents and contributors. |
 
-Authentication (email/password + Google login if available)
+## Stack
 
-Supabase backend
+- **Framework:** TanStack Start v1 (React 19, file-based routing, SSR, server functions)
+- **Build:** Vite 7
+- **Styling:** Tailwind CSS v4 with OKLCH-friendly tokens
+- **Data:** TanStack Query
+- **Backend:** Lovable Cloud (Postgres, Auth, RLS, Storage)
+- **AI:** Lovable AI Gateway (Google Gemini)
+- **Commerce:** Paddle (sandbox)
+- **Email:** Managed transactional email on `notify.jeffhallstead.com`
 
-PostgreSQL database
+## Key principles
 
-Row Level Security
+- The assessment is configuration, not code (`src/lib/assessment/config.ts`).
+- Every significant action is recorded as an immutable `platform_event`.
+- Lifecycle and qualification are derived from the event stream.
+- Entitlements are enforced server-side; paid payloads never reach unentitled clients.
+- Roles live in a separate `user_roles` table and are checked via a security-definer function.
+- Integration credentials are encrypted at rest with AES-256-GCM.
+- AI is honest, grounded, and never predictive of a numeric score.
 
-TypeScript
+## Development
 
-Modern React architecture
+```sh
+git clone https://github.com/jeffhallstead/audience-blueprint.git
+cd audience-blueprint
+npm i
+npm run dev
+```
 
-Tailwind CSS
-
-Component-driven design
-
-Clean folder structure
-
-Future-ready for AI integrations
-
-Overall UX
-
-The product should resemble a premium SaaS dashboard.
-
-Inspiration:
-
-Linear
-
-Notion
-
-Stripe Dashboard
-
-Vercel
-
-Arc Browser
-
-Use generous whitespace.
-
-Minimalist design.
-
-Executive aesthetic.
-
-Avoid playful illustrations.
-
-Use cards, progress indicators, and dashboards.
-
-User Flow
-
-Landing Page
-
-↓
-
-Account Creation
-
-↓
-
-Welcome Screen
-
-↓
-
-Blueprint Wizard
-
-↓
-
-Processing Screen
-
-↓
-
-Executive Dashboard
-
-↓
-
-Export PDF
-
-↓
-
-Purchase Upsell (future)
-
-Navigation
-
-Sidebar
-
-Dashboard
-
-My Blueprint
-
-Roadmap
-
-AI Toolkit (placeholder)
-
-Resources
-
-Settings
-
-Wizard Structure
-
-Create a multi-step wizard with progress tracking.
-
-Sections:
-
-1. Company Profile
-
-Collect:
-
-Company name
-
-Website
-
-Industry
-
-Revenue range
-
-Team size
-
-Number of marketers
-
-2. Audience
-
-Collect:
-
-Email subscribers
-
-CRM size
-
-Community
-
-Website traffic
-
-Social channels
-
-3. Content
-
-Evaluate:
-
-Newsletter
-
-Blog
-
-Podcast
-
-Video
-
-Events
-
-Research
-
-Case studies
-
-Executive thought leadership
-
-4. Distribution
-
-Assess:
-
-Email
-
-SEO
-
-Social
-
-Partnerships
-
-Paid
-
-PR
-
-Influencers
-
-5. Operations
-
-Evaluate:
-
-Team
-
-Workflow
-
-AI adoption
-
-Measurement
-
-KPIs
-
-6. Goals
-
-Choose objectives:
-
-Thought leadership
-
-Lead generation
-
-Community
-
-Retention
-
-First-party audience
-
-Brand awareness
-
-7. Constraints
-
-Collect:
-
-Budget
-
-Team
-
-Executive buy-in
-
-Time
-
-Technology
-
-Dashboard
-
-Generate an executive dashboard containing placeholder data.
-
-Include these cards:
-
-Publisher Level
-
-Overall Score
-
-Top Opportunity
-
-Top Risk
-
-Recommended Priority
-
-Next 90 Days
-
-Create placeholders only.
-
-No AI generation yet.
-
-Additional Pages
-
-Roadmap
-
-Display:
-
-Month 1
-
-Month 2
-
-Month 3
-
-Each with editable cards.
-
-Resources
-
-Placeholder cards.
-
-Settings
-
-Basic profile page.
-
-Database
-
-Design a normalized schema.
-
-Tables:
-
-users
-
-organizations
-
-assessments
-
-assessment_answers
-
-blueprints
-
-roadmaps
-
-recommendations
-
-Implement proper relationships.
-
-UI Components
-
-Create reusable components.
-
-Examples:
-
-Progress Bar
-
-Question Card
-
-Score Card
-
-Dashboard Card
-
-Metric Tile
-
-Timeline
-
-Roadmap Card
-
-Recommendation Card
-
-Navigation
-
-Buttons
-
-Modal
-
-Toast
-
-Design System
-
-Typography hierarchy
-
-Consistent spacing
-
-Rounded cards
-
-Subtle shadows
-
-Accessible colors
-
-WCAG AA
-
-Responsive layouts
-
-Dark mode ready
-
-Code Quality
-
-Create reusable components.
-
-Avoid duplicated logic.
-
-Document architecture.
-
-Comment only where necessary.
-
-Organize files cleanly.
-
-Future Features
-
-Leave architecture ready for:
-
-OpenAI integration
-
-Claude integration
-
-PDF generation
-
-Stripe payments
-
-Email automation
-
-CRM integrations
-
-Benchmarking
-
-Team collaboration
-
-Deliverable
-
-Produce a complete working MVP scaffold with navigation, database schema, reusable components, routing, placeholder content, and polished UI.
-
-Do not build AI recommendation logic yet.
-
-Focus on creating a production-quality foundation that can be extended in future iterations.
-
-This project was built with [Lovable](https://lovable.dev).
+The local dev server runs on `http://localhost:8080`.
 
 ## Build with Lovable
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/6d4e5e38-ebb7-4aa9-b55b-9a7cad324fe2).
+This project was built with [Lovable](https://lovable.dev). Continue developing it in the [Lovable editor](https://lovable.dev/projects/6d4e5e38-ebb7-4aa9-b55b-9a7cad324fe2).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
 - **Stay in sync**: every change made in Lovable is committed straight to this repository.
 - **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```

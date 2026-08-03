@@ -1,8 +1,9 @@
-# Publisher Blueprint™ — Product Specification v1.0
+# Publisher Blueprint™ — Product Specification v2.0
 
-**Status:** Current as of the v1.0 build (Phases 1–6 shipped)
-**Owner:** Jeff Hallstead
-**Audience:** Parts 1–4 are written for executives and commercial stakeholders. Parts 5–8 are written for product and engineering.
+**Status:** Current as of the v2.0 build (Phases 1–6 shipped; Phase 7 planned)  
+**Owner:** Jeff Hallstead  
+**Audience:** Parts 1–4 are written for executives and commercial stakeholders. Parts 5–8 are written for product and engineering.  
+**Constitution:** This document complies with `Product-Constitution-v2.0.md`.
 
 ---
 
@@ -10,9 +11,11 @@
 
 ### 1.1 What the product is
 
-Publisher Blueprint™ is a self-serve executive assessment and strategy platform. A marketing leader answers a structured seven-section questionnaire about how their organization builds and reaches its audience. The platform scores that input into the **Publisher Index™** — a 0–100 measure across six categories — places the organization on a five-level maturity ladder, and then generates a consulting-quality strategic assessment: an executive dashboard, an opportunity matrix, a prioritized 90-day roadmap, and a KPI framework.
+Publisher Blueprint™ is a self-serve executive assessment and strategy platform. A marketing leader answers a structured seven-section questionnaire about how their organization builds and reaches its audience. The platform scores that input into the **Publisher Index™** — a 0–100 measure across six categories — places the organization on a five-level maturity ladder, and generates a consulting-quality strategic assessment: an executive dashboard, an opportunity matrix, a prioritized 90-day roadmap, and a KPI framework.
 
 **Publisher Copilot™** layers an AI strategist on top. Every AI request is grounded in the organization's own assessment data, so the user never re-explains their business and the model never works from a blank page.
+
+**Publisher OS™** is the recurring operating layer that helps a team execute the plan, quarter after quarter, with reassessment, blueprint history, progress tracking, and unlimited Copilot access.
 
 ### 1.2 The problem
 
@@ -43,8 +46,13 @@ A consulting-grade strategic assessment, produced in about eight minutes of inpu
 | Per-user exports to CSV, Excel, Airtable, Asana | Shipped |
 | Transactional email on notify.jeffhallstead.com | Shipped |
 | Internal admin console | Shipped |
-| PDF export | Not shipped — see Part 8 |
-| Peer benchmarking, team collaboration | Not shipped — see Part 8 |
+| Organization profile and audit | Shipped |
+| Platform event store and lifecycle derivation | Shipped |
+| Qualification engine | Shipped |
+| Acquisition tracking | Shipped |
+| PDF export | Not shipped — Phase 7 |
+| Peer benchmarking | Not shipped — Phase 7 |
+| Team collaboration | Not shipped — Phase 7 |
 
 ---
 
@@ -75,14 +83,14 @@ All routes below sit behind a client-side session gate that redirects unauthenti
 | Executive dashboard | `/dashboard` | Full strategic assessment, opportunity matrix, KPIs | Blueprint |
 | Blueprint | `/blueprint` | Complete narrative blueprint, recommendations, saved actions | Blueprint |
 | Roadmap | `/roadmap` | Editable 90-day, three-phase timeline | Blueprint |
+| Strategy library | `/resources` | Playbooks and reference material; add-to-blueprint actions | Free / OS premium |
 | Copilot home | `/copilot` | Numbered four-step walkthrough of every AI capability | Blueprint |
 | Copilot chat | `/copilot/chat/$sessionId` | Streaming conversation with the AI strategist | Blueprint (unlimited on OS) |
 | Documents library | `/copilot/documents` | Every generated deliverable, versioned | Blueprint |
 | Document detail | `/copilot/documents/$documentId` | A single deliverable, regenerable | Blueprint |
 | Scenario simulator | `/copilot/simulator` | Directional impact modeling of strategic choices | Blueprint |
 | Prompt packs | `/copilot/prompts` | Tailored prompts the team can reuse elsewhere | Blueprint |
-| Strategy library | `/resources` | Playbooks and reference material; add-to-blueprint actions | Free / OS-premium |
-| Settings | `/settings` | Profile, billing, integrations, account security | Free |
+| Settings | `/settings` | Profile, organization, billing, integrations, account security | Free |
 | Checkout success | `/checkout/success` | Post-payment entitlement polling and handoff | Free |
 | Admin console | `/admin` | Internal operations surface | Role-gated |
 
@@ -100,7 +108,7 @@ The paywall sits deliberately after the score. The user receives real diagnostic
 
 ### 2.4 The admin console
 
-`/admin` is internal-only, gated by a `user_roles` table checked server-side through a security-definer function. It exposes customer lifecycle state, event history, and integration outbox status. It is never linked from user-facing navigation.
+`/admin` is internal-only, gated by a `user_roles` table checked server-side through a security-definer function. It exposes customer lifecycle state, qualification tiers, event history, organization search, and integration outbox status. It is never linked from user-facing navigation.
 
 ---
 
@@ -177,7 +185,7 @@ Each category defines band-specific status and explanation copy, a strength fram
 
 ### 3.7 Autosave and telemetry
 
-Wizard progress is persisted per answer, so a session can be abandoned and resumed on any device. Section-level progression events are recorded to `assessment_events`, giving a per-section drop-off view.
+Wizard progress is persisted per answer, so a session can be abandoned and resumed on any device. Section-level progression events are recorded to `platform_events` (`assessment.section_completed`), giving a per-section drop-off view.
 
 ---
 
@@ -263,20 +271,24 @@ Protected server functions are never called from a public route loader, because 
 
 ### 5.4 Design system
 
-Every color, radius, shadow, and typography value is an OKLCH token in `src/styles.css`, derived from the jeffhallstead.com brand — navy surfaces with cyan and orange accents, set in Barlow, Inter, DM Mono, and Rajdhani. Components reference semantic classes (`bg-surface`, `text-brass`, `surface-panel`) and never hardcode a color. Dark-mode tokens are defined and ready; no user-facing toggle ships in v1.
+Every color, radius, shadow, and typography value is an OKLCH-friendly token in `src/styles.css`, derived from the Executive Obsidian brand — near-black surfaces with an indigo-violet accent, set in Plus Jakarta Sans, Outfit, and DM Mono. Components reference semantic classes (`bg-surface`, `text-brass`, `surface-panel`) and never hardcode a color. Dark mode is the default; no user-facing toggle ships in v1.
+
+Full design system reference: `/design/Design-System.md`.
 
 ---
 
 ## Part 6 — Data model (technical)
 
-Twenty-two tables in the `public` schema. Every table has row-level security enabled and is scoped to `auth.uid()` unless noted. A trigger creates a profile row on signup.
+Twenty-two+ tables in the `public` schema. Every table has row-level security enabled and is scoped to `auth.uid()` unless noted. A trigger creates a profile row on signup. The primary identity is the organization, which is currently 1:1 with the primary user but is modeled to support multi-member teams in the future.
 
 ### 6.1 Identity and organization
 
 | Table | Purpose |
 | --- | --- |
-| `profiles` | 1:1 with the auth user. Name, job title, avatar, welcome-email idempotency timestamp. |
-| `organizations` | Company profile captured in section one — name, website, industry, revenue range, team size. |
+| `profiles` | 1:1 with the auth user. Name, job title, avatar, welcome-email idempotency, acquisition first-touch. |
+| `organizations` | Company profile captured in intake and extended in Phase 6 — name, website, domain, industry, revenue range, team size, business model, region, profile completeness. |
+| `organization_members` | Future multi-user support; currently one primary member per org. |
+| `organization_audit` | Change log for organization profile fields. |
 | `user_roles` | Role assignments in a separate table, read through a security-definer `has_role` function. Never stored on the profile, to prevent privilege escalation. |
 
 ### 6.2 Assessment
@@ -286,7 +298,7 @@ Twenty-two tables in the `public` schema. Every table has row-level security ena
 | `assessments` | One run of the instrument. Status, current step, version, started and completed timestamps. |
 | `assessment_answers` | One row per answered question, stored as JSONB against a section and question key. |
 | `assessment_scores` | Computed result: overall score, all six category scores, maturity level and title, config version. |
-| `assessment_events` | Section-level progression telemetry for drop-off analysis. |
+| `assessment_events` | Section-level progression telemetry (legacy; backfilled to `platform_events`). |
 
 ### 6.3 Blueprint output
 
@@ -312,7 +324,7 @@ Twenty-two tables in the `public` schema. Every table has row-level security ena
 | --- | --- |
 | `purchases` | One-time transactions. Paddle transaction and customer IDs, product, price, amount, status, included-OS expiry, invoice URL, environment. |
 | `subscriptions` | Recurring plans with status and period boundaries. |
-| `customer_events` | Commercial lifecycle event log — signup, assessment completion, purchase, subscription change. |
+| `customer_events` | Commercial lifecycle event log (legacy; backfilled to `platform_events`). |
 
 ### 6.6 Integrations and operations
 
@@ -322,6 +334,17 @@ Twenty-two tables in the `public` schema. Every table has row-level security ena
 | `export_targets` | Per-user destination configuration — Airtable table, Asana project and workspace. |
 | `integration_outbox` | Durable async queue. Provider, event, dedupe key, payload, status, attempts, last error, next attempt time. No RLS policies by design — it is service-role only and never read by the browser. |
 | `user_feedback` | In-product feedback capture. |
+
+### 6.7 Platform events and derived state
+
+| Table | Purpose |
+| --- | --- |
+| `platform_events` | Immutable, append-only event store. Central source of truth for analytics, lifecycle, qualification, and CRM sync. |
+| `customer_lifecycle` | Cached lifecycle stage derived from `platform_events` (visitor → registered → assessment_started → assessment_completed → blueprint_owner → os_subscriber → churned). |
+| `customer_qualification` | Cached qualification tier derived from organization profile fit and event-driven engagement. |
+
+Full data model: `/api/Data-Model.md`.  
+Full event schema: `/api/Event-Schema.md`.
 
 ---
 
@@ -370,65 +393,31 @@ Transactional email sends from `notify.jeffhallstead.com` through the managed em
 
 ### 8.1 Open items
 
-| # | Gap | Impact | Priority |
-| --- | --- | --- | --- |
-| 1 | **PDF export is a stub.** The "Export PDF" action is entitled at the Blueprint tier and appears in the UI, but currently emits a toast rather than producing a file. | High — it is a named, paid feature | P0 |
-| 2 | **Mobile Google OAuth in embedded previews.** Sign-in works in standalone browsers and on desktop. Inside an embedded mobile preview the token handoff is unreliable; the current mitigation is an explicit "open in browser" path. | Medium — affects preview testing more than production | P1 |
-| 3 | **Hydration warning on `/auth`.** A server/client render mismatch is logged on the auth route. Cosmetic today, but it forces a client re-render of that tree. | Low | P2 |
-| 4 | **HubSpot is wired but unused.** The adapter exists and conforms to the integration contract; no connection has been configured. | Low — deliberate | P3 |
-| 5 | **No peer benchmarking.** Section one collects industry, revenue, and size specifically to benchmark against a peer set, but no comparison is rendered. The data is being captured for a feature that does not exist yet. | Medium — a differentiator left on the table | P1 |
-| 6 | **No team collaboration.** Every object is single-owner. There is no way to share a blueprint with a colleague, assign a roadmap item to a real teammate, or have two people work one account. | Medium | P1 |
-| 7 | **`integration_outbox` has no RLS policies.** Intentional — the table is service-role only — but it should carry an explicit deny-all policy rather than relying on the absence of grants. | Low — hardening | P2 |
-| 8 | **No reassessment flow in the UI.** Reassessment is entitled at the OS tier and the schema versions assessments, but no user-facing "run this again and compare" path ships. | High for OS retention | P0 |
-| 9 | **Dark mode is defined but not exposed.** Tokens exist; no toggle. | Low | P3 |
+| # | Gap | Impact | Priority | Horizon |
+| --- | --- | --- | --- | --- |
+| 1 | **PDF export is a stub.** The "Export PDF" action is entitled at the Blueprint tier and appears in the UI, but currently emits a toast rather than producing a file. | High — it is a named, paid feature | P0 | Next |
+| 2 | **Mobile Google OAuth in embedded previews.** Sign-in works in standalone browsers and on desktop. Inside an embedded mobile preview the token handoff is unreliable; the current mitigation is an explicit "open in browser" path. | Medium — affects preview testing more than production | P1 | Now |
+| 3 | **Hydration warning on `/auth`.** A server/client render mismatch is logged on the auth route. Cosmetic today, but it forces a client re-render of that tree. | Low | P2 | Next |
+| 4 | **HubSpot is wired but unused.** The adapter exists and conforms to the integration contract; no connection has been configured. | Low — deliberate | P3 | Now |
+| 5 | **No peer benchmarking.** Section one collects industry, revenue, and size specifically to benchmark against a peer set, but no comparison is rendered. The data is being captured for a feature that does not exist yet. | Medium — a differentiator left on the table | P1 | Later |
 
-### 8.2 Proposed Phase 7 — close the paid promise
+### 8.2 Roadmap
 
-Ship what customers have already been sold: real PDF export, and the OS-tier reassessment flow with a before/after score comparison. These two items are the difference between an honest entitlement matrix and an aspirational one.
+- **Now:** stabilize event-driven CRM sync, resolve mobile OAuth handoff, activate HubSpot adapter.
+- **Next:** PDF export, reassessment + OS blueprint history, progress tracking, admin event monitor and audit log browser.
+- **Later:** team plans, peer benchmarking, white-label API.
 
-### 8.3 Proposed Phase 8 — the benchmarking moat
-
-Use the industry, revenue range, and company size already captured in section one to render peer comparison on the results and dashboard surfaces: "Your Audience score of 41 sits in the bottom quartile for B2B SaaS companies at your revenue." This requires a minimum corpus of completed assessments before it is credible, so the collection is already correct — only the presentation is missing.
-
-### 8.4 Proposed Phase 9 — teams
-
-Introduce a workspace object above the user, invitations, shared blueprint access, and real assignee resolution on roadmap items. This is the natural expansion path from a $49 individual subscription to a seat-based team plan.
-
-### 8.5 Further candidates
-
-- Progress tracking against roadmap items, with quarterly check-ins that feed the next reassessment
-- CRM sync activation once HubSpot has a live connection
-- A public, shareable read-only blueprint link as an acquisition channel
-- Slack or email digest nudges tied to roadmap milestones
+Full roadmap: `Product-Roadmap.md`.
 
 ---
 
-## Appendix A — Glossary
+## Part 9 — References
 
-| Term | Definition |
-| --- | --- |
-| **Publisher Index™** | The 0–100 composite score produced by the assessment |
-| **Publisher Blueprint™** | Both the product name and the $99 tier's core deliverable — the full strategic assessment |
-| **Publisher Copilot™** | The AI strategist layer |
-| **Publisher OS™** | The $49/month operating subscription |
-| **Publisher Test™** | The free tier |
-| **Maturity level** | One of five named stages from Observer to Category Leader |
-| **Entitlement** | The server-resolved tier that determines feature access |
-| **Outbox** | The durable async queue for third-party integration delivery |
-
-## Appendix B — Document control
-
-| Field | Value |
-| --- | --- |
-| Version | 1.0 |
-| Covers | Phases 1–6 |
-| Assessment config version | v1 |
-| Blueprint rules version | rules-v1 |
-| Copilot model | google/gemini-3.6-flash |
-| Public schema tables | 22 |
-
-### Version history
-
-| Version | Change |
-| --- | --- |
-| 1.0 | Initial specification covering the shipped v1 build |
+- Product Constitution: `Product-Constitution-v2.0.md`
+- Product Roadmap: `Product-Roadmap.md`
+- Phase PRDs: `/prd/`
+- Architecture Decision Records: `/adr/`
+- Design System: `/design/Design-System.md`
+- Event Schema: `/api/Event-Schema.md`
+- Data Model: `/api/Data-Model.md`
+- Architecture: `ARCHITECTURE.md`
