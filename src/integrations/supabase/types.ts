@@ -444,6 +444,74 @@ export type Database = {
           },
         ]
       }
+      customer_qualification: {
+        Row: {
+          created_at: string
+          engagement_score: number
+          fit_score: number
+          highest_tier: Database["public"]["Enums"]["qualification_tier"]
+          id: string
+          organization_id: string | null
+          previous_tier:
+            | Database["public"]["Enums"]["qualification_tier"]
+            | null
+          scored_at: string
+          signals: Json
+          tier: Database["public"]["Enums"]["qualification_tier"]
+          tier_entered_at: string
+          tier_reason: string | null
+          total_score: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          engagement_score?: number
+          fit_score?: number
+          highest_tier?: Database["public"]["Enums"]["qualification_tier"]
+          id?: string
+          organization_id?: string | null
+          previous_tier?:
+            | Database["public"]["Enums"]["qualification_tier"]
+            | null
+          scored_at?: string
+          signals?: Json
+          tier?: Database["public"]["Enums"]["qualification_tier"]
+          tier_entered_at?: string
+          tier_reason?: string | null
+          total_score?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          engagement_score?: number
+          fit_score?: number
+          highest_tier?: Database["public"]["Enums"]["qualification_tier"]
+          id?: string
+          organization_id?: string | null
+          previous_tier?:
+            | Database["public"]["Enums"]["qualification_tier"]
+            | null
+          scored_at?: string
+          signals?: Json
+          tier?: Database["public"]["Enums"]["qualification_tier"]
+          tier_entered_at?: string
+          tier_reason?: string | null
+          total_score?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_qualification_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       export_targets: {
         Row: {
           airtable_table: string | null
@@ -1259,6 +1327,12 @@ export type Database = {
         | "blueprint_owner"
         | "os_subscriber"
         | "churned"
+      qualification_tier:
+        | "unqualified"
+        | "lead"
+        | "marketing_qualified"
+        | "sales_qualified"
+        | "customer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1396,6 +1470,13 @@ export const Constants = {
         "blueprint_owner",
         "os_subscriber",
         "churned",
+      ],
+      qualification_tier: [
+        "unqualified",
+        "lead",
+        "marketing_qualified",
+        "sales_qualified",
+        "customer",
       ],
     },
   },
