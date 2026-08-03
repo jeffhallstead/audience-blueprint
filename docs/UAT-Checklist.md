@@ -81,9 +81,3 @@ Do this with **uat-blueprint@example.com** (repeat abbreviated with uat-os for O
 ## 5. Recording results
 
 For each item, record: pass/fail, account used, device, and a screenshot for anything that fails. Group failures into blocking (auth, payment gating, data loss) versus cosmetic, and report blocking items first.
-
----
-
-## Notes
-
-This checklist is documentation and manual verification only — no code changes are required to run it. If you'd like, the checklist can also be saved into the repo (for example `docs/UAT-Checklist.md`) so it lives alongside the other product documents.
