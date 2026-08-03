@@ -98,11 +98,14 @@ function Landing() {
         <section className="mx-auto max-w-6xl px-6 pb-24 pt-16 sm:pt-24">
           <p className="text-eyebrow">Publisher Blueprint™</p>
           <h1 className="text-display mt-6 max-w-3xl text-5xl leading-[1.05] sm:text-6xl">
-            Stop renting attention. <span className="italic">Build an audience you own.</span>
+            The Strategy Operating System for{" "}
+            <span className="bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
+              Marketing Leaders
+            </span>
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground">
-            A structured executive assessment that measures your organization's readiness to build an owned
-            audience through branded entertainment — and returns a personalized strategic roadmap.
+            A premium executive assessment that scores your publishing maturity, identifies the highest-leverage gap,
+            and returns a sequenced 90-day roadmap your leadership team can act on.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <Button asChild size="lg">
@@ -115,6 +118,7 @@ function Landing() {
             </Button>
           </div>
           <p className="mt-6 text-xs text-muted-foreground">Approximately 12 minutes · Seven sections · Confidential</p>
+          <p className="mt-3 text-xs text-muted-foreground">by Jeff Hallstead</p>
         </section>
 
         <section className="border-y border-border bg-surface">
