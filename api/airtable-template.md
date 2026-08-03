@@ -73,7 +73,16 @@ See [`airtable-template.json`](./airtable-template.json) under `tables[1].sample
 2. **Rename the default table** to `Publisher Blueprint Contacts` and add the fields listed above with the exact names and types.
 3. **Add a second table** named `Publisher Blueprint Actions` and add its fields.
 4. **Paste the sample records** from [`airtable-template.json`](./airtable-template.json) into each table.
-5. **Share the base publicly**:
+5. **Import the CSV files** (optional, faster than copying JSON):
+   - [`airtable-contacts-template.csv`](./airtable-contacts-template.csv) for the Contacts table.
+   - [`airtable-actions-template.csv`](./airtable-actions-template.csv) for the Actions table.
+   - In Airtable, open each table, click the dropdown next to the table name, and choose **Add or import → CSV file**. Map the columns to the fields created above.
+6. **Verify the schema** by running the verification script in the project root:
+   ```sh
+   node api/verify-airtable-template.cjs <baseId>
+   ```
+   If you omit the baseId, the script looks for a base whose name contains "Publisher Blueprint".
+7. **Share the base publicly**:
    - In Airtable, click **Share** in the top-right.
    - Turn on **Create a shareable link to this base**.
    - Set permissions to **Allow viewers to copy the base** so it works as a template.
