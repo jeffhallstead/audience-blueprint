@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { ASSESSMENT_VERSION, QUESTIONS, type AssessmentAnswers, type AnswerValue } from "./config";
 import { computePublisherIndex } from "./scoring";
+import { createOrganization, fetchMyOrganization, updateOrganization } from "@/lib/organization/store";
 
 export type AssessmentEventName =
   | "assessment_started"
