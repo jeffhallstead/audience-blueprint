@@ -281,9 +281,9 @@ function Introduction({ onStart, resumeStep }: { onStart: () => void; resumeStep
         <p className="text-eyebrow">The Publisher Index™</p>
         <h1 className="text-display text-4xl sm:text-5xl">A diagnostic, not a quiz.</h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Seven sections benchmark how ready your organization is to build and grow an owned audience. Your answers
-          produce a Publisher Index™ score, six category scores, and a maturity classification used throughout your
-          Blueprint.
+          Seven sections benchmark your organization's publishing maturity across company, audience, content,
+          distribution, operations, goals, and constraints. Your answers produce a Publisher Index™ score, six category
+          scores, and a maturity classification used throughout your Blueprint.
         </p>
       </div>
 
