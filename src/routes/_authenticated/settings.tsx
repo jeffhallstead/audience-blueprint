@@ -14,6 +14,8 @@ import { BillingPanel } from "@/components/billing/billing-panel";
 import { AccountSecurityPanel } from "@/components/billing/account-security-panel";
 import { ConnectionsPanel } from "@/components/settings/connections-panel";
 import { OrganizationPanel } from "@/components/organization/organization-panel";
+import { LifecycleStatus } from "@/components/lifecycle/lifecycle-status";
+
 
 
 export const Route = createFileRoute("/_authenticated/settings")({
