@@ -120,23 +120,38 @@ function normalizePatch(patch: OrgProfilePatch): OrgProfilePatch {
   return next;
 }
 
-function buildRow(profile: OrgProfilePatch) {
-  const normalized = normalizePatch(profile);
-  const text = (id: keyof OrgProfilePatch) =>
-    normalized[id] === undefined ? undefined : ((normalized[id] as string | null) ?? null);
+interface OrgRow {
+  name?: string;
+  website?: string | null;
+  industry?: string | null;
+  revenue_range?: string | null;
+  team_size?: string | null;
+  region?: string | null;
+  business_model?: string | null;
+  marketer_count?: number | null;
+  domain: string | null;
+  profile_completeness: number;
+  updated_at: string;
+}
 
-  const row: Record<string, string | number | null> = {
-    domain: normalizeDomain(normalized.website as string | null),
-    profile_completeness: computeCompleteness(normalized as Partial<OrganizationProfile>),
+function buildRow(profile: OrgProfilePatch): OrgRow {
+  const n = normalizePatch(profile);
+  const text = (value: string | number | null | undefined) =>
+    value === undefined ? undefined : ((value as string | null) ?? null);
+
+  const row: OrgRow = {
+    domain: normalizeDomain(n.website as string | null),
+    profile_completeness: computeCompleteness(n as Partial<OrganizationProfile>),
     updated_at: new Date().toISOString(),
   };
-  for (const id of ["name", "website", "industry", "revenue_range", "team_size", "region", "business_model"] as const) {
-    const value = text(id);
-    if (value !== undefined) row[id] = id === "name" ? (value?.trim() || "Untitled organization") : value;
-  }
-  if (normalized.marketer_count !== undefined) {
-    row["marketer_count"] = normalized.marketer_count === null ? null : Number(normalized.marketer_count);
-  }
+  if (n.name !== undefined) row.name = String(n.name ?? "").trim() || "Untitled organization";
+  if (n.website !== undefined) row.website = text(n.website)!;
+  if (n.industry !== undefined) row.industry = text(n.industry)!;
+  if (n.revenue_range !== undefined) row.revenue_range = text(n.revenue_range)!;
+  if (n.team_size !== undefined) row.team_size = text(n.team_size)!;
+  if (n.region !== undefined) row.region = text(n.region)!;
+  if (n.business_model !== undefined) row.business_model = text(n.business_model)!;
+  if (n.marketer_count !== undefined) row.marketer_count = n.marketer_count === null ? null : Number(n.marketer_count);
   return row;
 }
 
