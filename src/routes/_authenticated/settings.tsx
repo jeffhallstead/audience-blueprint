@@ -106,7 +106,9 @@ function Settings() {
           </div>
         </DashboardCard>
 
+        <LifecycleStatus />
       </form>
+
 
       <section aria-labelledby="organization-heading" className="space-y-5">
         <h2 id="organization-heading" className="text-display text-2xl">
