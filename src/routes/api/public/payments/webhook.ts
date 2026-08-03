@@ -3,6 +3,9 @@ import { createClient } from "@supabase/supabase-js";
 import { verifyWebhook, gatewayFetch, EventName, type PaddleEnv } from "@/lib/paddle.server";
 import { PRICE_PRODUCT, PRODUCT_TIER } from "@/lib/commerce/plans";
 import type { Database } from "@/integrations/supabase/types";
+import { emitPlatformEvent } from "@/lib/events/emit.server";
+import type { PlatformEventType } from "@/lib/events/catalog";
+
 
 let _supabase: ReturnType<typeof createClient<Database>> | null = null;
 function getSupabase() {
