@@ -17,13 +17,48 @@ function getSupabase() {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+/** Legacy webhook event name → canonical platform event type. */
+const CANONICAL: Record<string, PlatformEventType> = {
+  subscription_started: "commerce.subscription_activated",
+  subscription_past_due: "commerce.subscription_past_due",
+  subscription_canceled: "commerce.subscription_canceled",
+  purchase_unmatched: "commerce.purchase_unmatched",
+  purchase_completed: "commerce.purchase_completed",
+  purchase_refunded: "commerce.purchase_refunded",
+  payment_failed: "commerce.payment_failed",
+};
+
+/**
+ * Dual-writes to legacy `customer_events` and the canonical `platform_events`
+ * store. `dedupeKey` keys off the Paddle id in the payload so a redelivered
+ * webhook records the event exactly once.
+ */
 async function logEvent(userId: string, eventName: string, metadata: Record<string, unknown>) {
-  await getSupabase().from("customer_events").insert({
-    user_id: userId,
-    event_name: eventName,
-    metadata: metadata as never,
-  });
+  const canonical = CANONICAL[eventName];
+  const reference =
+    (metadata["transactionId"] as string | undefined) ??
+    (metadata["subscriptionId"] as string | undefined) ??
+    null;
+  await Promise.allSettled([
+    getSupabase().from("customer_events").insert({
+      user_id: userId,
+      event_name: eventName,
+      metadata: metadata as never,
+    }),
+    canonical
+      ? emitPlatformEvent({
+          type: canonical,
+          userId,
+          environment: (metadata["environment"] as string | undefined) ?? "live",
+          source: "webhook",
+          context: { provider: "paddle" },
+          payload: metadata,
+          dedupeKey: reference ? `${canonical}:${reference}` : null,
+        })
+      : Promise.resolve(),
+  ]);
 }
+
 
 /** Paddle internal price id → human-readable external id, cached per worker. */
 const priceExternalIdCache = new Map<string, string>();
