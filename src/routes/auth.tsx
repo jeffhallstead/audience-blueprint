@@ -28,9 +28,9 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in — Publisher Blueprint" },
-      { name: "description", content: "Access your executive owned-audience readiness blueprint and roadmap." },
+      { name: "description", content: "Access your Publisher Blueprint™ assessment, dashboard and 90-day roadmap." },
       { property: "og:title", content: "Sign in — Publisher Blueprint" },
-      { property: "og:description", content: "Access your executive owned-audience readiness blueprint." },
+      { property: "og:description", content: "Access your Publisher Blueprint™ assessment and strategic roadmap." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
