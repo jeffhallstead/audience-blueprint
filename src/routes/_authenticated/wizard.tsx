@@ -67,17 +67,20 @@ function Wizard() {
   const [saving, setSaving] = useState<"idle" | "saving" | "saved">("idle");
   const [submitting, setSubmitting] = useState(false);
   const [invalid, setInvalid] = useState<string[]>([]);
+  const [organization, setOrganization] = useState<OrganizationProfile | null>(null);
+  const [orgSaving, setOrgSaving] = useState(false);
   const savedTimer = useRef<number | null>(null);
 
-  // Load or resume the in-progress assessment.
+  // Load or resume the in-progress assessment and the organization profile.
   useEffect(() => {
     if (!user) return;
     let active = true;
-    getOrCreateAssessment(user.id)
-      .then((assessment) => {
+    Promise.all([getOrCreateAssessment(user.id), fetchMyOrganization(user.id).catch(() => null)])
+      .then(([assessment, org]) => {
         if (!active) return;
         setAssessmentId(assessment.id);
         setAnswers(assessment.answers);
+        setOrganization(org);
         setStep(Math.min(assessment.currentStep, REVIEW_STEP));
         if (assessment.resumed && Object.keys(assessment.answers).length > 0) {
           setStarted(true);
@@ -92,6 +95,32 @@ function Wizard() {
       active = false;
     };
   }, [user]);
+
+  const intakeComplete = !!organization && missingIntakeFields(organization as OrgProfilePatch).length === 0;
+
+  /** Saves the minimal gate, then prefills the matching assessment answers. */
+  async function handleIntake(patch: OrgProfilePatch) {
+    if (!user) return;
+    setOrgSaving(true);
+    try {
+      const org = await createOrganization(user.id, patch);
+      setOrganization(org);
+      const prefilled: AssessmentAnswers = {};
+      for (const field of ORG_FIELDS) {
+        if (!field.prefills) continue;
+        const value = patch[field.id];
+        if (value === null || value === undefined || String(value).trim() === "") continue;
+        const answer = field.type === "number" ? Number(value) : String(value);
+        prefilled[field.prefills] = answer as AnswerValue;
+        if (assessmentId) await saveAnswer(assessmentId, user.id, field.prefills, answer as AnswerValue);
+      }
+      setAnswers((prev) => ({ ...prefilled, ...prev }));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save your organization profile");
+    } finally {
+      setOrgSaving(false);
+    }
+  }
 
   // Warn before losing an unsaved in-flight answer.
   useEffect(() => {
