@@ -79,7 +79,7 @@ const container = {
 const eyebrow = {
   fontSize: '11px',
   letterSpacing: '0.18em',
-  color: '#8a6a3b',
+  color: '#6366f1',
   margin: '0 0 12px',
   fontWeight: 600 as const,
 }
