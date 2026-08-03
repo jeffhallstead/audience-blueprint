@@ -6,9 +6,9 @@ export const Route = createFileRoute("/_authenticated/processing")({
   head: () => ({
     meta: [
       { title: "Generating your blueprint — Publisher Blueprint" },
-      { name: "description", content: "Compiling your executive owned-audience readiness blueprint." },
+      { name: "description", content: "Compiling your executive publishing maturity blueprint." },
       { property: "og:title", content: "Generating your blueprint" },
-      { property: "og:description", content: "Compiling your executive readiness blueprint." },
+      { property: "og:description", content: "Compiling your executive publishing maturity blueprint." },
     ],
   }),
   component: Processing,

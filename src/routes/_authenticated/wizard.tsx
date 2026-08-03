@@ -32,10 +32,10 @@ export const Route = createFileRoute("/_authenticated/wizard")({
       { title: "Publisher Index Assessment — Publisher Blueprint" },
       {
         name: "description",
-        content: "A seven-section executive diagnostic that scores your organization's owned-audience readiness.",
+        content: "A seven-section executive diagnostic that scores your organization's publishing maturity.",
       },
       { property: "og:title", content: "Publisher Index™ Assessment" },
-      { property: "og:description", content: "Score your organization's owned-audience readiness in under 8 minutes." },
+      { property: "og:description", content: "Score your organization's publishing maturity in under 12 minutes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
