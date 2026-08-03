@@ -82,8 +82,11 @@ export const getLifecycleBreakdown = createServerFn({ method: "GET" })
         .from("platform_events")
         .select("user_id, payload, occurred_at")
         .eq("event_type", "lifecycle.stage_changed")
+        // Events are immutable, so shape-guard rather than clean up history.
+        .not("payload->>to", "is", null)
         .order("occurred_at", { ascending: false })
         .limit(20),
+
     ]);
 
     const counts = new Map<string, number>();
