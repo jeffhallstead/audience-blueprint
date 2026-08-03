@@ -1,0 +1,7 @@
+Name,Email,Event,Occurred At,Organization,Publisher Index,Maturity Level,Tier,Amount,Currency
+Jeff Hallstead,jeff@example.com,user.signed_up,2026-08-01T14:30:00.000Z,Momentive Ventures,,,free,,
+Jeff Hallstead,jeff@example.com,assessment.completed,2026-08-01T15:15:00.000Z,Momentive Ventures,72,Publisher,free,,
+Jeff Hallstead,jeff@example.com,purchase.completed,2026-08-01T15:45:00.000Z,Momentive Ventures,72,Publisher,blueprint,99.00,USD
+Alex Rivera,alex@example.com,subscription.changed,2026-08-02T09:00:00.000Z,Acme Publishing,68,Contributor,os,49.00,USD
+Sam Chen,sam@example.com,qualification.tier_changed,2026-08-02T11:20:00.000Z,One Sweet Dream,58,Contributor,sales_qualified,,
+Taylor Morgan,taylor@example.com,lifecycle.stage_changed,2026-08-03T08:45:00.000Z,Brief Growth,81,Platform,os,,

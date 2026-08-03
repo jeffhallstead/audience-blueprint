@@ -1,0 +1,10 @@
+Key,Type,Category,Title,Detail,Impact,Effort,Phase,Owner,Status,Source,Created
+score:overall,Score,Publisher Index,Overall Publisher Index™,72/100 — Publisher,,,Track,,Publisher,Publisher Blueprint,2026-08-01
+score:audience,Score,Audience,Audience score,65/100 — Build,Track,,Priority 1,,Build,Publisher Blueprint,2026-08-01
+opportunity:opp_001,Opportunity,Audience,Launch a newsletter referral program,"Double-sided referral rewards are the highest-ROI lever for owned list growth.",High,Medium,Priority 1,,To do,Publisher Blueprint,2026-08-01
+quick-win:qw_001,Quick win,Content,Add a newsletter signup CTA to top 10 posts,"Place an inline email capture at the top-performing 10% of content pages.",High,Low,Week 1-2,,To do,Publisher Blueprint,2026-08-01
+long-term:lt_001,Long-term move,Operations,Build a first-party data warehouse,"Consolidate email, web, and purchase signals into a unified owned data layer.",High,High,Q2-Q3,,To do,Publisher Blueprint,2026-08-01
+roadmap:phase_01:0,Roadmap activity,Foundation,Audit current email capture points,"Map every existing email and lead capture surface across the website and social channels.",High,Low,Month 1,Growth Team,To do,Publisher Blueprint,2026-08-01
+roadmap-metric:phase_01:0,Roadmap metric,Foundation,Email capture coverage,"Success metric for Foundation. Percentage of high-traffic pages with an email capture path.",Measure,,Month 1,,Measure,Publisher Blueprint,2026-08-01
+kpi:kpi_001,KPI,Measurement,Owned list growth rate,"Month-over-month percentage growth in confirmed email subscribers.",Track,,Target: 10%,,Track,Publisher Blueprint,2026-08-01
+saved:rec_123,Saved action,Distribution,Repurpose top 3 articles into a lead magnet series,"Use Publisher Copilot to draft a 3-part email series from the best-performing content.",Medium,Low,Week 3-4,,To do,Publisher Copilot,2026-08-02
