@@ -678,6 +678,65 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_events: {
+        Row: {
+          context: Json
+          created_at: string
+          dedupe_key: string | null
+          environment: string
+          event_type: string
+          event_version: number
+          id: string
+          occurred_at: string
+          organization_id: string | null
+          payload: Json
+          processed_at: string | null
+          product: string
+          source: string
+          user_id: string | null
+        }
+        Insert: {
+          context?: Json
+          created_at?: string
+          dedupe_key?: string | null
+          environment?: string
+          event_type: string
+          event_version?: number
+          id?: string
+          occurred_at?: string
+          organization_id?: string | null
+          payload?: Json
+          processed_at?: string | null
+          product?: string
+          source?: string
+          user_id?: string | null
+        }
+        Update: {
+          context?: Json
+          created_at?: string
+          dedupe_key?: string | null
+          environment?: string
+          event_type?: string
+          event_version?: number
+          id?: string
+          occurred_at?: string
+          organization_id?: string | null
+          payload?: Json
+          processed_at?: string | null
+          product?: string
+          source?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
