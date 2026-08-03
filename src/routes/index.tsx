@@ -9,17 +9,17 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Publisher Blueprint — Executive Readiness Platform" },
+      { title: "Publisher Blueprint™ — Strategy Operating System for Marketing Leaders" },
       {
         name: "description",
         content:
-          "Assess your organization's readiness to build an owned audience through branded entertainment, and receive a personalized 90-day strategic roadmap.",
+          "Publisher Blueprint™ is a premium executive assessment that scores your publishing maturity and delivers a personalized 90-day strategic roadmap.",
       },
-      { property: "og:title", content: "Publisher Blueprint — Executive Readiness Platform" },
+      { property: "og:title", content: "Publisher Blueprint™ — Strategy Operating System for Marketing Leaders" },
       {
         property: "og:description",
         content:
-          "A premium executive assessment that turns owned-audience ambition into a sequenced, accountable roadmap.",
+          "A premium executive assessment that scores publishing maturity and delivers a sequenced 90-day roadmap.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
