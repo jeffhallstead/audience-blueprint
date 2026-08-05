@@ -31,8 +31,9 @@ export function PricingTable({
   onManage,
 }: PricingTableProps) {
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
-      {PLANS.map((plan) => {
+    <div className="grid gap-6 md:grid-cols-2">
+      {/* Publisher OS™ is not sold on this page. */}
+      {PLANS.filter((plan) => plan.tier !== "os").map((plan) => {
         const featured = plan.tier === "blueprint";
         // The Blueprint is a one-time purchase: once owned it is never re-sold,
         // including to OS subscribers who reached that tier through it.
