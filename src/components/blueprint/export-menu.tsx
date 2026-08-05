@@ -218,8 +218,16 @@ export function ExportMenu({
 
         <Separator />
 
+        {!canUseConnectors ? (
+          <LockedFeature
+            feature="connector_export"
+            title="Unlock Airtable and Asana sync"
+            description="Push every opportunity, roadmap activity and KPI straight into your tracker. Included with Publisher Blueprint™."
+          />
+        ) : (
         <div className="space-y-4">
           <p className="text-eyebrow">Send to a tracker</p>
+
 
           <div className="space-y-2">
             <Label htmlFor="airtable-table" className="text-sm">
