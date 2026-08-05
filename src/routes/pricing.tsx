@@ -125,6 +125,8 @@ function PricingPage() {
         </Link>
         .
       </p>
+      {checkoutElement}
     </div>
+
   );
 }
