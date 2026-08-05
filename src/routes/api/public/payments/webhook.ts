@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
-import { verifyWebhook, gatewayFetch, EventName, type StripeEnv } from "@/lib/paddle.server";
+import { verifyWebhook, createStripeClient, type StripeEnv } from "@/lib/stripe.server";
 import { PRICE_PRODUCT, PRODUCT_TIER } from "@/lib/commerce/plans";
 import type { Database } from "@/integrations/supabase/types";
 import { emitPlatformEvent } from "@/lib/events/emit.server";
 import type { PlatformEventType } from "@/lib/events/catalog";
-
 
 let _supabase: ReturnType<typeof createClient<Database>> | null = null;
 function getSupabase() {
@@ -33,8 +32,8 @@ const CANONICAL: Record<string, PlatformEventType> = {
 
 /**
  * Dual-writes to legacy `customer_events` and the canonical `platform_events`
- * store. `dedupeKey` keys off the Paddle id in the payload so a redelivered
- * webhook records the event exactly once.
+ * store. `dedupeKey` keys off the Stripe object id so a redelivered webhook
+ * records the event exactly once.
  */
 async function logEvent(userId: string, eventName: string, metadata: Record<string, unknown>) {
   const canonical = CANONICAL[eventName];
@@ -54,7 +53,7 @@ async function logEvent(userId: string, eventName: string, metadata: Record<stri
           userId,
           environment: (metadata["environment"] as string | undefined) ?? "live",
           source: "webhook",
-          context: { provider: "paddle" },
+          context: { provider: "stripe" },
           payload: metadata,
           dedupeKey: reference ? `${canonical}:${reference}` : null,
         })
@@ -62,192 +61,211 @@ async function logEvent(userId: string, eventName: string, metadata: Record<stri
   ]);
 }
 
-
-/** Paddle internal price id → human-readable external id, cached per worker. */
-const priceExternalIdCache = new Map<string, string>();
-
-async function lookupPriceExternalId(paddlePriceId: string, env: StripeEnv): Promise<string | null> {
-  const cached = priceExternalIdCache.get(paddlePriceId);
-  if (cached) return cached;
-  try {
-    const response = await gatewayFetch(env, `/prices/${encodeURIComponent(paddlePriceId)}`);
-    if (!response.ok) return null;
-    const result: any = await response.json();
-    const externalId: string | undefined =
-      result?.data?.import_meta?.external_id ?? result?.data?.importMeta?.externalId;
-    if (!externalId) return null;
-    priceExternalIdCache.set(paddlePriceId, externalId);
-    return externalId;
-  } catch (err) {
-    console.error("[payments] price lookup failed:", paddlePriceId, err);
-    return null;
-  }
-}
-
 /**
- * Resolve the catalog product for a line item, or null when it is unknown.
- *
- * Notification payloads do not always carry `importMeta` on the price (and
- * transaction events carry no product object at all), so fall back to looking
- * the Paddle internal price id up through the API.
+ * Resolve the catalog entry for a Stripe price. `lookup_key` carries the
+ * human-readable id (e.g. `publisher_blueprint_onetime`) and is identical in
+ * test and live, so entitlements survive the go-live switch.
  */
-async function resolveCatalog(
-  item: any,
-  env: StripeEnv,
-): Promise<{ priceId: string; productId: string } | null> {
-  const rawPriceId: string | undefined = item?.price?.id ?? item?.priceId;
+function resolveCatalog(price: any): { priceId: string; productId: string } | null {
   const priceId: string | null =
-    item?.price?.importMeta?.externalId ??
-    item?.price?.import_meta?.external_id ??
-    (rawPriceId ? await lookupPriceExternalId(rawPriceId, env) : null);
-
+    price?.lookup_key ?? price?.metadata?.lovable_external_id ?? null;
   if (!priceId) {
-    console.error("[payments] could not resolve price external id", { rawPriceId });
+    console.error("[payments] price has no lookup_key", { rawPriceId: price?.id });
     return null;
   }
-
-  const productId =
-    item?.product?.importMeta?.externalId ??
-    item?.product?.import_meta?.external_id ??
-    PRICE_PRODUCT[priceId] ??
-    null;
-
-  // Never grant a tier for something that is not in our catalog.
+  const productId = PRICE_PRODUCT[priceId] ?? null;
   if (!productId || !PRODUCT_TIER[productId]) {
-    console.error("[payments] price is not in the catalog", { priceId, productId, rawPriceId });
+    console.error("[payments] price is not in the catalog", { priceId, productId });
     return null;
   }
   return { priceId, productId };
 }
 
+/** userId lives on the Customer, the Subscription and the Session. */
+async function resolveUserId(
+  object: any,
+  env: StripeEnv,
+  customerId?: string | null,
+): Promise<string | null> {
+  const direct = object?.metadata?.userId;
+  if (direct) return direct;
+  if (!customerId) return null;
+  try {
+    const stripe = createStripeClient(env);
+    const customer = await stripe.customers.retrieve(customerId);
+    if (!("deleted" in customer && customer.deleted)) {
+      return (customer as any).metadata?.userId ?? null;
+    }
+  } catch (err) {
+    console.error("[payments] customer lookup failed", customerId, err);
+  }
+  return null;
+}
 
-async function handleSubscriptionCreated(data: any, env: StripeEnv) {
-  const userId = data.customData?.userId;
-  if (!userId) return console.error("[payments] subscription.created without customData.userId");
+const isoFromUnix = (seconds: number | null | undefined) =>
+  seconds ? new Date(seconds * 1000).toISOString() : null;
 
-  const catalog = await resolveCatalog(data.items?.[0], env);
-  if (!catalog) {
-    console.warn("[payments] skipping subscription: unknown catalog item");
+const customerIdOf = (value: any): string | null =>
+  typeof value === "string" ? value : (value?.id ?? null);
+
+async function upsertSubscription(subscription: any, env: StripeEnv, isNew: boolean) {
+  const customerId = customerIdOf(subscription.customer);
+  const userId = await resolveUserId(subscription, env, customerId);
+  if (!userId) {
+    console.error("[payments] subscription without resolvable userId", subscription.id);
     return;
   }
+
+  const item = subscription.items?.data?.[0];
+  const catalog = resolveCatalog(item?.price);
+  if (!catalog) {
+    console.warn("[payments] skipping subscription: unknown catalog item", subscription.id);
+    return;
+  }
+
+  const periodStart = item?.current_period_start ?? subscription.current_period_start;
+  const periodEnd = item?.current_period_end ?? subscription.current_period_end;
 
   await getSupabase()
     .from("subscriptions")
     .upsert(
       {
         user_id: userId,
-        paddle_subscription_id: data.id,
-        paddle_customer_id: data.customerId,
+        stripe_subscription_id: subscription.id,
+        stripe_customer_id: customerId,
         product_id: catalog.productId,
         price_id: catalog.priceId,
-        status: data.status,
-        current_period_start: data.currentBillingPeriod?.startsAt ?? null,
-        current_period_end: data.currentBillingPeriod?.endsAt ?? null,
-        cancel_at_period_end: data.scheduledChange?.action === "cancel",
+        status: subscription.status,
+        current_period_start: isoFromUnix(periodStart),
+        current_period_end: isoFromUnix(periodEnd),
+        cancel_at_period_end: Boolean(subscription.cancel_at_period_end),
         environment: env,
         updated_at: new Date().toISOString(),
       },
-      { onConflict: "paddle_subscription_id" },
+      { onConflict: "stripe_subscription_id" },
     );
 
-  await logEvent(userId, "subscription_started", { ...catalog, environment: env });
-}
-
-/**
- * Covers subscription.updated, .past_due, .paused and .resumed — Paddle sends
- * the same subscription entity on each, with `status` reflecting the change.
- */
-async function handleSubscriptionStateChange(data: any, env: StripeEnv) {
-  const catalog = await resolveCatalog(data.items?.[0], env);
-
-  await getSupabase()
-    .from("subscriptions")
-    .update({
-      status: data.status,
-      ...(catalog ? { price_id: catalog.priceId, product_id: catalog.productId } : {}),
-      current_period_start: data.currentBillingPeriod?.startsAt ?? null,
-      current_period_end: data.currentBillingPeriod?.endsAt ?? null,
-      cancel_at_period_end: data.scheduledChange?.action === "cancel",
-      updated_at: new Date().toISOString(),
-    })
-    .eq("paddle_subscription_id", data.id)
-    .eq("environment", env);
-
-  const userId = data.customData?.userId;
-  if (userId && data.status === "past_due") {
-    await logEvent(userId, "subscription_past_due", { environment: env });
+  if (isNew) {
+    await logEvent(userId, "subscription_started", {
+      ...catalog,
+      subscriptionId: subscription.id,
+      environment: env,
+    });
+  } else if (subscription.status === "past_due") {
+    await logEvent(userId, "subscription_past_due", {
+      subscriptionId: subscription.id,
+      environment: env,
+    });
   }
 }
 
-async function handleSubscriptionCanceled(data: any, env: StripeEnv) {
+async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {
   // Access is retained until current_period_end — see entitlement.server.ts.
-  await getSupabase()
+  const item = subscription.items?.data?.[0];
+  const periodEnd = item?.current_period_end ?? subscription.current_period_end;
+
+  const { data: rows } = await getSupabase()
     .from("subscriptions")
     .update({
       status: "canceled",
-      current_period_end: data.currentBillingPeriod?.endsAt ?? data.canceledAt ?? null,
+      current_period_end: isoFromUnix(periodEnd),
       updated_at: new Date().toISOString(),
     })
-    .eq("paddle_subscription_id", data.id)
-    .eq("environment", env);
+    .eq("stripe_subscription_id", subscription.id)
+    .eq("environment", env)
+    .select("user_id");
 
-  const userId = data.customData?.userId;
-  if (userId) await logEvent(userId, "subscription_canceled", { environment: env });
+  const userId = rows?.[0]?.user_id;
+  if (userId) {
+    await logEvent(userId, "subscription_canceled", {
+      subscriptionId: subscription.id,
+      environment: env,
+    });
+  }
 }
 
-async function handleTransactionCompleted(data: any, env: StripeEnv) {
-  // Subscription renewals arrive here too; only one-time purchases are recorded.
-  if (data.subscriptionId) return;
+/** One-time Blueprint purchases. Subscription sessions are handled above. */
+async function handleCheckoutCompleted(session: any, env: StripeEnv) {
+  if (session.mode !== "payment") return;
+  // Delayed-notification methods settle later via async_payment_succeeded.
+  if (session.payment_status === "unpaid") return;
 
-  const userId = data.customData?.userId;
-  if (!userId) return console.error("[payments] transaction.completed without customData.userId");
+  const customerId = customerIdOf(session.customer);
+  const userId = await resolveUserId(session, env, customerId);
+  if (!userId) {
+    console.error("[payments] checkout.session without resolvable userId", session.id);
+    return;
+  }
 
-  const catalog = await resolveCatalog(data.items?.[0], env);
+  const stripe = createStripeClient(env);
+  const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+    limit: 1,
+    expand: ["data.price"],
+  });
+  const catalog = resolveCatalog(lineItems.data[0]?.price);
+
   if (!catalog) {
     // A paid transaction we cannot attribute must never disappear quietly.
     console.error("[payments] UNMATCHED PURCHASE — no catalog item", {
-      transactionId: data.id,
+      sessionId: session.id,
       userId,
       environment: env,
-      rawPriceId: data.items?.[0]?.price?.id ?? data.items?.[0]?.priceId ?? null,
     });
     await logEvent(userId, "purchase_unmatched", {
-      transactionId: data.id,
+      transactionId: session.id,
       environment: env,
-      rawPriceId: data.items?.[0]?.price?.id ?? data.items?.[0]?.priceId ?? null,
     });
     return;
   }
 
-
   // Buying the Blueprint includes one month of Publisher OS™ access.
   const includedUntil = new Date();
   includedUntil.setMonth(includedUntil.getMonth() + 1);
+
+  const paymentIntentId =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : (session.payment_intent?.id ?? null);
+
+  let receiptUrl: string | null = null;
+  if (paymentIntentId) {
+    try {
+      const charges = await stripe.charges.list({ payment_intent: paymentIntentId, limit: 1 });
+      receiptUrl = charges.data[0]?.receipt_url ?? null;
+    } catch (err) {
+      console.error("[payments] receipt lookup failed", paymentIntentId, err);
+    }
+  }
+
+  const amountCents = Number(session.amount_total ?? 0);
+  const currency = String(session.currency ?? "usd").toUpperCase();
 
   await getSupabase()
     .from("purchases")
     .upsert(
       {
         user_id: userId,
-        paddle_transaction_id: data.id,
-        paddle_customer_id: data.customerId ?? null,
+        stripe_session_id: session.id,
+        stripe_payment_intent_id: paymentIntentId,
+        stripe_customer_id: customerId,
         product_id: catalog.productId,
         price_id: catalog.priceId,
-        amount_cents: Number(data.details?.totals?.total ?? 0),
-        currency: data.currencyCode ?? "USD",
+        amount_cents: amountCents,
+        currency,
         status: "completed",
         included_os_access_until:
           catalog.productId === "publisher_blueprint" ? includedUntil.toISOString() : null,
-        invoice_url: data.invoiceId ? `https://my.paddle.com/invoice/${data.invoiceId}` : null,
+        invoice_url: receiptUrl,
         environment: env,
         updated_at: new Date().toISOString(),
       },
-      { onConflict: "paddle_transaction_id" },
+      { onConflict: "stripe_session_id" },
     );
 
   await logEvent(userId, "purchase_completed", {
     ...catalog,
-    amountCents: Number(data.details?.totals?.total ?? 0),
+    transactionId: session.id,
+    amountCents,
     environment: env,
   });
 
@@ -267,84 +285,92 @@ async function handleTransactionCompleted(data: any, env: StripeEnv) {
         email: userRecord?.user?.email ?? null,
         fullName: profile?.full_name ?? null,
         tier: catalog.productId,
-        amount: Number(data.details?.totals?.total ?? 0) / 100,
-        currency: data.currencyCode ?? "USD",
+        amount: amountCents / 100,
+        currency,
         occurredAt: new Date().toISOString(),
-        metadata: { transactionId: data.id, environment: env },
+        metadata: { sessionId: session.id, environment: env },
       },
-      { dedupeKey: `purchase:${data.id}` },
+      { dedupeKey: `purchase:${session.id}` },
     );
   } catch (err) {
     console.error("[integrations] purchase sync enqueue failed:", err);
   }
 }
 
-
 /**
- * Refunds and chargebacks. Access is revoked as soon as the adjustment is
- * approved: the purchase is marked refunded and the bundled OS month cleared.
+ * Refunds and chargebacks. Access is revoked as soon as the money leaves: the
+ * purchase is marked refunded and the bundled OS month cleared.
  */
-async function handleAdjustment(data: any, env: StripeEnv) {
-  const action = String(data.action ?? "");
-  const status = String(data.status ?? "");
-  if (!["refund", "chargeback", "chargeback_warning"].includes(action)) return;
-  // adjustment.created for chargebacks is immediate; refunds revoke on approval.
-  if (action === "refund" && status !== "approved") return;
-  if (status === "rejected" || status === "reversed") return;
-
-  const transactionId = data.transactionId;
-  if (!transactionId) return;
+async function handleRefundOrDispute(
+  paymentIntentId: string | null,
+  status: "refunded" | "charged_back",
+  env: StripeEnv,
+) {
+  if (!paymentIntentId) return;
 
   const { data: rows } = await getSupabase()
     .from("purchases")
     .update({
-      status: action === "refund" ? "refunded" : "charged_back",
+      status,
       included_os_access_until: null,
       updated_at: new Date().toISOString(),
     })
-    .eq("paddle_transaction_id", transactionId)
+    .eq("stripe_payment_intent_id", paymentIntentId)
     .eq("environment", env)
     .select("user_id");
 
   const userId = rows?.[0]?.user_id;
-  if (userId) await logEvent(userId, "purchase_refunded", { action, environment: env });
+  if (userId) {
+    await logEvent(userId, "purchase_refunded", { action: status, environment: env });
+  }
 }
 
-async function handlePaymentFailed(data: any, env: StripeEnv) {
-  const userId = data.customData?.userId;
+async function handlePaymentFailed(invoice: any, env: StripeEnv) {
+  const customerId = customerIdOf(invoice.customer);
+  const userId = await resolveUserId(invoice, env, customerId);
   if (userId) await logEvent(userId, "payment_failed", { environment: env });
 }
 
 async function handleWebhook(req: Request, env: StripeEnv) {
   const event = await verifyWebhook(req, env);
+  const object = event.data.object as any;
 
-  switch (event.eventType) {
-    case EventName.SubscriptionCreated:
-      await handleSubscriptionCreated(event.data, env);
+  switch (event.type) {
+    case "customer.subscription.created":
+      await upsertSubscription(object, env, true);
       break;
-    case EventName.SubscriptionUpdated:
-    case EventName.SubscriptionPastDue:
-    case EventName.SubscriptionPaused:
-    case EventName.SubscriptionResumed:
-    case EventName.SubscriptionActivated:
-    case EventName.SubscriptionTrialing:
-      await handleSubscriptionStateChange(event.data, env);
+    case "customer.subscription.updated":
+    case "customer.subscription.paused":
+    case "customer.subscription.resumed":
+      await upsertSubscription(object, env, false);
       break;
-    case EventName.SubscriptionCanceled:
-      await handleSubscriptionCanceled(event.data, env);
+    case "customer.subscription.deleted":
+      await handleSubscriptionDeleted(object, env);
       break;
-    case EventName.TransactionCompleted:
-      await handleTransactionCompleted(event.data, env);
+    case "checkout.session.completed":
+    case "checkout.session.async_payment_succeeded":
+      await handleCheckoutCompleted(object, env);
       break;
-    case EventName.TransactionPaymentFailed:
-      await handlePaymentFailed(event.data, env);
+    case "charge.refunded":
+      await handleRefundOrDispute(
+        typeof object.payment_intent === "string" ? object.payment_intent : null,
+        "refunded",
+        env,
+      );
       break;
-    case EventName.AdjustmentCreated:
-    case EventName.AdjustmentUpdated:
-      await handleAdjustment(event.data, env);
+    case "charge.dispute.created":
+      await handleRefundOrDispute(
+        typeof object.payment_intent === "string" ? object.payment_intent : null,
+        "charged_back",
+        env,
+      );
+      break;
+    case "invoice.payment_failed":
+    case "checkout.session.async_payment_failed":
+      await handlePaymentFailed(object, env);
       break;
     default:
-      console.log("[payments] unhandled event:", event.eventType);
+      console.log("[payments] unhandled event:", event.type);
   }
 }
 
@@ -352,10 +378,13 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const url = new URL(request.url);
-        const env = (url.searchParams.get("env") || "sandbox") as StripeEnv;
+        const rawEnv = new URL(request.url).searchParams.get("env");
+        if (rawEnv !== "sandbox" && rawEnv !== "live") {
+          console.error("[payments] webhook with invalid env:", rawEnv);
+          return Response.json({ received: true, ignored: "invalid env" });
+        }
         try {
-          await handleWebhook(request, env);
+          await handleWebhook(request, rawEnv);
           return Response.json({ received: true });
         } catch (error) {
           console.error("[payments] webhook error:", error);
