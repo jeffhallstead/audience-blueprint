@@ -28,7 +28,8 @@ export function BillingPanel() {
     try {
       void trackCommerceEvent(target === "cancel" ? "cancel_started" : "portal_opened");
       const session = await createPortalSession({ data: { environment: getStripeEnvironment() } });
-      const url = target === "cancel" ? (session.cancelUrl ?? session.url) : session.url;
+      if ("error" in session) throw new Error(session.error);
+      const { url } = session;
       if (!url) {
         toast.info("No billing account yet — make a purchase first.");
         return;

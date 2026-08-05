@@ -54,7 +54,7 @@ export const getEntitlement = createServerFn({ method: "GET" })
       grantExpiresAt,
       subscription: latestSub
         ? {
-            id: latestSub.paddle_subscription_id,
+            id: latestSub.stripe_subscription_id ?? latestSub.paddle_subscription_id ?? "",
             status: latestSub.status,
             priceId: latestSub.price_id,
             productId: latestSub.product_id,

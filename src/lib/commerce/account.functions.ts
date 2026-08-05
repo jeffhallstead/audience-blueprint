@@ -17,7 +17,7 @@ export const deleteAccount = createServerFn({ method: "POST" })
 
     const { data: subscriptions } = await supabase
       .from("subscriptions")
-      .select("paddle_subscription_id, status, cancel_at_period_end")
+      .select("stripe_subscription_id, status, cancel_at_period_end")
       .eq("user_id", userId)
       .eq("environment", data.environment);
 
@@ -29,12 +29,13 @@ export const deleteAccount = createServerFn({ method: "POST" })
 
     let canceled = 0;
     if (cancellable.length > 0) {
-      const { getPaddleClient } = await import("@/lib/paddle.server");
-      const paddle = getPaddleClient(data.environment);
+      const { createStripeClient } = await import("@/lib/stripe.server");
+      const stripe = createStripeClient(data.environment);
       for (const row of cancellable) {
+        if (!row.stripe_subscription_id) continue;
         try {
-          await paddle.subscriptions.cancel(row.paddle_subscription_id, {
-            effectiveFrom: "next_billing_period",
+          await stripe.subscriptions.update(row.stripe_subscription_id, {
+            cancel_at_period_end: true,
           });
           canceled += 1;
         } catch (error) {

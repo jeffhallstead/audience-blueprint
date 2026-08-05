@@ -35,7 +35,7 @@ export const Route = createFileRoute("/pricing")({
 function PricingPage() {
   const { user, loading: authLoading } = useAuth();
   const { tier, entitlement, isLoading } = useEntitlement({ enabled: !!user });
-  const { openCheckout, loading } = useCheckout();
+  const { openCheckout, loading, checkoutElement } = useCheckout();
 
   useEffect(() => {
     void trackCommerceEvent("pricing_viewed");
@@ -43,7 +43,9 @@ function PricingPage() {
 
   async function manageSubscription() {
     try {
-      const { url } = await createPortalSession({ data: { environment: getStripeEnvironment() } });
+      const session = await createPortalSession({ data: { environment: getStripeEnvironment() } });
+      if ("error" in session) throw new Error(session.error);
+      const { url } = session;
       if (!url) {
         toast.info("No billing account yet.");
         return;
