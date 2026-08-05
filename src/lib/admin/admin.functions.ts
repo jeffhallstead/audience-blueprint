@@ -9,7 +9,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     await assertAdmin(context as never);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const [authUsersRes, profiles, orgs, assessments, scores, purchases, subs, sessions, docs, outbox, roles] =
+    const [authUsersRes, profiles, orgs, assessments, scores, purchases, subs, sessions, docs, outbox, roles, grants] =
       await Promise.all([
         supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 }),
         supabaseAdmin.from("profiles").select("id, full_name, created_at"),
@@ -29,7 +29,12 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           .order("created_at", { ascending: false })
           .limit(25),
         supabaseAdmin.from("user_roles").select("user_id, role"),
+        supabaseAdmin
+          .from("entitlement_grants")
+          .select("user_id, tier, expires_at")
+          .is("revoked_at", null),
       ]);
+
 
     const users = authUsersRes.data?.users ?? [];
     const profileById = new Map((profiles.data ?? []).map((p) => [p.id, p]));
