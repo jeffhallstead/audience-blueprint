@@ -13,7 +13,6 @@ import type { Database } from "@/integrations/supabase/types";
 
 type LeadStatus = Database["public"]["Enums"]["lead_outreach_status"];
 
-
 const STATUS_LABEL: Record<LeadStatus, string> = {
   new: "New",
   contacted: "Contacted",
@@ -60,11 +59,9 @@ export const getQualifiedLeads = createServerFn({ method: "POST" })
       .in("tier", leadTiers)
       .order("total_score", { ascending: false });
 
-
-
-    if (data.tier) request = request.eq("tier", data.tier as Database["public"]["Enums"]["qualification_tier"]);
+    if (data.tier)
+      request = request.eq("tier", data.tier as Database["public"]["Enums"]["qualification_tier"]);
     const { data: qualifications } = await request;
-
 
     const userIds = (qualifications ?? []).map((q) => q.user_id);
     if (userIds.length === 0) return { leads: [], count: 0 };
@@ -99,7 +96,10 @@ export const getQualifiedLeads = createServerFn({ method: "POST" })
     const latestScoreByUser = new Map<string, { overall: number; level: number }>();
     for (const row of scores ?? []) {
       if (!latestScoreByUser.has(row.user_id)) {
-        latestScoreByUser.set(row.user_id, { overall: row.overall_score, level: row.maturity_level });
+        latestScoreByUser.set(row.user_id, {
+          overall: row.overall_score,
+          level: row.maturity_level,
+        });
       }
     }
 

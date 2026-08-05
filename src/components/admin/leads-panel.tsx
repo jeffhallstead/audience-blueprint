@@ -8,10 +8,27 @@ import { TIER_LABEL } from "@/lib/qualification/tiers";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -23,7 +40,11 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 
-const OUTREACH_STATUS: { value: string; label: string; variant: "default" | "secondary" | "outline" | "destructive" }[] = [
+const OUTREACH_STATUS: {
+  value: string;
+  label: string;
+  variant: "default" | "secondary" | "outline" | "destructive";
+}[] = [
   { value: "new", label: "New", variant: "default" },
   { value: "contacted", label: "Contacted", variant: "secondary" },
   { value: "responded", label: "Responded", variant: "secondary" },
@@ -43,7 +64,6 @@ function StatusBadge({ status }: { status: string }) {
   const item = OUTREACH_STATUS.find((s) => s.value === status) ?? OUTREACH_STATUS[0]!;
   return <Badge variant={item.variant}>{item.label}</Badge>;
 }
-
 
 type LeadEditState = {
   userId: string;
@@ -96,8 +116,6 @@ export function LeadsPanel() {
     onError: (err: Error) => toast.error(err.message),
   });
 
-
-
   const copyEmail = (email: string) => {
     void navigator.clipboard.writeText(email);
     toast.success("Email copied to clipboard.");
@@ -106,7 +124,6 @@ export function LeadsPanel() {
   const leads = data?.leads ?? [];
   const crmBaseUrl =
     typeof import.meta.env !== "undefined" ? import.meta.env["VITE_AIRTABLE_BASE_URL"] : undefined;
-
 
   if (isLoading) return <Skeleton className="h-96" />;
 
@@ -174,7 +191,10 @@ export function LeadsPanel() {
               <TableBody>
                 {leads.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="py-12 text-center text-sm text-muted-foreground">
+                    <TableCell
+                      colSpan={7}
+                      className="py-12 text-center text-sm text-muted-foreground"
+                    >
                       No qualified leads match the current filters.
                     </TableCell>
                   </TableRow>
@@ -183,7 +203,9 @@ export function LeadsPanel() {
                     <TableRow key={lead.userId}>
                       <TableCell>
                         <div className="font-medium">{lead.fullName ?? lead.email ?? "—"}</div>
-                        <div className="text-xs text-muted-foreground">{lead.email ?? lead.userId.slice(0, 8)}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {lead.email ?? lead.userId.slice(0, 8)}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5 text-sm">
@@ -195,7 +217,9 @@ export function LeadsPanel() {
                         ) : null}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="secondary">{TIER_LABEL[lead.tier as keyof typeof TIER_LABEL] ?? lead.tier}</Badge>
+                        <Badge variant="secondary">
+                          {TIER_LABEL[lead.tier as keyof typeof TIER_LABEL] ?? lead.tier}
+                        </Badge>
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
                         {lead.indexScore ?? "—"} / {lead.maturityLevel ?? "—"}
@@ -207,7 +231,9 @@ export function LeadsPanel() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <StatusBadge status={lead.outreachStatus} />
-                          <span className="text-xs text-muted-foreground">{shortDate(lead.lastContactedAt)}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {shortDate(lead.lastContactedAt)}
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -271,7 +297,10 @@ export function LeadsPanel() {
             <div className="space-y-4 py-2">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Outreach status</label>
-                <Select value={edit.status} onValueChange={(value) => setEdit({ ...edit, status: value })}>
+                <Select
+                  value={edit.status}
+                  onValueChange={(value) => setEdit({ ...edit, status: value })}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
