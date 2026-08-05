@@ -65,14 +65,31 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     const assessmentRows = assessments.data ?? [];
     const scoreValues = [...latestScoreByUser.values()].map((s) => s.overall);
 
+    // Highest still-valid manual grant per user.
+    const rank = { blueprint: 1, os: 2 } as const;
+    const grantByUser = new Map<string, { tier: "blueprint" | "os"; expiresAt: string | null }>();
+    for (const row of grants.data ?? []) {
+      if (row.expires_at && new Date(row.expires_at) <= new Date()) continue;
+      const tier = row.tier as "blueprint" | "os";
+      const current = grantByUser.get(row.user_id);
+      if (!current || rank[tier] > rank[current.tier]) {
+        grantByUser.set(row.user_id, { tier, expiresAt: row.expires_at });
+      }
+    }
+
     const userRows: AdminUserRow[] = users
       .map((u) => {
         const score = latestScoreByUser.get(u.id) ?? null;
-        const tier: AdminUserRow["tier"] = activeSubUsers.has(u.id)
+        const paidTier: AdminUserRow["tier"] = activeSubUsers.has(u.id)
           ? "os"
           : completedPurchaseUsers.has(u.id)
             ? "blueprint"
             : "free";
+        const grant = grantByUser.get(u.id) ?? null;
+        const tier: AdminUserRow["tier"] =
+          grant && rank[grant.tier] > (paidTier === "free" ? 0 : rank[paidTier])
+            ? grant.tier
+            : paidTier;
         return {
           userId: u.id,
           email: u.email ?? "—",
@@ -83,9 +100,12 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           maturityLevel: score?.level ?? null,
           tier,
           isAdmin: adminIds.has(u.id),
+          grantedTier: grant?.tier ?? null,
+          grantExpiresAt: grant?.expiresAt ?? null,
         };
       })
       .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+
 
     const outboxCounts: Record<string, number> = {};
     for (const row of outbox.data ?? []) {
