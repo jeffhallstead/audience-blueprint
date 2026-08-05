@@ -79,7 +79,15 @@ export function LeadsPanel() {
 
   const updateMutation = useMutation({
     mutationFn: (payload: { userId: string; status: string; notes: string }) =>
-      saveOutreach({ data: { ...payload, lastContactedAt: payload.status === "contacted" || payload.status === "meeting_booked" ? new Date().toISOString() : null } }),
+      saveOutreach({
+        data: {
+          ...payload,
+          lastContactedAt:
+            payload.status === "contacted" || payload.status === "meeting_booked"
+              ? new Date().toISOString()
+              : null,
+        },
+      }),
     onSuccess: () => {
       toast.success("Lead outreach updated.");
       void queryClient.invalidateQueries({ queryKey: ["admin", "leads"] });
@@ -88,15 +96,6 @@ export function LeadsPanel() {
     onError: (err: Error) => toast.error(err.message),
   });
 
-  const quickUpdateMutation = useMutation({
-    mutationFn: (payload: { userId: string; status: string; notes: string }) =>
-      saveOutreach({ data: { ...payload } }),
-    onSuccess: () => {
-      toast.success("Status updated.");
-      void queryClient.invalidateQueries({ queryKey: ["admin", "leads"] });
-    },
-    onError: (err: Error) => toast.error(err.message),
-  });
 
 
   const copyEmail = (email: string) => {
