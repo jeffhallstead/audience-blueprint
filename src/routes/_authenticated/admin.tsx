@@ -11,6 +11,7 @@ import { OrganizationsPanel } from "@/components/admin/organizations-panel";
 import { EventsPanel } from "@/components/admin/events-panel";
 import { LeadsPanel } from "@/components/admin/leads-panel";
 import { IntegrationsHealth } from "@/components/admin/integrations-health";
+import { FeedbackPanel } from "@/components/admin/feedback-panel";
 import { GrantAccessDialog } from "@/components/admin/grant-access-dialog";
 
 
