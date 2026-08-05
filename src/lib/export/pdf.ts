@@ -143,7 +143,7 @@ function coverPage(doc: Doc, layout: Layout, blueprint: Blueprint, locked: boole
 
   doc.setDrawColor(...ACCENT).setLineWidth(2);
   doc.line(MARGIN.left, layout.y, MARGIN.left + 64, layout.y);
-  layout.y += 42;
+  layout.y += 84; // clears the 56pt score cap height below the rule
 
   // Headline score.
   doc.setFont("helvetica", "bold").setFontSize(56).setTextColor(...ACCENT);
@@ -222,7 +222,7 @@ export async function downloadBlueprintPdf(
   }
 
   if (locked) {
-    layout.pageBreak();
+    layout.gap(20);
     layout.heading("Unlock the full report");
     layout.paragraph(
       "This summary covers your Publisher Index™ score and category readings. The complete Publisher Blueprint™ adds the strategic interpretation behind those numbers:",
@@ -248,7 +248,7 @@ export async function downloadBlueprintPdf(
   }
 
   // ---- Executive summary ----
-  layout.pageBreak();
+  layout.gap(20);
   layout.heading("Executive summary");
   layout.subheading("Where you stand");
   layout.paragraph(blueprint.summary.position);
@@ -314,7 +314,7 @@ export async function downloadBlueprintPdf(
 
   // ---- Roadmap ----
   if (blueprint.roadmap.length > 0) {
-    layout.pageBreak();
+    layout.gap(20);
     layout.heading("90-day roadmap");
     for (const phase of blueprint.roadmap) {
       layout.subheading(`Month ${phase.month} · ${phase.phase}`);
