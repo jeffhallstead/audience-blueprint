@@ -70,7 +70,9 @@ export function LockedFeature({
           <span className="text-xs text-muted-foreground">{plan.cadence}</span>
         </div>
       </div>
+      {checkoutElement}
     </section>
+
   );
 }
 
