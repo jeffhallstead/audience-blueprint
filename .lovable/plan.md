@@ -4,16 +4,18 @@ Right now every download path (CSV, Excel, Copy for Sheets, PDF, email delivery)
 
 ## Recommended tiering
 
-| Capability | Free (Publisher Test™) | Blueprint ($49) | OS ($49/mo) |
-| --- | --- | --- | --- |
-| Limited PDF (score + category readings + upgrade page) | Yes | — | — |
-| Full executive PDF | No | Yes | Yes |
-| Email the report to my account | No | Yes | Yes |
-| CSV / Excel / Copy for Sheets export | No (preview only) | Yes | Yes |
-| Airtable + Asana connections | No | No | Yes |
-| Push plan rows to Airtable / Asana | No | No | Yes |
+| Capability | Free (Publisher Test™) | Blueprint ($49) |
+| --- | --- | --- |
+| Limited PDF (score + category readings + upgrade page) | Yes | — |
+| Full executive PDF | No | Yes |
+| Email the report to my account | No | Yes |
+| CSV / Excel / Copy for Sheets export | No (preview only) | Yes |
+| Airtable + Asana connections | No | Yes |
+| Push plan rows to Airtable / Asana | No | Yes |
 
-Reasoning: the one-time Blueprint should own "get my plan out of the app" (files + email). The recurring OS tier should own "keep my plan in sync with the tools my team runs on" — connectors are the strongest recurring-value story and the weakest one-time-purchase story.
+Reasoning: with OS not launching yet, the Blueprint purchase owns everything that gets the plan out of the app — files, email, and connectors. Free stays a credible diagnostic, paid is where the plan becomes usable.
+
+Future move (not built now): when Publisher OS™ launches, connectors become the recurring-value story and move to the OS tier. The implementation below keeps that a one-line change — connectors get their own `connector_export` feature flag whose minimum tier flips from `blueprint` to `os`.
 
 ## What the free user sees (the upgrade moment)
 
@@ -22,11 +24,11 @@ Free users keep a real, useful artifact so the value is credible, but every lock
 - Export dialog still opens; scope checkboxes and the row count are visible so they can see exactly how much plan is waiting. Download buttons are replaced by a single "Unlock exports for $49" panel.
 - Limited PDF still downloads, with a closing page that names what the full report adds.
 - "Email me the report" shows the lock instead of sending.
-- Settings → Connections shows both connectors with a blurred preview and an "Included with Publisher OS™" unlock.
+- Settings → Connections shows both connectors with a blurred preview and an "Unlock for $49" upgrade panel.
 
 ## Technical notes
 
-- Add three features to `src/lib/commerce/plans.ts`: `file_export` (blueprint), `email_report` (blueprint), `connector_export` (os); add matching bullet copy to the plan cards.
+- Add three features to `src/lib/commerce/plans.ts`: `file_export`, `email_report`, and `connector_export`, all with a minimum tier of `blueprint` for now; add matching bullet copy to the Blueprint plan card ("Airtable and Asana sync" included).
 - Enforce server-side with `requireFeature` (from `entitlement.server`) in:
   - `pushExportRows`, `saveExportTarget`, `getExportDestinations`, `listExportAsanaProjects` → `connector_export`
   - `connectIntegration`, `selectAirtableBase`, `listMyAirtableBases` in `connections.functions.ts` → `connector_export`
@@ -38,4 +40,4 @@ Free users keep a real, useful artifact so the value is credible, but every lock
 
 ## QA
 
-Sign in as the free UAT user and confirm: export dialog shows the unlock panel, limited PDF still downloads, email button is locked, connections panel is locked. Then as the Blueprint user: files and email work, connectors still locked. Then as the OS user: everything works. Also call the gated server functions directly as the free user to confirm they reject rather than relying on UI alone.
+Sign in as the free UAT user and confirm: export dialog shows the unlock panel, limited PDF still downloads, email button is locked, connections panel is locked. Then as the Blueprint user: files, email, and both connectors all work. Also call the gated server functions directly as the free user to confirm they reject rather than relying on UI alone.
