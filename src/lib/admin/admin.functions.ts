@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { assertAdmin, isAdminContext, MATURITY_LABELS, type AdminOverview, type AdminUserRow } from "@/lib/admin/shared";
+import { assertAdmin, isAdminContext, MATURITY_LABELS, type AdminOverview, type AdminUserRow, type IntegrationsStatus } from "@/lib/admin/shared";
 
 /** Internal-only operations snapshot. Admin role required. */
 export const getAdminOverview = createServerFn({ method: "GET" })
