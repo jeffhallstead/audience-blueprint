@@ -285,6 +285,7 @@ export function ExportMenu({
             </p>
           </div>
         </div>
+        )}
 
         <DialogFooter>
           <Button variant="ghost" onClick={() => setOpen(false)}>
