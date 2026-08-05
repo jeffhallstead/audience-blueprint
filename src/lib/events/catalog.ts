@@ -47,6 +47,9 @@ export const PLATFORM_EVENTS = {
   "commerce.subscription_canceled": 1,
   "commerce.portal_opened": 1,
   "commerce.cancel_started": 1,
+  "commerce.entitlement_granted": 1,
+  "commerce.entitlement_revoked": 1,
+
 
 
   // Copilot
