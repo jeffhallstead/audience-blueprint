@@ -75,11 +75,15 @@ function Dashboard() {
     if (!blueprint) return;
     setExporting(true);
     try {
-      const { downloadBlueprintPdf } = await import("@/lib/export/pdf");
-      await downloadBlueprintPdf(blueprint, exportFilename(blueprint), {
-        saved: locked ? null : (saved ?? null),
-        locked,
-      });
+      const blob = await generatePdfBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${exportFilename(blueprint)}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
       toast.success("PDF downloaded.");
       // Logged through the same export analytics path as CSV/Excel. The free
       // report has no opportunities, so it records the report itself.
