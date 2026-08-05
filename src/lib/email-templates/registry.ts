@@ -20,5 +20,6 @@ export interface TemplateEntry {
  *   // then add to TEMPLATES: 'welcome': welcomeTemplate
  */
 export const TEMPLATES: Record<string, TemplateEntry> = {
+  'report-delivered': reportDeliveredTemplate,
   welcome: welcomeTemplate,
 }
