@@ -23,6 +23,7 @@ type PricingTableProps = {
 export function PricingTable({
   currentTier,
   loading,
+  isAuthenticated,
   hasSubscription,
   ownsBlueprint,
   includedOsUntil,
