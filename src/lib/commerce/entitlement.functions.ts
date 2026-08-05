@@ -31,6 +31,9 @@ export type Entitlement = {
   purchases: PurchaseSummary[];
   /** Set when OS access comes from the month bundled with a Blueprint purchase. */
   includedOsUntil: string | null;
+  /** Set when access was granted manually by an admin rather than paid for. */
+  grantedTier: Exclude<Tier, "free"> | null;
+  grantExpiresAt: string | null;
 };
 
 /** Authoritative entitlement read. Never trust a client-supplied tier. */
@@ -39,17 +42,16 @@ export const getEntitlement = createServerFn({ method: "GET" })
   .inputValidator((data: { environment: PaddleEnv }) => ({ environment: isEnv(data.environment) }))
   .handler(async ({ data, context }): Promise<Entitlement> => {
     const { resolveEntitlement } = await import("@/lib/commerce/entitlement.server");
-    const { tier, includedOsUntil, subscriptions, purchases } = await resolveEntitlement(
-      context.supabase,
-      context.userId,
-      data.environment,
-    );
+    const { tier, includedOsUntil, grantedTier, grantExpiresAt, subscriptions, purchases } =
+      await resolveEntitlement(context.supabase, context.userId, data.environment);
 
     const latestSub = subscriptions[0] ?? null;
 
     return {
       tier,
       includedOsUntil,
+      grantedTier,
+      grantExpiresAt,
       subscription: latestSub
         ? {
             id: latestSub.paddle_subscription_id,
@@ -60,6 +62,7 @@ export const getEntitlement = createServerFn({ method: "GET" })
             cancelAtPeriodEnd: latestSub.cancel_at_period_end,
           }
         : null,
+
       purchases: purchases.map((row) => ({
         id: row.id,
         productId: row.product_id,

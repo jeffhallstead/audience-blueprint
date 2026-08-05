@@ -11,6 +11,8 @@ import { OrganizationsPanel } from "@/components/admin/organizations-panel";
 import { EventsPanel } from "@/components/admin/events-panel";
 import { LeadsPanel } from "@/components/admin/leads-panel";
 import { IntegrationsHealth } from "@/components/admin/integrations-health";
+import { GrantAccessDialog } from "@/components/admin/grant-access-dialog";
+
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -219,6 +221,7 @@ function AdminConsole() {
                     <TableHead className="text-right">Index</TableHead>
                     <TableHead>Tier</TableHead>
                     <TableHead>Joined</TableHead>
+                    <TableHead className="text-right">Access</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -239,24 +242,29 @@ function AdminConsole() {
                           <Badge variant={u.tier === "free" ? "outline" : "secondary"}>
                             {TIER_LABEL[u.tier]}
                           </Badge>
+                          {u.grantedTier ? <Badge variant="outline">Manual</Badge> : null}
                           {u.isAdmin ? <Badge>Admin</Badge> : null}
                         </div>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         {shortDate(u.createdAt)}
                       </TableCell>
+                      <TableCell className="text-right">
+                        <GrantAccessDialog user={u} />
+                      </TableCell>
                     </TableRow>
                   ))}
                   {filteredUsers.length === 0 ? (
                     <TableRow>
                       <TableCell
-                        colSpan={5}
+                        colSpan={6}
                         className="py-10 text-center text-sm text-muted-foreground"
                       >
                         No accounts match that search.
                       </TableCell>
                     </TableRow>
                   ) : null}
+
                 </TableBody>
               </Table>
             </CardContent>

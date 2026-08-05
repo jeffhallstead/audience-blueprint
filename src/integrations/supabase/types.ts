@@ -512,6 +512,45 @@ export type Database = {
           },
         ]
       }
+      entitlement_grants: {
+        Row: {
+          created_at: string
+          environment: string
+          expires_at: string | null
+          granted_by: string | null
+          id: string
+          reason: string | null
+          revoked_at: string | null
+          tier: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          environment?: string
+          expires_at?: string | null
+          granted_by?: string | null
+          id?: string
+          reason?: string | null
+          revoked_at?: string | null
+          tier: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          environment?: string
+          expires_at?: string | null
+          granted_by?: string | null
+          id?: string
+          reason?: string | null
+          revoked_at?: string | null
+          tier?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       export_targets: {
         Row: {
           airtable_table: string | null

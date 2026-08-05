@@ -9,7 +9,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     await assertAdmin(context as never);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const [authUsersRes, profiles, orgs, assessments, scores, purchases, subs, sessions, docs, outbox, roles] =
+    const [authUsersRes, profiles, orgs, assessments, scores, purchases, subs, sessions, docs, outbox, roles, grants] =
       await Promise.all([
         supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 }),
         supabaseAdmin.from("profiles").select("id, full_name, created_at"),
@@ -29,7 +29,12 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           .order("created_at", { ascending: false })
           .limit(25),
         supabaseAdmin.from("user_roles").select("user_id, role"),
+        supabaseAdmin
+          .from("entitlement_grants")
+          .select("user_id, tier, expires_at")
+          .is("revoked_at", null),
       ]);
+
 
     const users = authUsersRes.data?.users ?? [];
     const profileById = new Map((profiles.data ?? []).map((p) => [p.id, p]));
@@ -60,14 +65,31 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     const assessmentRows = assessments.data ?? [];
     const scoreValues = [...latestScoreByUser.values()].map((s) => s.overall);
 
+    // Highest still-valid manual grant per user.
+    const rank = { blueprint: 1, os: 2 } as const;
+    const grantByUser = new Map<string, { tier: "blueprint" | "os"; expiresAt: string | null }>();
+    for (const row of grants.data ?? []) {
+      if (row.expires_at && new Date(row.expires_at) <= new Date()) continue;
+      const tier = row.tier as "blueprint" | "os";
+      const current = grantByUser.get(row.user_id);
+      if (!current || rank[tier] > rank[current.tier]) {
+        grantByUser.set(row.user_id, { tier, expiresAt: row.expires_at });
+      }
+    }
+
     const userRows: AdminUserRow[] = users
       .map((u) => {
         const score = latestScoreByUser.get(u.id) ?? null;
-        const tier: AdminUserRow["tier"] = activeSubUsers.has(u.id)
+        const paidTier: AdminUserRow["tier"] = activeSubUsers.has(u.id)
           ? "os"
           : completedPurchaseUsers.has(u.id)
             ? "blueprint"
             : "free";
+        const grant = grantByUser.get(u.id) ?? null;
+        const tier: AdminUserRow["tier"] =
+          grant && rank[grant.tier] > (paidTier === "free" ? 0 : rank[paidTier])
+            ? grant.tier
+            : paidTier;
         return {
           userId: u.id,
           email: u.email ?? "—",
@@ -78,9 +100,12 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           maturityLevel: score?.level ?? null,
           tier,
           isAdmin: adminIds.has(u.id),
+          grantedTier: grant?.tier ?? null,
+          grantExpiresAt: grant?.expiresAt ?? null,
         };
       })
       .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+
 
     const outboxCounts: Record<string, number> = {};
     for (const row of outbox.data ?? []) {
@@ -215,3 +240,97 @@ export const dispatchOutboxNow = createServerFn({ method: "POST" })
     return await dispatchOutbox();
   });
 
+
+/** Manually grants a paid tier to an account with no payment. Admin only. */
+export const grantEntitlement = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (data: {
+      userId: string;
+      tier: "blueprint" | "os";
+      environment: "sandbox" | "live";
+      expiresAt?: string | null;
+      reason?: string | null;
+    }) => {
+      if (!data?.userId) throw new Error("userId is required");
+      if (data.tier !== "blueprint" && data.tier !== "os") throw new Error("Invalid tier");
+      return {
+        userId: data.userId,
+        tier: data.tier,
+        environment: data.environment === "live" ? ("live" as const) : ("sandbox" as const),
+        expiresAt: data.expiresAt ? new Date(data.expiresAt).toISOString() : null,
+        reason: data.reason?.trim() || null,
+      };
+    },
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // One active grant per account: retire any prior grant before writing the new one.
+    await supabaseAdmin
+      .from("entitlement_grants")
+      .update({ revoked_at: new Date().toISOString() })
+      .eq("user_id", data.userId)
+      .eq("environment", data.environment)
+      .is("revoked_at", null);
+
+    const { error } = await supabaseAdmin.from("entitlement_grants").insert({
+      user_id: data.userId,
+      tier: data.tier,
+      environment: data.environment,
+      granted_by: context.userId,
+      reason: data.reason,
+      expires_at: data.expiresAt,
+    });
+    if (error) throw new Error(error.message);
+
+    const { emitPlatformEvent } = await import("@/lib/events/emit.server");
+    await emitPlatformEvent({
+      type: "commerce.entitlement_granted",
+      userId: data.userId,
+      environment: data.environment,
+      source: "admin",
+      payload: {
+        tier: data.tier,
+        expiresAt: data.expiresAt,
+        reason: data.reason,
+        grantedBy: context.userId,
+      },
+    });
+
+    return { ok: true as const };
+  });
+
+/** Revokes any active manual grant for an account. Admin only. */
+export const revokeEntitlement = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { userId: string; environment: "sandbox" | "live" }) => {
+    if (!data?.userId) throw new Error("userId is required");
+    return {
+      userId: data.userId,
+      environment: data.environment === "live" ? ("live" as const) : ("sandbox" as const),
+    };
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("entitlement_grants")
+      .update({ revoked_at: new Date().toISOString() })
+      .eq("user_id", data.userId)
+      .eq("environment", data.environment)
+      .is("revoked_at", null);
+    if (error) throw new Error(error.message);
+
+    const { emitPlatformEvent } = await import("@/lib/events/emit.server");
+    await emitPlatformEvent({
+      type: "commerce.entitlement_revoked",
+      userId: data.userId,
+      environment: data.environment,
+      source: "admin",
+      payload: { revokedBy: context.userId },
+    });
+
+    return { ok: true as const };
+  });

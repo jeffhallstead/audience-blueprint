@@ -20,6 +20,9 @@ function subscriptionIsActive(row: { status: string; current_period_end: string 
 export type ResolvedEntitlement = {
   tier: Tier;
   includedOsUntil: string | null;
+  /** Tier granted manually by an admin, when one is active. */
+  grantedTier: Exclude<Tier, "free"> | null;
+  grantExpiresAt: string | null;
   subscriptions: Database["public"]["Tables"]["subscriptions"]["Row"][];
   purchases: Database["public"]["Tables"]["purchases"]["Row"][];
 };
@@ -30,7 +33,8 @@ export async function resolveEntitlement(
   userId: string,
   env: PaddleEnv,
 ): Promise<ResolvedEntitlement> {
-  const [{ data: subs }, { data: purchaseRows }] = await Promise.all([
+  const nowIso = new Date().toISOString();
+  const [{ data: subs }, { data: purchaseRows }, { data: grantRows }] = await Promise.all([
     supabase
       .from("subscriptions")
       .select("*")
@@ -43,6 +47,13 @@ export async function resolveEntitlement(
       .eq("user_id", userId)
       .eq("environment", env)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("entitlement_grants")
+      .select("tier, expires_at")
+      .eq("user_id", userId)
+      .eq("environment", env)
+      .is("revoked_at", null)
+      .or(`expires_at.is.null,expires_at.gt.${nowIso}`),
   ]);
 
   const subscriptions = subs ?? [];
@@ -56,12 +67,26 @@ export async function resolveEntitlement(
       .sort()
       .at(-1) ?? null;
 
+  // Highest active manual grant, if any.
+  const grants = (grantRows ?? []) as { tier: Exclude<Tier, "free">; expires_at: string | null }[];
+  const bestGrant =
+    grants.sort((a, b) => TIER_RANK[b.tier] - TIER_RANK[a.tier])[0] ?? null;
+
   let tier: Tier = "free";
   if (purchases.length > 0) tier = "blueprint";
   if (activeSub || includedOsUntil) tier = "os";
+  if (bestGrant && TIER_RANK[bestGrant.tier] > TIER_RANK[tier]) tier = bestGrant.tier;
 
-  return { tier, includedOsUntil: activeSub ? null : includedOsUntil, subscriptions, purchases };
+  return {
+    tier,
+    includedOsUntil: activeSub ? null : includedOsUntil,
+    grantedTier: bestGrant?.tier ?? null,
+    grantExpiresAt: bestGrant?.expires_at ?? null,
+    subscriptions,
+    purchases,
+  };
 }
+
 
 export function tierMeets(tier: Tier, feature: Feature) {
   return TIER_RANK[tier] >= TIER_RANK[FEATURE_MINIMUM[feature]];

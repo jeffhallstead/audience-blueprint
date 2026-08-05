@@ -23,7 +23,11 @@ export type AdminUserRow = {
   maturityLevel: number | null;
   tier: "free" | "blueprint" | "os";
   isAdmin: boolean;
+  /** Manually granted tier (admin comp), when an active grant exists. */
+  grantedTier: "blueprint" | "os" | null;
+  grantExpiresAt: string | null;
 };
+
 
 export type AdminOutboxRow = {
   id: string;
