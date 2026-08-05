@@ -161,7 +161,7 @@ function coverPage(doc: Doc, layout: Layout, blueprint: Blueprint, locked: boole
   doc.text(`Publisher Index™ · Assessed ${formatDate(blueprint.completedAt)}`, MARGIN.left, layout.y);
   layout.y += 40;
 
-  layout.paragraph(blueprint.maturity.description, { size: 10.5, color: INK });
+  layout.paragraph(blueprint.maturity.summary, { size: 10.5, color: INK });
 }
 
 function footers(doc: Doc) {
@@ -240,7 +240,7 @@ export async function downloadBlueprintPdf(
       layout.bullet(item);
     }
     layout.gap(16);
-    layout.paragraph(blueprint.cta.headline, { size: 11, style: "bold" });
+    layout.paragraph(blueprint.cta.title, { size: 11, style: "bold" });
     layout.paragraph(blueprint.cta.body, { color: MUTED });
     footers(doc);
     doc.save(`${filenameStem}.pdf`);
