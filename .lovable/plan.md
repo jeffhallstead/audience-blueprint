@@ -24,7 +24,7 @@ Free users keep a real, useful artifact so the value is credible, but every lock
 - Export dialog still opens; scope checkboxes and the row count are visible so they can see exactly how much plan is waiting. Download buttons are replaced by a single "Unlock exports for $49" panel.
 - Limited PDF still downloads, with a closing page that names what the full report adds.
 - "Email me the report" shows the lock instead of sending.
-- Settings → Connections shows both connectors with a blurred preview and an "Included with Publisher OS™" unlock.
+- Settings → Connections shows both connectors with a blurred preview and an "Unlock for $49" upgrade panel.
 
 ## Technical notes
 
