@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Download, Loader2, Mail, RefreshCw } from "lucide-react";
+import { ArrowRight, Download, Loader2, Lock, Mail, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/page-header";
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
@@ -24,6 +24,8 @@ import {
 import { MATURITY_LEVELS } from "@/lib/assessment/config";
 import { useBlueprint, formatAssessmentDate } from "@/lib/blueprint/use-blueprint";
 import { LockedFeature } from "@/components/billing/feature-gate";
+import { useEntitlement } from "@/lib/commerce/use-entitlement";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { trackBlueprintEvent } from "@/lib/blueprint/analytics";
 import { useSavedRecommendations } from "@/lib/copilot/queries";
 import { exportFilename } from "@/lib/export/rows";
@@ -61,6 +63,8 @@ function Dashboard() {
   const [exporting, setExporting] = useState(false);
   const [emailing, setEmailing] = useState(false);
   const sendReport = useServerFn(sendReportPdf);
+  const { can } = useEntitlement();
+  const canEmailReport = can("email_report");
 
   async function generatePdfBlob(): Promise<Blob> {
     if (!blueprint) throw new Error("No blueprint available");
@@ -122,7 +126,13 @@ function blobToBase64(blob: Blob): Promise<string> {
     try {
       const blob = await generatePdfBlob();
       const base64 = await blobToBase64(blob);
-      const result = await sendReport({ data: { pdfBase64: base64, filename: exportFilename(blueprint) } });
+      const result = await sendReport({
+        data: {
+          pdfBase64: base64,
+          filename: exportFilename(blueprint),
+          environment: getStripeEnvironment(),
+        },
+      });
       if (!result.sent) {
         toast.warning(result.reason === "recipient_suppressed" ? "This email is currently suppressed." : "Could not send the email.");
       } else {
@@ -240,14 +250,20 @@ function blobToBase64(blob: Blob): Promise<string> {
               )}
               {exporting ? "Preparing PDF…" : "Download PDF"}
             </Button>
-            <Button variant="ghost" onClick={() => void handleEmailPdf()} disabled={emailing}>
-              {emailing ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden />
-              ) : (
-                <Mail className="size-4" aria-hidden />
-              )}
-              {emailing ? "Sending…" : "Email my report"}
-            </Button>
+            {canEmailReport ? (
+              <Button variant="ghost" onClick={() => void handleEmailPdf()} disabled={emailing}>
+                {emailing ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : (
+                  <Mail className="size-4" aria-hidden />
+                )}
+                {emailing ? "Sending…" : "Email my report"}
+              </Button>
+            ) : (
+              <Button variant="ghost" disabled title="Emailing your report is part of Publisher Blueprint™">
+                <Lock className="size-4" aria-hidden /> Email my report
+              </Button>
+            )}
           </div>
         </div>
       </section>

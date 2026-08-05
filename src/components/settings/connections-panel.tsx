@@ -16,6 +16,9 @@ import {
   listMyConnections,
   selectAirtableBase,
 } from "@/lib/integrations/connections.functions";
+import { getStripeEnvironment } from "@/lib/stripe";
+import { useEntitlement } from "@/lib/commerce/use-entitlement";
+import { LockedFeature } from "@/components/billing/feature-gate";
 
 type Provider = "airtable" | "asana";
 
@@ -38,6 +41,9 @@ const PROVIDER_COPY: Record<Provider, { name: string; help: string; tokenUrl: st
 export function ConnectionsPanel() {
   const queryClient = useQueryClient();
   const [tokens, setTokens] = useState<Record<Provider, string>>({ airtable: "", asana: "" });
+  const { can, isLoading: entitlementLoading } = useEntitlement();
+  const canUseConnectors = can("connector_export");
+  const environment = getStripeEnvironment();
 
   const connections = useQuery({
     queryKey: ["integrations", "connections"],
@@ -49,8 +55,8 @@ export function ConnectionsPanel() {
 
   const bases = useQuery({
     queryKey: ["integrations", "airtable-bases"],
-    queryFn: () => listMyAirtableBases(),
-    enabled: Boolean(connected("airtable")),
+    queryFn: () => listMyAirtableBases({ data: { environment } }),
+    enabled: canUseConnectors && Boolean(connected("airtable")),
   });
 
   function refresh() {
@@ -59,7 +65,7 @@ export function ConnectionsPanel() {
   }
 
   const connect = useMutation({
-    mutationFn: (input: { provider: Provider; token: string }) => connectIntegration({ data: input }),
+    mutationFn: (input: { provider: Provider; token: string }) => connectIntegration({ data: { ...input, environment } }),
     onSuccess: (_result, input) => {
       setTokens((current) => ({ ...current, [input.provider]: "" }));
       toast.success(`${PROVIDER_COPY[input.provider].name} connected.`);
@@ -78,13 +84,23 @@ export function ConnectionsPanel() {
   });
 
   const chooseBase = useMutation({
-    mutationFn: (baseId: string) => selectAirtableBase({ data: { baseId } }),
+    mutationFn: (baseId: string) => selectAirtableBase({ data: { baseId, environment } }),
     onSuccess: () => {
       toast.success("Airtable base saved.");
       refresh();
     },
     onError: (error) => toast.error((error as Error).message),
   });
+
+  if (!entitlementLoading && !canUseConnectors) {
+    return (
+      <LockedFeature
+        feature="connector_export"
+        title="Connect Airtable and Asana"
+        description="Sync your opportunities, 90-day roadmap and KPIs into the tools your team already runs on. Included with Publisher Blueprint™."
+      />
+    );
+  }
 
   return (
     <DashboardCard eyebrow="Integrations" title="Connections">
