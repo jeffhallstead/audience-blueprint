@@ -50,11 +50,17 @@ export const getQualifiedLeads = createServerFn({ method: "POST" })
     await assertAdmin(context as never);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+    const leadTiers: Database["public"]["Enums"]["qualification_tier"][] = [
+      "marketing_qualified",
+      "sales_qualified",
+      "customer",
+    ];
     let request = supabaseAdmin
       .from("customer_qualification")
       .select("*")
-      .in("tier", LEAD_TIERS as unknown as string[])
+      .in("tier", leadTiers)
       .order("total_score", { ascending: false });
+
 
 
     if (data.tier) request = request.eq("tier", data.tier);
