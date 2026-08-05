@@ -74,7 +74,7 @@ export const airtableAdapter: IntegrationAdapter = {
     if (!c.connectionKey) throw new Error("AIRTABLE_API_KEY is not configured");
     if (!c.baseId) throw new Error("AIRTABLE_BASE_ID is not configured");
 
-    const url = `${GATEWAY_URL}/v0/${c.baseId}/${encodeURIComponent(c.tableName)}`;
+    const url = `${GATEWAY_URL}/v0/${c.baseId}/${encodeURIComponent(tableFor(event, c.tableName))}`;
     const response = await fetch(url, {
       method: "POST",
       headers: {
