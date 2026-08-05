@@ -240,3 +240,97 @@ export const dispatchOutboxNow = createServerFn({ method: "POST" })
     return await dispatchOutbox();
   });
 
+
+/** Manually grants a paid tier to an account with no payment. Admin only. */
+export const grantEntitlement = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (data: {
+      userId: string;
+      tier: "blueprint" | "os";
+      environment: "sandbox" | "live";
+      expiresAt?: string | null;
+      reason?: string | null;
+    }) => {
+      if (!data?.userId) throw new Error("userId is required");
+      if (data.tier !== "blueprint" && data.tier !== "os") throw new Error("Invalid tier");
+      return {
+        userId: data.userId,
+        tier: data.tier,
+        environment: data.environment === "live" ? ("live" as const) : ("sandbox" as const),
+        expiresAt: data.expiresAt ? new Date(data.expiresAt).toISOString() : null,
+        reason: data.reason?.trim() || null,
+      };
+    },
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // One active grant per account: retire any prior grant before writing the new one.
+    await supabaseAdmin
+      .from("entitlement_grants")
+      .update({ revoked_at: new Date().toISOString() })
+      .eq("user_id", data.userId)
+      .eq("environment", data.environment)
+      .is("revoked_at", null);
+
+    const { error } = await supabaseAdmin.from("entitlement_grants").insert({
+      user_id: data.userId,
+      tier: data.tier,
+      environment: data.environment,
+      granted_by: context.userId,
+      reason: data.reason,
+      expires_at: data.expiresAt,
+    });
+    if (error) throw new Error(error.message);
+
+    const { emitPlatformEvent } = await import("@/lib/events/emit.server");
+    await emitPlatformEvent({
+      type: "commerce.entitlement_granted",
+      userId: data.userId,
+      environment: data.environment,
+      source: "admin",
+      payload: {
+        tier: data.tier,
+        expiresAt: data.expiresAt,
+        reason: data.reason,
+        grantedBy: context.userId,
+      },
+    });
+
+    return { ok: true as const };
+  });
+
+/** Revokes any active manual grant for an account. Admin only. */
+export const revokeEntitlement = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { userId: string; environment: "sandbox" | "live" }) => {
+    if (!data?.userId) throw new Error("userId is required");
+    return {
+      userId: data.userId,
+      environment: data.environment === "live" ? ("live" as const) : ("sandbox" as const),
+    };
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("entitlement_grants")
+      .update({ revoked_at: new Date().toISOString() })
+      .eq("user_id", data.userId)
+      .eq("environment", data.environment)
+      .is("revoked_at", null);
+    if (error) throw new Error(error.message);
+
+    const { emitPlatformEvent } = await import("@/lib/events/emit.server");
+    await emitPlatformEvent({
+      type: "commerce.entitlement_revoked",
+      userId: data.userId,
+      environment: data.environment,
+      source: "admin",
+      payload: { revokedBy: context.userId },
+    });
+
+    return { ok: true as const };
+  });
