@@ -15,7 +15,11 @@ import {
 } from "@/lib/auth/oauth-diagnostics";
 
 
-const searchSchema = z.object({ mode: z.enum(["signin", "signup"]).optional() });
+const searchSchema = z.object({
+  mode: z.enum(["signin", "signup"]).optional(),
+  /** "test" pre-selects the free Publisher Test™ entry point. */
+  plan: z.string().optional(),
+});
 
 const credentialsSchema = z.object({
   email: z.string().trim().email("Enter a valid work email").max(255),
