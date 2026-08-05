@@ -94,7 +94,13 @@ export const PLANS: Plan[] = [
       "Maturity level",
       "Category score breakdown",
     ],
-    excluded: ["90-day roadmap", "AI strategy documents", "PDF exports"],
+    excluded: [
+      "90-day roadmap",
+      "AI strategy documents",
+      "Full executive PDF",
+      "CSV, Excel and Google Sheets exports",
+      "Airtable and Asana sync",
+    ],
   },
   {
     tier: "blueprint",
