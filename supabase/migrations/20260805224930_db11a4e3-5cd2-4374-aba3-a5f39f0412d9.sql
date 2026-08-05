@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX IF NOT EXISTS purchases_stripe_session_id_key ON public.purchases (stripe_session_id) WHERE stripe_session_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS subscriptions_stripe_subscription_id_key ON public.subscriptions (stripe_subscription_id) WHERE stripe_subscription_id IS NOT NULL;
