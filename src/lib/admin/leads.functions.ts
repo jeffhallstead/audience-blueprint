@@ -13,7 +13,6 @@ import type { Database } from "@/integrations/supabase/types";
 
 type LeadStatus = Database["public"]["Enums"]["lead_outreach_status"];
 
-const LEAD_TIERS = ["marketing_qualified", "sales_qualified", "customer"] as const;
 
 const STATUS_LABEL: Record<LeadStatus, string> = {
   new: "New",
