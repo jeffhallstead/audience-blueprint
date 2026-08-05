@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Download, Loader2, RefreshCw } from "lucide-react";
+import { ArrowRight, Download, Loader2, Mail, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/page-header";
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
@@ -27,6 +27,9 @@ import { LockedFeature } from "@/components/billing/feature-gate";
 import { trackBlueprintEvent } from "@/lib/blueprint/analytics";
 import { useSavedRecommendations } from "@/lib/copilot/queries";
 import { exportFilename } from "@/lib/export/rows";
+import { buildBlueprintPdf } from "@/lib/export/pdf";
+import { sendReportPdf } from "@/lib/email/report.functions";
+import { useServerFn } from "@tanstack/react-start";
 import { trackRecommendationExport } from "@/lib/analytics/recommendation-metadata";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -56,16 +59,31 @@ function Dashboard() {
   const { data: blueprint, isLoading, locked } = useBlueprint();
   const { data: saved } = useSavedRecommendations();
   const [exporting, setExporting] = useState(false);
+  const [emailing, setEmailing] = useState(false);
+  const sendReport = useServerFn(sendReportPdf);
+
+  async function generatePdfBlob(): Promise<Blob> {
+    if (!blueprint) throw new Error("No blueprint available");
+    const blob = await buildBlueprintPdf(blueprint, {
+      saved: locked ? null : (saved ?? null),
+      locked,
+    });
+    return blob;
+  }
 
   async function handleDownloadPdf() {
     if (!blueprint) return;
     setExporting(true);
     try {
-      const { downloadBlueprintPdf } = await import("@/lib/export/pdf");
-      await downloadBlueprintPdf(blueprint, exportFilename(blueprint), {
-        saved: locked ? null : (saved ?? null),
-        locked,
-      });
+      const blob = await generatePdfBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${exportFilename(blueprint)}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
       toast.success("PDF downloaded.");
       // Logged through the same export analytics path as CSV/Excel. The free
       // report has no opportunities, so it records the report itself.
@@ -79,6 +97,47 @@ function Dashboard() {
       toast.error(error instanceof Error ? error.message : "Could not generate the PDF.");
     } finally {
       setExporting(false);
+    }
+  }
+
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result;
+      if (typeof result === "string") {
+        resolve(result);
+      } else {
+        reject(new Error("Could not read PDF as base64."));
+      }
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+  async function handleEmailPdf() {
+    if (!blueprint) return;
+    setEmailing(true);
+    try {
+      const blob = await generatePdfBlob();
+      const base64 = await blobToBase64(blob);
+      const result = await sendReport({ data: { pdfBase64: base64, filename: exportFilename(blueprint) } });
+      if (!result.sent) {
+        toast.warning(result.reason === "recipient_suppressed" ? "This email is currently suppressed." : "Could not send the email.");
+      } else {
+        toast.success("Report emailed to your account.");
+      }
+      void trackRecommendationExport(
+        locked
+          ? ["Publisher Index summary"]
+          : blueprint.opportunities.map((item) => item.title),
+        "email-pdf",
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not email the PDF.");
+    } finally {
+      setEmailing(false);
     }
   }
 
@@ -180,6 +239,14 @@ function Dashboard() {
                 <Download className="size-4" aria-hidden />
               )}
               {exporting ? "Preparing PDF…" : "Download PDF"}
+            </Button>
+            <Button variant="ghost" onClick={() => void handleEmailPdf()} disabled={emailing}>
+              {emailing ? (
+                <Loader2 className="size-4 animate-spin" aria-hidden />
+              ) : (
+                <Mail className="size-4" aria-hidden />
+              )}
+              {emailing ? "Sending…" : "Email my report"}
             </Button>
           </div>
         </div>
