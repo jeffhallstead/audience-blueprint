@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal/legal-page";
-import { SELLER, PADDLE_BUYER_TERMS } from "@/lib/legal";
+import { SELLER, PROCESSOR } from "@/lib/legal";
 
 export const Route = createFileRoute("/terms")({
   component: TermsPage,
@@ -78,13 +78,15 @@ function TermsPage() {
 
       <h2>Payment and subscriptions</h2>
       <p>
-        Our order process is conducted by our online reseller Paddle.com. Paddle.com is the Merchant
-        of Record for all our orders. Paddle provides all customer service inquiries and handles
-        returns. Payment, billing, tax, cancellation and refund mechanics are governed by{" "}
-        <a href={PADDLE_BUYER_TERMS} target="_blank" rel="noreferrer">
-          Paddle&rsquo;s Buyer Terms
-        </a>
-        . Publisher OS™ renews monthly until cancelled; cancelling stops future renewals and access
+        Orders are sold by {SELLER.legalName} and processed by {PROCESSOR.name}, our payment
+        provider, which handles payment, tax calculation and collection, invoicing and dispute
+        handling on our behalf. Card details are entered directly with {PROCESSOR.name} and are
+        never stored on our systems; their{" "}
+        <a href={PROCESSOR.consumerTerms} target="_blank" rel="noreferrer">
+          consumer terms
+        </a>{" "}
+        apply to the payment itself. Billing questions, cancellations and refunds are handled by us
+        at <a href={`mailto:${SELLER.supportEmail}`}>{SELLER.supportEmail}</a>. Publisher OS™ renews monthly until cancelled; cancelling stops future renewals and access
         continues to the end of the paid period. The Publisher Blueprint™ purchase is one-time and
         includes one month of Publisher OS™ access.
       </p>

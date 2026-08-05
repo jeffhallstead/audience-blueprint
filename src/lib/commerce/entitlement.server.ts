@@ -1,11 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { FEATURE_MINIMUM, TIER_RANK, type Feature, type Tier } from "@/lib/commerce/plans";
-import type { PaddleEnv } from "@/lib/paddle.server";
+import type { StripeEnv } from "@/lib/stripe.server";
 
 type Client = SupabaseClient<Database>;
 
-export function isPaddleEnv(value: unknown): PaddleEnv {
+export function isStripeEnv(value: unknown): StripeEnv {
   return value === "live" ? "live" : "sandbox";
 }
 
@@ -31,7 +31,7 @@ export type ResolvedEntitlement = {
 export async function resolveEntitlement(
   supabase: Client,
   userId: string,
-  env: PaddleEnv,
+  env: StripeEnv,
 ): Promise<ResolvedEntitlement> {
   const nowIso = new Date().toISOString();
   const [{ data: subs }, { data: purchaseRows }, { data: grantRows }] = await Promise.all([
@@ -96,7 +96,7 @@ export function tierMeets(tier: Tier, feature: Feature) {
 export async function requireFeature(
   supabase: Client,
   userId: string,
-  env: PaddleEnv,
+  env: StripeEnv,
   feature: Feature,
 ): Promise<Tier> {
   const { tier } = await resolveEntitlement(supabase, userId, env);

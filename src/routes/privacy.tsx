@@ -69,8 +69,12 @@ function PrivacyPage() {
       <h2>Who we share it with</h2>
       <ul>
         <li>
-          <strong>Paddle</strong>, our reseller and Merchant of Record, for the sale of our products,
-          subscription management, payments, tax compliance and invoicing.
+          <strong>Stripe</strong>, our payment provider, for checkout, subscription management,
+          payments, tax compliance and invoicing. See{" "}
+          <a href="https://stripe.com/privacy" target="_blank" rel="noreferrer">
+            Stripe&rsquo;s privacy policy
+          </a>
+          .
         </li>
         <li>
           <strong>Service providers and subprocessors</strong> — hosting and database infrastructure,

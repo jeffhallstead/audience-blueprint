@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { trackEvent } from "@/lib/events/track.functions";
 import type { PlatformEventType } from "@/lib/events/catalog";
 
@@ -34,7 +34,7 @@ export async function trackCommerceEvent(
   try {
     const { data } = await supabase.auth.getUser();
     if (!data.user) return;
-    const environment = getPaddleEnvironment();
+    const environment = getStripeEnvironment();
     await Promise.allSettled([
       supabase.from("customer_events").insert({
         user_id: data.user.id,

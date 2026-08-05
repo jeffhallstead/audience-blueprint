@@ -1,9 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { PaddleEnv } from "@/lib/paddle.server";
+import type { StripeEnv } from "@/lib/stripe.server";
 import type { Tier } from "@/lib/commerce/plans";
 
-const isEnv = (value: unknown): PaddleEnv => (value === "live" ? "live" : "sandbox");
+const isEnv = (value: unknown): StripeEnv => (value === "live" ? "live" : "sandbox");
 
 export type SubscriptionSummary = {
   id: string;
@@ -39,7 +39,7 @@ export type Entitlement = {
 /** Authoritative entitlement read. Never trust a client-supplied tier. */
 export const getEntitlement = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { environment: PaddleEnv }) => ({ environment: isEnv(data.environment) }))
+  .inputValidator((data: { environment: StripeEnv }) => ({ environment: isEnv(data.environment) }))
   .handler(async ({ data, context }): Promise<Entitlement> => {
     const { resolveEntitlement } = await import("@/lib/commerce/entitlement.server");
     const { tier, includedOsUntil, grantedTier, grantExpiresAt, subscriptions, purchases } =
@@ -54,7 +54,7 @@ export const getEntitlement = createServerFn({ method: "GET" })
       grantExpiresAt,
       subscription: latestSub
         ? {
-            id: latestSub.paddle_subscription_id,
+            id: latestSub.stripe_subscription_id ?? latestSub.paddle_subscription_id ?? "",
             status: latestSub.status,
             priceId: latestSub.price_id,
             productId: latestSub.product_id,

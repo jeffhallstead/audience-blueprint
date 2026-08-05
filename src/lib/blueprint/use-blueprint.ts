@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { getBlueprintPayload, type BlueprintPayload } from "./blueprint.functions";
 import type { Blueprint } from "./engine";
 
@@ -13,7 +13,7 @@ export const blueprintQueryKey = ["blueprint", "payload"] as const;
 export function useBlueprint() {
   const query = useQuery<BlueprintPayload>({
     queryKey: blueprintQueryKey,
-    queryFn: () => getBlueprintPayload({ data: { environment: getPaddleEnvironment() } }),
+    queryFn: () => getBlueprintPayload({ data: { environment: getStripeEnvironment() } }),
     staleTime: 60_000,
   });
 

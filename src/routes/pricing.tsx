@@ -6,7 +6,7 @@ import { PricingTable } from "@/components/billing/pricing-table";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { useCheckout } from "@/lib/commerce/use-checkout";
 import { createPortalSession } from "@/lib/commerce/payments.functions";
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { trackCommerceEvent } from "@/lib/commerce/analytics";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/brand/logo";
@@ -35,7 +35,7 @@ export const Route = createFileRoute("/pricing")({
 function PricingPage() {
   const { user, loading: authLoading } = useAuth();
   const { tier, entitlement, isLoading } = useEntitlement({ enabled: !!user });
-  const { openCheckout, loading } = useCheckout();
+  const { openCheckout, loading, checkoutElement } = useCheckout();
 
   useEffect(() => {
     void trackCommerceEvent("pricing_viewed");
@@ -43,7 +43,9 @@ function PricingPage() {
 
   async function manageSubscription() {
     try {
-      const { url } = await createPortalSession({ data: { environment: getPaddleEnvironment() } });
+      const session = await createPortalSession({ data: { environment: getStripeEnvironment() } });
+      if ("error" in session) throw new Error(session.error);
+      const { url } = session;
       if (!url) {
         toast.info("No billing account yet.");
         return;
@@ -109,7 +111,7 @@ function PricingPage() {
       </section>
 
       <p className="text-xs text-muted-foreground">
-        Payments, invoices and refunds are handled by our reseller and merchant of record, Paddle. See our{" "}
+        Payments and invoices are processed securely by Stripe. See our{" "}
         <Link to="/terms" className="underline">
           Terms
         </Link>
@@ -123,6 +125,8 @@ function PricingPage() {
         </Link>
         .
       </p>
+      {checkoutElement}
     </div>
+
   );
 }

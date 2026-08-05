@@ -29,7 +29,7 @@ export function LockedFeature({
 }: LockedFeatureProps) {
   const requiredTier = FEATURE_MINIMUM[feature];
   const plan = planForTier(requiredTier);
-  const { openCheckout, loading } = useCheckout();
+  const { openCheckout, loading, checkoutElement } = useCheckout();
 
   return (
     <section
@@ -70,7 +70,9 @@ export function LockedFeature({
           <span className="text-xs text-muted-foreground">{plan.cadence}</span>
         </div>
       </div>
+      {checkoutElement}
     </section>
+
   );
 }
 
