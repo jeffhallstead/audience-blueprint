@@ -146,3 +146,72 @@ export const retryOutboxEvent = createServerFn({ method: "POST" })
 export const getIsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => ({ isAdmin: await isAdminContext(context as never) }));
+
+/** Health of the CRM pipeline: what's connected, what's queued, what last shipped. */
+export const getIntegrationsStatus = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<IntegrationsStatus> => {
+    await assertAdmin(context as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { configuredProviders } = await import("@/lib/integrations/outbox.server");
+    const { CONTACT_PROVIDERS } = await import("@/lib/integrations/types");
+
+    const [statusRows, lastDelivered, qualified] = await Promise.all([
+      supabaseAdmin.from("integration_outbox").select("status"),
+      supabaseAdmin
+        .from("integration_outbox")
+        .select("processed_at")
+        .eq("status", "delivered")
+        .order("processed_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabaseAdmin
+        .from("customer_qualification")
+        .select("user_id")
+        .in("tier", ["lead", "marketing_qualified", "sales_qualified", "customer"]),
+    ]);
+
+    const counts: Record<string, number> = {};
+    for (const row of statusRows.data ?? []) counts[row.status] = (counts[row.status] ?? 0) + 1;
+
+    return {
+      contactProviders: configuredProviders(CONTACT_PROVIDERS),
+      counts,
+      lastDeliveredAt: lastDelivered.data?.processed_at ?? null,
+      qualifiedLeads: (qualified.data ?? []).length,
+    };
+  });
+
+/** Queues a current-state CRM push for every qualified account. Safe to re-run. */
+export const backfillCrmContacts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<{ queued: number; skipped: number }> => {
+    await assertAdmin(context as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { enqueueContactSnapshot } = await import("@/lib/integrations/crm-sync.server");
+
+    const { data: rows } = await supabaseAdmin
+      .from("customer_qualification")
+      .select("user_id, organization_id")
+      .in("tier", ["lead", "marketing_qualified", "sales_qualified", "customer"]);
+
+    let queued = 0;
+    let skipped = 0;
+    // Sequential: a backfill must not stampede the identity reads or the queue.
+    for (const row of rows ?? []) {
+      const result = await enqueueContactSnapshot(row.user_id, row.organization_id ?? null);
+      if (result.queued) queued += 1;
+      else skipped += 1;
+    }
+    return { queued, skipped };
+  });
+
+/** Runs the outbox dispatcher immediately instead of waiting for the 5-minute schedule. */
+export const dispatchOutboxNow = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context as never);
+    const { dispatchOutbox } = await import("@/lib/integrations/outbox.server");
+    return await dispatchOutbox();
+  });
+
