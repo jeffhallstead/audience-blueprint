@@ -116,7 +116,9 @@ export const PLANS: Plan[] = [
       "Opportunity matrix and gap analysis",
       "90-day strategic roadmap",
       "AI strategy documents",
-      "Executive PDF export",
+      "Executive PDF export, emailed to you",
+      "CSV, Excel and Google Sheets exports",
+      "Airtable and Asana sync",
     ],
   },
 
