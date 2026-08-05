@@ -80,6 +80,7 @@ function PricingPage() {
       <PricingTable
         currentTier={tier}
         loading={loading || isLoading || authLoading}
+        isAuthenticated={!!user}
         hasSubscription={!!entitlement?.subscription}
         includedOsUntil={entitlement?.includedOsUntil ?? null}
         ownsBlueprint={(entitlement?.purchases ?? []).some((purchase) => purchase.productId === "publisher_blueprint")}
