@@ -13,9 +13,11 @@ import {
   Menu,
   LogOut,
   ShieldCheck,
+  LifeBuoy,
 } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { PaymentTestModeBanner } from "@/components/billing/payment-test-mode-banner";
+import { FeedbackWidget } from "@/components/feedback/feedback-widget";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +34,7 @@ const NAV_ITEMS = [
   { to: "/resources", label: "Resources", icon: BookOpen },
   { to: "/pricing", label: "Plans & Billing", icon: CreditCard },
   { to: "/settings", label: "Settings", icon: SettingsIcon },
+  { to: "/help", label: "Help & Support", icon: LifeBuoy },
 ] as const;
 
 function NavList({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
