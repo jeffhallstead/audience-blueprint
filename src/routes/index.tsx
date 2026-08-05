@@ -31,17 +31,17 @@ export const Route = createFileRoute("/")({
 const PILLARS = [
   {
     icon: Layers,
-    title: "Seven-dimension diagnostic",
-    body: "Company, audience, content, distribution, operations, goals, and constraints assessed in one structured pass.",
+    title: "Know exactly where your content strategy is strong and where it's leaking.",
+    body: "Seven dimensions — company, audience, content, distribution, operations, goals, and constraints — assessed in one structured pass.",
   },
   {
     icon: LineChart,
-    title: "Publisher maturity score",
-    body: "A defensible readiness score and maturity level you can present to the executive committee.",
+    title: "A score that tells you where you stand — and how far you are from where you need to be.",
+    body: "Your Publisher Index™ score places you on a five-tier maturity scale and identifies the highest-leverage gap to close first.",
   },
   {
     icon: ShieldCheck,
-    title: "Sequenced 90-day roadmap",
+    title: "A 90-day roadmap you can act on, not file away.",
     body: "Named owners, month-by-month initiatives, and the risks worth escalating now.",
   },
 ];
