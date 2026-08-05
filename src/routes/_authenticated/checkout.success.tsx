@@ -76,7 +76,7 @@ function CheckoutSuccessPage() {
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
-          A receipt has been emailed to you by Paddle, our merchant of record. Manage billing any
+          A receipt has been emailed to you by Stripe, our payment provider. Manage billing any
           time from Settings.
         </p>
       </div>

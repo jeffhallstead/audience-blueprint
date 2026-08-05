@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal/legal-page";
-import { SELLER, PADDLE_REFUND_POLICY, PADDLE_SUPPORT } from "@/lib/legal";
+import { SELLER, PROCESSOR } from "@/lib/legal";
 
 export const Route = createFileRoute("/refund-policy")({
   component: RefundPolicyPage,
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/refund-policy")({
       {
         name: "description",
         content:
-          "Publisher Blueprint™ offers a 30-day money-back guarantee. Refunds are processed by Paddle, our merchant of record.",
+          "Publisher Blueprint™ offers a 30-day money-back guarantee. Refunds are issued by Momentive Ventures LLC through our payment provider.",
       },
       { property: "og:title", content: "Refund Policy | Publisher Blueprint™" },
       {
@@ -47,12 +47,9 @@ function RefundPolicyPage() {
 
       <h2>How to request a refund</h2>
       <p>
-        Refunds are processed by our reseller and merchant of record, Paddle. Request one at{" "}
-        <a href={PADDLE_SUPPORT} target="_blank" rel="noreferrer">
-          paddle.net
-        </a>{" "}
-        using the email address on your receipt, or contact us at{" "}
-        <a href={`mailto:${SELLER.supportEmail}`}>{SELLER.supportEmail}</a> and we will arrange it.
+        Email us at <a href={`mailto:${SELLER.supportEmail}`}>{SELLER.supportEmail}</a> from the
+        address on your receipt, or open Manage billing in your account and reply to any invoice.
+        We issue approved refunds through {PROCESSOR.name}, our payment provider.
         Approved refunds are returned to the original payment method, typically within 5–10 business
         days depending on your bank.
       </p>
@@ -63,13 +60,6 @@ function RefundPolicyPage() {
         Publisher Test™ tier. Your assessment results remain available.
       </p>
 
-      <p>
-        Paddle&rsquo;s own{" "}
-        <a href={PADDLE_REFUND_POLICY} target="_blank" rel="noreferrer">
-          refund policy
-        </a>{" "}
-        also applies to every order.
-      </p>
     </LegalPage>
   );
 }

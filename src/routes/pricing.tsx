@@ -111,7 +111,7 @@ function PricingPage() {
       </section>
 
       <p className="text-xs text-muted-foreground">
-        Payments, invoices and refunds are handled by our reseller and merchant of record, Paddle. See our{" "}
+        Payments and invoices are processed securely by Stripe. See our{" "}
         <Link to="/terms" className="underline">
           Terms
         </Link>

@@ -1,6 +1,6 @@
 /**
  * Commercial plan catalog — the single source of truth for tiers, pricing copy,
- * and feature entitlements. Price amounts here must match the Paddle catalog.
+ * and feature entitlements. Price amounts here must match the Stripe catalog.
  */
 
 export type Tier = "free" | "blueprint" | "os";
@@ -47,13 +47,13 @@ export const PRICE_IDS = {
   os: "publisher_os_monthly",
 } as const;
 
-/** Paddle product external_id → tier. Used by the webhook to map purchases. */
-/** Paddle price external_id → product external_id. Used by the webhook. */
+/** Stripe price lookup_key → catalog product id. Used by the webhook. */
 export const PRICE_PRODUCT: Record<string, string> = {
   [PRICE_IDS.blueprint]: "publisher_blueprint",
   [PRICE_IDS.os]: "publisher_os",
 };
 
+/** Catalog product id → tier granted. */
 export const PRODUCT_TIER: Record<string, Exclude<Tier, "free">> = {
   publisher_blueprint: "blueprint",
   publisher_os: "os",

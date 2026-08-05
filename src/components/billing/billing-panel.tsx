@@ -117,7 +117,7 @@ export function BillingPanel() {
       <DashboardCard
         eyebrow="Billing"
         title="Invoices"
-        footer="Invoices and refunds are handled by Paddle, our merchant of record."
+        footer="Payments and invoices are processed securely by Stripe."
       >
         {invoicesQuery.isLoading ? (
           <p className="text-sm text-muted-foreground">Loading invoices…</p>
