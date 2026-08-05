@@ -181,11 +181,17 @@ function AdminConsole() {
           <TabsTrigger value="qualification">Qualification</TabsTrigger>
           <TabsTrigger value="maturity">Maturity mix</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
+          <TabsTrigger value="feedback">Feedback</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="feedback" className="mt-6">
+          <FeedbackPanel />
+        </TabsContent>
 
         <TabsContent value="leads" className="mt-6">
           <LeadsPanel />
         </TabsContent>
+
 
         <TabsContent value="organizations" className="mt-6">
           <OrganizationsPanel />
