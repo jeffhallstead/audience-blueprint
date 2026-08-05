@@ -66,6 +66,9 @@ export const PLATFORM_EVENTS = {
   // Lifecycle & qualification (emitted from E3/E4)
   "lifecycle.stage_changed": 1,
   "qualification.scored": 1,
+
+  // In-app feedback
+  "feedback.submitted": 1,
 } as const;
 
 export type PlatformEventType = keyof typeof PLATFORM_EVENTS;
