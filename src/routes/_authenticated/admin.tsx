@@ -150,6 +150,7 @@ function AdminConsole() {
       <Tabs defaultValue="users">
         <TabsList>
           <TabsTrigger value="users">Accounts</TabsTrigger>
+          <TabsTrigger value="leads">Leads</TabsTrigger>
           <TabsTrigger value="organizations">Organizations</TabsTrigger>
           <TabsTrigger value="events">Events</TabsTrigger>
           <TabsTrigger value="lifecycle">Lifecycle</TabsTrigger>
@@ -158,9 +159,14 @@ function AdminConsole() {
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="leads" className="mt-6">
+          <LeadsPanel />
+        </TabsContent>
+
         <TabsContent value="organizations" className="mt-6">
           <OrganizationsPanel />
         </TabsContent>
+
 
         <TabsContent value="events" className="mt-6">
           <EventsPanel />
