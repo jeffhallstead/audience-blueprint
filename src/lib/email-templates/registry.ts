@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react'
+import { template as reportDeliveredTemplate } from './report-delivered'
 import { template as welcomeTemplate } from './welcome'
 
 export interface TemplateEntry {
