@@ -53,8 +53,9 @@ export const getQualifiedLeads = createServerFn({ method: "POST" })
     let request = supabaseAdmin
       .from("customer_qualification")
       .select("*")
-      .in("tier", LEAD_TIERS)
+      .in("tier", LEAD_TIERS as unknown as string[])
       .order("total_score", { ascending: false });
+
 
     if (data.tier) request = request.eq("tier", data.tier);
     const { data: qualifications } = await request;
