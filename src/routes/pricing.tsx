@@ -67,12 +67,9 @@ function PricingPage() {
 
       <header className="max-w-2xl space-y-3">
         <p className="text-eyebrow">Plans</p>
-        <h1 className="text-display text-3xl sm:text-4xl">
-          Turn your Publisher Index™ into an operating plan
-        </h1>
+        <h1 className="text-display text-3xl sm:text-4xl">Start with a score. Leave with a plan.</h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Start free with the Publisher Index™ diagnostic. Upgrade when you want the full blueprint, the 90-day
-          roadmap, and Publisher Copilot™ working alongside your team.
+          The Publisher Test is free. The Blueprint gives you the full roadmap.
         </p>
         <p className="text-xs text-muted-foreground">by Jeff Hallstead</p>
       </header>
