@@ -29,6 +29,9 @@ import {
   pushExportRows,
   saveExportTarget,
 } from "@/lib/export/export.functions";
+import { getStripeEnvironment } from "@/lib/stripe";
+import { useEntitlement } from "@/lib/commerce/use-entitlement";
+import { LockedFeature } from "@/components/billing/feature-gate";
 
 /**
  * One export surface for every destination. File downloads happen in the
@@ -49,11 +52,15 @@ export function ExportMenu({
 
   const queryClient = useQueryClient();
   const { data: saved } = useSavedRecommendations();
+  const { can } = useEntitlement();
+  const canExportFiles = can("file_export");
+  const canUseConnectors = can("connector_export");
+  const environment = getStripeEnvironment();
 
   const destinations = useQuery({
     queryKey: ["export", "destinations"],
-    queryFn: () => getExportDestinations(),
-    enabled: open,
+    queryFn: () => getExportDestinations({ data: { environment } }),
+    enabled: open && canUseConnectors,
   });
 
   const asanaAvailable = destinations.data?.available.includes("asana") ?? false;
@@ -61,13 +68,13 @@ export function ExportMenu({
 
   const asanaProjects = useQuery({
     queryKey: ["export", "asana-projects"],
-    queryFn: () => listExportAsanaProjects(),
-    enabled: open && asanaAvailable,
+    queryFn: () => listExportAsanaProjects({ data: { environment } }),
+    enabled: open && asanaAvailable && canUseConnectors,
   });
 
   const push = useMutation({
     mutationFn: (provider: "airtable_records" | "asana") =>
-      pushExportRows({ data: { provider, rows } }),
+      pushExportRows({ data: { provider, rows, environment } }),
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["export", "destinations"] });
       toast.success(
@@ -80,11 +87,13 @@ export function ExportMenu({
   });
 
   const saveTarget = useMutation({
-    mutationFn: (input: Parameters<typeof saveExportTarget>[0]["data"]) => saveExportTarget({ data: input }),
+    mutationFn: (input: Parameters<typeof saveExportTarget>[0]["data"]) => saveExportTarget({ data: { ...input, environment } }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["export", "destinations"] }),
   });
 
-  const rows = buildExportRows({ blueprint, saved: saved ?? null }, scopes);
+  const rows = buildExportRows({ blueprint, saved: saved ?? null }, scopes, {
+    locked: !canExportFiles,
+  });
   const stem = exportFilename(blueprint);
 
   function toggleScope(scope: ExportScope, checked: boolean) {
@@ -175,33 +184,50 @@ export function ExportMenu({
 
         <Separator />
 
-        <div className="space-y-3">
-          <p className="text-eyebrow">Download</p>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void run("csv")}>
-              <Table2 className="size-4" aria-hidden /> CSV
-            </Button>
-            <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void run("xlsx")}>
-              {busy === "xlsx" ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden />
-              ) : (
-                <FileSpreadsheet className="size-4" aria-hidden />
-              )}{" "}
-              Excel
-            </Button>
-            <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void run("clipboard")}>
-              <ClipboardCopy className="size-4" aria-hidden /> Copy for Google Sheets
-            </Button>
+        {canExportFiles ? (
+          <div className="space-y-3">
+            <p className="text-eyebrow">Download</p>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void run("csv")}>
+                <Table2 className="size-4" aria-hidden /> CSV
+              </Button>
+              <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void run("xlsx")}>
+                {busy === "xlsx" ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : (
+                  <FileSpreadsheet className="size-4" aria-hidden />
+                )}{" "}
+                Excel
+              </Button>
+              <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void run("clipboard")}>
+                <ClipboardCopy className="size-4" aria-hidden /> Copy for Google Sheets
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              For Google Sheets: copy, then paste into a blank sheet — or import the CSV.
+            </p>
           </div>
-          <p className="text-xs text-muted-foreground">
-            For Google Sheets: copy, then paste into a blank sheet — or import the CSV.
-          </p>
-        </div>
+        ) : (
+          <LockedFeature
+            feature="file_export"
+            title="Unlock exports"
+            description="CSV, Excel and Google Sheets exports of your opportunities, 90-day roadmap and KPIs come with Publisher Blueprint™."
+          />
+        )}
+
 
         <Separator />
 
+        {!canUseConnectors ? (
+          <LockedFeature
+            feature="connector_export"
+            title="Unlock Airtable and Asana sync"
+            description="Push every opportunity, roadmap activity and KPI straight into your tracker. Included with Publisher Blueprint™."
+          />
+        ) : (
         <div className="space-y-4">
           <p className="text-eyebrow">Send to a tracker</p>
+
 
           <div className="space-y-2">
             <Label htmlFor="airtable-table" className="text-sm">
@@ -259,6 +285,7 @@ export function ExportMenu({
             </p>
           </div>
         </div>
+        )}
 
         <DialogFooter>
           <Button variant="ghost" onClick={() => setOpen(false)}>

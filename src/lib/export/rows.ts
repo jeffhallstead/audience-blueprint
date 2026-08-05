@@ -81,10 +81,14 @@ export interface ExportSources {
 export function buildExportRows(
   sources: ExportSources,
   scopes: ExportScope[] = ALL_SCOPES,
+  options: { locked?: boolean } = {},
 ): ExportRow[] {
   const { blueprint, saved } = sources;
   const rows: ExportRow[] = [];
-  const wants = (scope: ExportScope) => scopes.includes(scope);
+  // Free accounts can only ever export their own saved actions — paid plan
+  // content (opportunities, roadmap, KPIs) never leaves the app unpurchased.
+  const wants = (scope: ExportScope) =>
+    scopes.includes(scope) && (!options.locked || scope === "saved");
 
   if (wants("saved")) {
     for (const item of saved ?? []) {

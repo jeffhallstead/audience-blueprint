@@ -7,6 +7,12 @@ import { RECORD_PROVIDERS, type IntegrationProvider } from "@/lib/integrations/t
 
 const MAX_ROWS = 500;
 
+type PaymentEnv = "sandbox" | "live";
+
+function assertEnv(value: unknown): PaymentEnv {
+  return value === "live" ? "live" : "sandbox";
+}
+
 function assertRecordProvider(value: unknown): IntegrationProvider {
   if (typeof value !== "string" || !RECORD_PROVIDERS.includes(value as IntegrationProvider)) {
     throw new Error("Unsupported export destination");
@@ -31,7 +37,12 @@ function sanitizeRows(input: unknown): ExportRow[] {
 /** Which record destinations this user has connected. */
 export const getExportDestinations = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { environment?: string } | undefined) => ({
+    environment: assertEnv(input?.environment),
+  }))
+  .handler(async ({ data, context }) => {
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(context.supabase, context.userId, data.environment, "connector_export");
     const { listUserConnections } = await import("@/lib/integrations/credentials.server");
     const connections = await listUserConnections(context.userId);
 
@@ -41,7 +52,7 @@ export const getExportDestinations = createServerFn({ method: "GET" })
     }
     if (connections.some((c) => c.provider === "asana")) available.push("asana");
 
-    const { data } = await context.supabase
+    const { data: targets } = await context.supabase
       .from("export_targets")
       .select("provider, airtable_table, asana_project_id, asana_project_name, last_exported_at")
       .eq("user_id", context.userId);
@@ -49,7 +60,7 @@ export const getExportDestinations = createServerFn({ method: "GET" })
     return {
       available,
       connections,
-      targets: data ?? [],
+      targets: targets ?? [],
     };
   });
 
@@ -58,11 +69,13 @@ export const saveExportTarget = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
     (input: {
+      environment?: string;
       provider: string;
       airtableTable?: string | null;
       asanaProjectId?: string | null;
       asanaProjectName?: string | null;
     }) => ({
+      environment: assertEnv(input?.environment),
       provider: assertRecordProvider(input?.provider),
       airtableTable: input?.airtableTable?.slice(0, 200) ?? null,
       asanaProjectId: input?.asanaProjectId?.slice(0, 100) ?? null,
@@ -70,6 +83,8 @@ export const saveExportTarget = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data, context }) => {
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(context.supabase, context.userId, data.environment, "connector_export");
     const { error } = await context.supabase.from("export_targets").upsert(
       {
         user_id: context.userId,
@@ -87,7 +102,12 @@ export const saveExportTarget = createServerFn({ method: "POST" })
 /** Asana projects this user's connected account can write to. */
 export const listExportAsanaProjects = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { environment?: string } | undefined) => ({
+    environment: assertEnv(input?.environment),
+  }))
+  .handler(async ({ data, context }) => {
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(context.supabase, context.userId, data.environment, "connector_export");
     const { getUserCredential } = await import("@/lib/integrations/credentials.server");
     const credential = await getUserCredential(context.userId, "asana");
     if (!credential?.token) return { connected: false as const, projects: [] };
@@ -107,11 +127,14 @@ export const listExportAsanaProjects = createServerFn({ method: "GET" })
  */
 export const pushExportRows = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { provider: string; rows: unknown }) => ({
+  .inputValidator((input: { provider: string; rows: unknown; environment?: string }) => ({
+    environment: assertEnv(input?.environment),
     provider: assertRecordProvider(input?.provider),
     rows: sanitizeRows(input?.rows),
   }))
   .handler(async ({ data, context }) => {
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(context.supabase, context.userId, data.environment, "connector_export");
     const { getAdapter } = await import("@/lib/integrations/outbox.server");
     const adapter = getAdapter(data.provider);
     const ready = adapter

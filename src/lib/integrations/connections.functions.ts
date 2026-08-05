@@ -12,6 +12,12 @@ function assertProvider(value: unknown): Provider {
   return value as Provider;
 }
 
+type PaymentEnv = "sandbox" | "live";
+
+function assertEnv(value: unknown): PaymentEnv {
+  return value === "live" ? "live" : "sandbox";
+}
+
 function cleanToken(value: unknown): string {
   const token = typeof value === "string" ? value.trim() : "";
   if (token.length < 10 || token.length > 500) throw new Error("That token doesn't look right.");
@@ -29,11 +35,14 @@ export const listMyConnections = createServerFn({ method: "GET" })
 /** Saves a personal access token after verifying it against the provider. */
 export const connectIntegration = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { provider: string; token: string }) => ({
+  .inputValidator((input: { provider: string; token: string; environment?: string }) => ({
+    environment: assertEnv(input?.environment),
     provider: assertProvider(input?.provider),
     token: cleanToken(input?.token),
   }))
   .handler(async ({ data, context }) => {
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(context.supabase, context.userId, data.environment, "connector_export");
     const { saveUserCredential } = await import("@/lib/integrations/credentials.server");
 
     let label: string;
@@ -70,7 +79,12 @@ export const disconnectIntegration = createServerFn({ method: "POST" })
 /** Airtable bases the user's token can write to. */
 export const listMyAirtableBases = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { environment?: string } | undefined) => ({
+    environment: assertEnv(input?.environment),
+  }))
+  .handler(async ({ data, context }) => {
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(context.supabase, context.userId, data.environment, "connector_export");
     const { getUserCredential } = await import("@/lib/integrations/credentials.server");
     const credential = await getUserCredential(context.userId, "airtable");
     if (!credential?.token) return { connected: false as const, bases: [], selectedBaseId: null };
@@ -90,11 +104,14 @@ export const listMyAirtableBases = createServerFn({ method: "GET" })
 /** Stores which Airtable base this user exports into. */
 export const selectAirtableBase = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { baseId: string }) => ({
+  .inputValidator((input: { baseId: string; environment?: string }) => ({
+    environment: assertEnv(input?.environment),
     baseId: String(input?.baseId ?? "").trim().slice(0, 100),
   }))
   .handler(async ({ data, context }) => {
     if (!data.baseId) throw new Error("Choose a base");
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(context.supabase, context.userId, data.environment, "connector_export");
     const { saveUserCredential } = await import("@/lib/integrations/credentials.server");
     await saveUserCredential(context.userId, "airtable", { airtableBaseId: data.baseId });
     return { saved: true as const };

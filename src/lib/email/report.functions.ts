@@ -8,6 +8,7 @@ const SIGNED_URL_EXPIRY_SECONDS = 7 * 24 * 60 * 60; // 7 days
 export interface SendReportPdfInput {
   pdfBase64: string;
   filename: string;
+  environment?: "sandbox" | "live";
 }
 
 export const sendReportPdf = createServerFn({ method: "POST" })
@@ -19,9 +20,11 @@ export const sendReportPdf = createServerFn({ method: "POST" })
     if (!input?.filename || typeof input.filename !== "string") {
       throw new Error("Filename is required");
     }
-    return input;
+    return { ...input, environment: input.environment === "live" ? ("live" as const) : ("sandbox" as const) };
   })
   .handler(async ({ data, context }) => {
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(context.supabase, context.userId, data.environment, "email_report");
     const userId = context.userId;
     const email = (context.claims.email as string | undefined) ?? null;
     if (!email) {

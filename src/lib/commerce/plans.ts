@@ -18,6 +18,9 @@ export type Feature =
   | "ai_chat"
   | "ai_chat_unlimited"
   | "pdf_export"
+  | "file_export"
+  | "email_report"
+  | "connector_export"
   | "progress_tracking"
   | "blueprint_history"
   | "reassessment";
@@ -32,11 +35,16 @@ export const FEATURE_MINIMUM: Record<Feature, Tier> = {
   ai_documents: "blueprint",
   ai_chat: "blueprint",
   pdf_export: "blueprint",
+  file_export: "blueprint",
+  email_report: "blueprint",
+  // Moves to "os" when Publisher OS™ launches.
+  connector_export: "blueprint",
   ai_chat_unlimited: "os",
   progress_tracking: "os",
   blueprint_history: "os",
   reassessment: "os",
 };
+
 
 export function tierAllows(tier: Tier, feature: Feature): boolean {
   return TIER_RANK[tier] >= TIER_RANK[FEATURE_MINIMUM[feature]];
@@ -86,7 +94,13 @@ export const PLANS: Plan[] = [
       "Maturity level",
       "Category score breakdown",
     ],
-    excluded: ["90-day roadmap", "AI strategy documents", "PDF exports"],
+    excluded: [
+      "90-day roadmap",
+      "AI strategy documents",
+      "Full executive PDF",
+      "CSV, Excel and Google Sheets exports",
+      "Airtable and Asana sync",
+    ],
   },
   {
     tier: "blueprint",
@@ -102,7 +116,9 @@ export const PLANS: Plan[] = [
       "Opportunity matrix and gap analysis",
       "90-day strategic roadmap",
       "AI strategy documents",
-      "Executive PDF export",
+      "Executive PDF export, emailed to you",
+      "CSV, Excel and Google Sheets exports",
+      "Airtable and Asana sync",
     ],
   },
 
