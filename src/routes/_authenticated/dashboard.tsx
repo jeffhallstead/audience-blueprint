@@ -59,6 +59,17 @@ function Dashboard() {
   const { data: blueprint, isLoading, locked } = useBlueprint();
   const { data: saved } = useSavedRecommendations();
   const [exporting, setExporting] = useState(false);
+  const [emailing, setEmailing] = useState(false);
+  const sendReport = useServerFn(sendReportPdf);
+
+  async function generatePdfBlob(): Promise<Blob> {
+    if (!blueprint) throw new Error("No blueprint available");
+    const blob = await buildBlueprintPdf(blueprint, {
+      saved: locked ? null : (saved ?? null),
+      locked,
+    });
+    return blob;
+  }
 
   async function handleDownloadPdf() {
     if (!blueprint) return;
@@ -85,9 +96,33 @@ function Dashboard() {
     }
   }
 
-  useEffect(() => {
-    if (blueprint) void trackBlueprintEvent("dashboard_viewed", { overall: blueprint.overall });
-  }, [blueprint]);
+  async function handleEmailPdf() {
+    if (!blueprint) return;
+    setEmailing(true);
+    try {
+      const blob = await generatePdfBlob();
+      const base64 = await blobToBase64(blob);
+      const result = await sendReport({ data: { pdfBase64: base64, filename: exportFilename(blueprint) } });
+      if (!result.sent) {
+        toast.warning(result.reason === "recipient_suppressed" ? "This email is currently suppressed." : "Could not send the email.");
+      } else {
+        toast.success("Report emailed to your account.");
+      }
+      void trackRecommendationExport(
+        locked
+          ? ["Publisher Index summary"]
+          : blueprint.opportunities.map((item) => item.title),
+        "email-pdf",
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not email the PDF.");
+    } finally {
+      setEmailing(false);
+    }
+  }
+
+  return null;
+}
 
   if (isLoading) {
     return (
