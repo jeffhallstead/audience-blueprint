@@ -162,7 +162,7 @@ function Landing() {
         <section className="mx-auto max-w-6xl px-6 py-24">
           <div className="surface-panel flex flex-col items-start justify-between gap-6 p-10 sm:flex-row sm:items-center">
             <div className="max-w-xl space-y-2">
-              <h2 className="text-display text-3xl">Your blueprint takes one sitting.</h2>
+              <h2 className="text-display text-3xl">Start with the free Publisher Test.</h2>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 Answer seven sections and receive a scored executive dashboard, prioritized recommendations, and a
                 sequenced 90-day roadmap.
