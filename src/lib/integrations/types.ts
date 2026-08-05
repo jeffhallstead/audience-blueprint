@@ -13,7 +13,9 @@ export type IntegrationEventName =
   // Derived-state pushes, mapped from the canonical platform_events stream.
   | "lifecycle.stage_changed"
   | "qualification.tier_changed"
-  | "organization.updated";
+  | "organization.updated"
+  // In-app feedback, routed to a dedicated Airtable table.
+  | "feedback.submitted";
 
 
 /** Normalized contact/event record every adapter receives. */
