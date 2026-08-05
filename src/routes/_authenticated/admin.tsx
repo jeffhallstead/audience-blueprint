@@ -9,8 +9,7 @@ import { LifecyclePanel } from "@/components/admin/lifecycle-panel";
 import { QualificationPanel } from "@/components/admin/qualification-panel";
 import { OrganizationsPanel } from "@/components/admin/organizations-panel";
 import { EventsPanel } from "@/components/admin/events-panel";
-
-
+import { LeadsPanel } from "@/components/admin/leads-panel";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,9 +30,16 @@ export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
       { title: "Admin Console | Publisher Blueprint" },
-      { name: "description", content: "Internal operations console for Publisher Blueprint: users, assessments, revenue, and integration health." },
+      {
+        name: "description",
+        content:
+          "Internal operations console for Publisher Blueprint: users, assessments, revenue, and integration health.",
+      },
       { property: "og:title", content: "Admin Console | Publisher Blueprint" },
-      { property: "og:description", content: "Internal operations console for Publisher Blueprint." },
+      {
+        property: "og:description",
+        content: "Internal operations console for Publisher Blueprint.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, nofollow" },
@@ -43,7 +49,11 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 const currency = (cents: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(cents / 100);
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(cents / 100);
 
 const shortDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
@@ -60,7 +70,11 @@ function Metric({ label, value, hint }: { label: string; value: string; hint?: s
   );
 }
 
-const TIER_LABEL: Record<string, string> = { free: "Free", blueprint: "Blueprint", os: "Publisher OS" };
+const TIER_LABEL: Record<string, string> = {
+  free: "Free",
+  blueprint: "Blueprint",
+  os: "Publisher OS",
+};
 
 function AdminConsole() {
   const fetchOverview = useServerFn(getAdminOverview);
@@ -126,18 +140,27 @@ function AdminConsole() {
         <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Internal</p>
         <h1 className="text-3xl font-semibold tracking-tight">Admin Console</h1>
         <p className="text-sm text-muted-foreground">
-          Operations snapshot across accounts, the Publisher Index™, commerce, and integration health.
+          Operations snapshot across accounts, the Publisher Index™, commerce, and integration
+          health.
         </p>
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Metric label="Accounts" value={String(m.users)} hint={`${m.newUsers7d} new in last 7 days`} />
+        <Metric
+          label="Accounts"
+          value={String(m.users)}
+          hint={`${m.newUsers7d} new in last 7 days`}
+        />
         <Metric
           label="Assessments"
           value={`${m.assessmentsCompleted}/${m.assessmentsStarted}`}
           hint="Completed / started"
         />
-        <Metric label="Avg Publisher Index" value={m.avgIndexScore === null ? "—" : String(m.avgIndexScore)} hint="Latest score per account" />
+        <Metric
+          label="Avg Publisher Index"
+          value={m.avgIndexScore === null ? "—" : String(m.avgIndexScore)}
+          hint="Latest score per account"
+        />
         <Metric label="Revenue" value={currency(m.revenueCents)} hint="Completed purchases" />
         <Metric label="Blueprint customers" value={String(m.blueprintCustomers)} />
         <Metric label="Active OS subscriptions" value={String(m.activeSubscriptions)} />
@@ -148,6 +171,7 @@ function AdminConsole() {
       <Tabs defaultValue="users">
         <TabsList>
           <TabsTrigger value="users">Accounts</TabsTrigger>
+          <TabsTrigger value="leads">Leads</TabsTrigger>
           <TabsTrigger value="organizations">Organizations</TabsTrigger>
           <TabsTrigger value="events">Events</TabsTrigger>
           <TabsTrigger value="lifecycle">Lifecycle</TabsTrigger>
@@ -155,6 +179,10 @@ function AdminConsole() {
           <TabsTrigger value="maturity">Maturity mix</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="leads" className="mt-6">
+          <LeadsPanel />
+        </TabsContent>
 
         <TabsContent value="organizations" className="mt-6">
           <OrganizationsPanel />
@@ -171,9 +199,6 @@ function AdminConsole() {
         <TabsContent value="qualification" className="mt-6">
           <QualificationPanel />
         </TabsContent>
-
-
-
 
         <TabsContent value="users" className="mt-6 space-y-4">
           <Input
@@ -202,20 +227,31 @@ function AdminConsole() {
                         <div className="font-medium">{u.fullName ?? u.email}</div>
                         <div className="text-xs text-muted-foreground">{u.email}</div>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{u.organization ?? "—"}</TableCell>
-                      <TableCell className="text-right tabular-nums">{u.indexScore ?? "—"}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {u.organization ?? "—"}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {u.indexScore ?? "—"}
+                      </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
-                          <Badge variant={u.tier === "free" ? "outline" : "secondary"}>{TIER_LABEL[u.tier]}</Badge>
+                          <Badge variant={u.tier === "free" ? "outline" : "secondary"}>
+                            {TIER_LABEL[u.tier]}
+                          </Badge>
                           {u.isAdmin ? <Badge>Admin</Badge> : null}
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{shortDate(u.createdAt)}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {shortDate(u.createdAt)}
+                      </TableCell>
                     </TableRow>
                   ))}
                   {filteredUsers.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="py-10 text-center text-sm text-muted-foreground">
+                      <TableCell
+                        colSpan={5}
+                        className="py-10 text-center text-sm text-muted-foreground"
+                      >
                         No accounts match that search.
                       </TableCell>
                     </TableRow>
@@ -283,14 +319,20 @@ function AdminConsole() {
                       <TableCell>
                         <div className="text-sm">{row.eventName}</div>
                         {row.lastError ? (
-                          <div className="max-w-md truncate text-xs text-destructive">{row.lastError}</div>
+                          <div className="max-w-md truncate text-xs text-destructive">
+                            {row.lastError}
+                          </div>
                         ) : null}
                       </TableCell>
                       <TableCell>
-                        <Badge variant={row.status === "failed" ? "destructive" : "secondary"}>{row.status}</Badge>
+                        <Badge variant={row.status === "failed" ? "destructive" : "secondary"}>
+                          {row.status}
+                        </Badge>
                       </TableCell>
                       <TableCell className="text-right tabular-nums">{row.attempts}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{shortDate(row.createdAt)}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {shortDate(row.createdAt)}
+                      </TableCell>
                       <TableCell className="text-right">
                         <Button
                           variant="ghost"
@@ -305,7 +347,10 @@ function AdminConsole() {
                   ))}
                   {data.outbox.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="py-10 text-center text-sm text-muted-foreground">
+                      <TableCell
+                        colSpan={6}
+                        className="py-10 text-center text-sm text-muted-foreground"
+                      >
                         Nothing in the integration outbox.
                       </TableCell>
                     </TableRow>

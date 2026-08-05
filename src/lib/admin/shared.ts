@@ -52,7 +52,10 @@ export const MATURITY_LABELS: Record<number, string> = {
   5: "Publisher-Grade",
 };
 
-type RoleContext = { supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }> }; userId: string };
+type RoleContext = {
+  supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }> };
+  userId: string;
+};
 
 /** True when the caller holds the `admin` role, checked server-side via RLS-safe RPC. */
 export async function isAdminContext(context: RoleContext): Promise<boolean> {
@@ -138,4 +141,31 @@ export type AdminEventRow = {
 export type AdminEventFeed = {
   events: AdminEventRow[];
   types: { type: string; count: number }[];
+};
+
+export type AdminLeadRow = {
+  userId: string;
+  email: string | null;
+  fullName: string | null;
+  organizationId: string | null;
+  organizationName: string | null;
+  domain: string | null;
+  tier: string;
+  fitScore: number;
+  engagementScore: number;
+  totalScore: number;
+  indexScore: number | null;
+  maturityLevel: number | null;
+  reason: string | null;
+  signals: { label: string; points: number }[];
+  outreachStatus: string;
+  notes: string | null;
+  lastContactedAt: string | null;
+  scoredAt: string;
+  lifecycleStage: string | null;
+};
+
+export type AdminLeadFeed = {
+  leads: AdminLeadRow[];
+  count: number;
 };
