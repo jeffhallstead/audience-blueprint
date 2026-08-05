@@ -367,5 +367,22 @@ export async function buildBlueprintPdf(
   }
 
   footers(doc);
-  doc.save(`${filenameStem}.pdf`);
+  return doc.output("blob");
+}
+
+/** Builds the report and hands it to the browser as a download. */
+export async function downloadBlueprintPdf(
+  blueprint: Blueprint,
+  filenameStem: string,
+  options: BlueprintPdfOptions = {},
+): Promise<void> {
+  const blob = await buildBlueprintPdf(blueprint, options);
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${filenameStem}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
