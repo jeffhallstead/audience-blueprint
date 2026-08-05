@@ -96,40 +96,66 @@ function Landing() {
 
       <main>
         <section className="mx-auto max-w-6xl px-6 pb-24 pt-16 sm:pt-24">
-          <p className="text-eyebrow">Publisher Blueprint™</p>
-          <h1 className="text-display mt-6 max-w-3xl text-5xl leading-[1.05] sm:text-6xl">
-            The Strategy Operating System for{" "}
-            <span className="bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
-              Marketing Leaders
-            </span>
+          <h1 className="text-display mt-6 max-w-4xl text-4xl leading-[1.1] sm:text-5xl">
+            Your brand is producing content, but may not be building an audience it owns. There&rsquo;s a measurable
+            difference between the two — and most brand leaders don&rsquo;t have a clear picture of where they actually
+            stand.
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground">
-            A premium executive assessment that scores your publishing maturity, identifies the highest-leverage gap,
-            and returns a sequenced 90-day roadmap your leadership team can act on.
+            The Publisher Test scores your content maturity across seven dimensions and returns a prioritized roadmap
+            for the next 90 days. Free. 12 minutes.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <Button asChild size="lg">
-              <Link to="/auth" search={{ mode: "signup" }}>
-                Begin your blueprint <ArrowRight className="size-4" />
+              <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
+                Begin the Publisher Test — it&rsquo;s free <ArrowRight className="size-4" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
               <Link to="/auth">I already have an account</Link>
             </Button>
           </div>
-          <p className="mt-6 text-xs text-muted-foreground">Approximately 12 minutes · Seven sections · Confidential</p>
-          <p className="mt-3 text-xs text-muted-foreground">by Jeff Hallstead</p>
+          <p className="mt-6 text-xs text-muted-foreground">
+            Approximately 12 minutes · Seven sections · Confidential · by Jeff Hallstead
+          </p>
         </section>
 
         <section className="border-y border-border bg-surface">
-          <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 sm:grid-cols-3">
+          <div className="mx-auto max-w-3xl space-y-6 px-6 py-20 text-base leading-relaxed text-muted-foreground">
+            <p>
+              Most brand content strategies are built around campaigns, not infrastructure. The ad budget runs, the
+              audience disappears, and the cycle starts over.
+            </p>
+            <p>
+              I spent 20 years building the audience measurement systems that help the TV and advertising industry
+              understand who was watching — and how viewing behavior translated to action. That work taught me that the
+              gap between brands that rent audiences and brands that own them is real, measurable, and closable. The
+              Publisher Test is designed to tell you exactly where your brand stands on that continuum.
+            </p>
+            <p className="text-xs uppercase tracking-widest text-foreground">Jeff Hallstead</p>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-6 py-20">
+          <h2 className="text-display text-3xl">Your blueprint takes one sitting.</h2>
+          <div className="mt-12 grid gap-10 sm:grid-cols-3">
             {PILLARS.map((pillar) => (
               <div key={pillar.title} className="space-y-3">
                 <pillar.icon className="size-5 text-brass" />
-                <h2 className="text-sm font-semibold tracking-tight text-foreground">{pillar.title}</h2>
+                <h3 className="text-sm font-semibold tracking-tight text-foreground">{pillar.title}</h3>
                 <p className="text-sm leading-relaxed text-muted-foreground">{pillar.body}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="border-y border-border">
+          <div className="mx-auto max-w-3xl px-6 py-20">
+            <p className="text-display text-2xl leading-snug sm:text-3xl">
+              Brands that stay in campaign mode keep spending without building an audience. Every dollar goes toward
+              renting one that belongs to the platform the moment the budget stops. The Publisher Test tells you what it
+              would take to change that.
+            </p>
           </div>
         </section>
 
@@ -143,12 +169,13 @@ function Landing() {
               </p>
             </div>
             <Button asChild size="lg">
-              <Link to="/auth" search={{ mode: "signup" }}>
-                Start now <ArrowRight className="size-4" />
+              <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
+                Begin the Publisher Test — it&rsquo;s free <ArrowRight className="size-4" />
               </Link>
             </Button>
           </div>
         </section>
+
       </main>
 
       <footer className="border-t border-border">
