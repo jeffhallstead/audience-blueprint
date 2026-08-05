@@ -81,9 +81,12 @@ export function PricingTable({
               <h2 id={`plan-${plan.tier}`} className="text-display text-4xl">
                 {plan.priceLabel}
               </h2>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">
+              <p className="text-xs uppercase tracking-widest text-primary">
                 {plan.cadence}
               </p>
+              {plan.supportingLine ? (
+                <p className="text-sm font-medium text-foreground">{plan.supportingLine}</p>
+              ) : null}
               <p className="text-sm leading-relaxed text-muted-foreground">{plan.tagline}</p>
               {plan.highlight && !owned ? (
                 <p className="inline-flex rounded-full border border-primary/40 px-3 py-1 text-xs text-primary">
