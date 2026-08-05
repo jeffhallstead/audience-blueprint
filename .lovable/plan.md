@@ -40,4 +40,4 @@ Free users keep a real, useful artifact so the value is credible, but every lock
 
 ## QA
 
-Sign in as the free UAT user and confirm: export dialog shows the unlock panel, limited PDF still downloads, email button is locked, connections panel is locked. Then as the Blueprint user: files and email work, connectors still locked. Then as the OS user: everything works. Also call the gated server functions directly as the free user to confirm they reject rather than relying on UI alone.
+Sign in as the free UAT user and confirm: export dialog shows the unlock panel, limited PDF still downloads, email button is locked, connections panel is locked. Then as the Blueprint user: files, email, and both connectors all work. Also call the gated server functions directly as the free user to confirm they reject rather than relying on UI alone.
