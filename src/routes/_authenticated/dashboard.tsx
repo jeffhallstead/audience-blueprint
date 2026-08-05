@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Download, RefreshCw } from "lucide-react";
+import { ArrowRight, Download, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/page-header";
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
@@ -25,6 +25,9 @@ import { MATURITY_LEVELS } from "@/lib/assessment/config";
 import { useBlueprint, formatAssessmentDate } from "@/lib/blueprint/use-blueprint";
 import { LockedFeature } from "@/components/billing/feature-gate";
 import { trackBlueprintEvent } from "@/lib/blueprint/analytics";
+import { useSavedRecommendations } from "@/lib/copilot/queries";
+import { exportFilename } from "@/lib/export/rows";
+import { trackRecommendationExport } from "@/lib/analytics/recommendation-metadata";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -51,6 +54,33 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function Dashboard() {
   const { data: blueprint, isLoading, locked } = useBlueprint();
+  const { data: saved } = useSavedRecommendations();
+  const [exporting, setExporting] = useState(false);
+
+  async function handleDownloadPdf() {
+    if (!blueprint) return;
+    setExporting(true);
+    try {
+      const { downloadBlueprintPdf } = await import("@/lib/export/pdf");
+      await downloadBlueprintPdf(blueprint, exportFilename(blueprint), {
+        saved: locked ? null : (saved ?? null),
+        locked,
+      });
+      toast.success("PDF downloaded.");
+      void trackBlueprintEvent("blueprint_pdf_exported", { overall: blueprint.overall, locked });
+      // Paid reports carry the action list, so they count as a recommendation export.
+      if (!locked) {
+        void trackRecommendationExport(
+          blueprint.opportunities.map((item) => item.title),
+          "pdf",
+        );
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not generate the PDF.");
+    } finally {
+      setExporting(false);
+    }
+  }
 
   useEffect(() => {
     if (blueprint) void trackBlueprintEvent("dashboard_viewed", { overall: blueprint.overall });
@@ -143,8 +173,13 @@ function Dashboard() {
                 <RefreshCw className="size-4" aria-hidden /> Retake assessment
               </Link>
             </Button>
-            <Button variant="ghost" onClick={() => toast.info("PDF export arrives in a later phase.")}>
-              <Download className="size-4" aria-hidden /> Export
+            <Button variant="ghost" onClick={() => void handleDownloadPdf()} disabled={exporting}>
+              {exporting ? (
+                <Loader2 className="size-4 animate-spin" aria-hidden />
+              ) : (
+                <Download className="size-4" aria-hidden />
+              )}
+              {exporting ? "Preparing PDF…" : "Download PDF"}
             </Button>
           </div>
         </div>
