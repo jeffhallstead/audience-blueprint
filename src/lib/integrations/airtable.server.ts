@@ -24,9 +24,27 @@ function config() {
 }
 
 
+/** Feedback lands in its own table so the free-text comment has a home. */
+const FEEDBACK_TABLE = "Publisher Blueprint Feedback";
+
+function tableFor(event: IntegrationEvent, defaultTable: string) {
+  return event.eventName === "feedback.submitted" ? FEEDBACK_TABLE : defaultTable;
+}
+
 /** Maps a normalized event onto Airtable field names. Unknown fields are dropped by Airtable
  *  only when typecast is off, so we keep the field set intentionally small and stable. */
 function toFields(event: IntegrationEvent): Record<string, unknown> {
+  if (event.eventName === "feedback.submitted") {
+    const meta = (event.metadata ?? {}) as { sentiment?: string; comment?: string; page?: string | null };
+    return {
+      Email: event.email ?? "",
+      Name: event.fullName ?? "",
+      Sentiment: meta.sentiment ?? "",
+      Comment: meta.comment ?? "",
+      Page: meta.page ?? "",
+      "Occurred At": event.occurredAt,
+    };
+  }
   const fields: Record<string, unknown> = {
     Email: event.email ?? "",
     Name: event.fullName ?? "",
