@@ -29,7 +29,7 @@ export function LockedFeature({
 }: LockedFeatureProps) {
   const requiredTier = FEATURE_MINIMUM[feature];
   const plan = planForTier(requiredTier);
-  const { openCheckout, loading } = useCheckout();
+  const { openCheckout, loading, checkoutElement } = useCheckout();
 
   return (
     <section
