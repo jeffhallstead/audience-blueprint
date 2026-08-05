@@ -67,12 +67,9 @@ function PricingPage() {
 
       <header className="max-w-2xl space-y-3">
         <p className="text-eyebrow">Plans</p>
-        <h1 className="text-display text-3xl sm:text-4xl">
-          Turn your Publisher Index™ into an operating plan
-        </h1>
+        <h1 className="text-display text-3xl sm:text-4xl">Start with a score. Leave with a plan.</h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Start free with the Publisher Index™ diagnostic. Upgrade when you want the full blueprint, the 90-day
-          roadmap, and Publisher Copilot™ working alongside your team.
+          The Publisher Test is free. The Blueprint gives you the full roadmap.
         </p>
         <p className="text-xs text-muted-foreground">by Jeff Hallstead</p>
       </header>
@@ -80,6 +77,7 @@ function PricingPage() {
       <PricingTable
         currentTier={tier}
         loading={loading || isLoading || authLoading}
+        isAuthenticated={!!user}
         hasSubscription={!!entitlement?.subscription}
         includedOsUntil={entitlement?.includedOsUntil ?? null}
         ownsBlueprint={(entitlement?.purchases ?? []).some((purchase) => purchase.productId === "publisher_blueprint")}
@@ -93,8 +91,25 @@ function PricingPage() {
         onManage={() => void manageSubscription()}
       />
 
+      <section className="max-w-2xl space-y-3">
+        <h2 className="text-lg font-semibold tracking-tight text-foreground">Working with your team directly</h2>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          The Publisher Blueprint™ is a starting point. Brand leaders who want to move faster — or want experienced
+          hands on the implementation — can work with Jeff directly. Consulting engagements are available for teams
+          ready to build.
+        </p>
+        <a
+          href="https://jeffhallstead.com/contact"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex text-sm text-primary underline underline-offset-4"
+        >
+          Get in touch →
+        </a>
+      </section>
+
       <p className="text-xs text-muted-foreground">
-        Payments, invoices and refunds are handled by our reseller and merchant of record, Paddle. Cancel Publisher OS™ any time — access continues to the end of the billing period. See our{" "}
+        Payments, invoices and refunds are handled by our reseller and merchant of record, Paddle. See our{" "}
         <Link to="/terms" className="underline">
           Terms
         </Link>

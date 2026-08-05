@@ -15,7 +15,11 @@ import {
 } from "@/lib/auth/oauth-diagnostics";
 
 
-const searchSchema = z.object({ mode: z.enum(["signin", "signup"]).optional() });
+const searchSchema = z.object({
+  mode: z.enum(["signin", "signup"]).optional(),
+  /** "test" pre-selects the free Publisher Test™ entry point. */
+  plan: z.string().optional(),
+});
 
 const credentialsSchema = z.object({
   email: z.string().trim().email("Enter a valid work email").max(255),
@@ -39,9 +43,10 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { mode } = Route.useSearch();
+  const { mode, plan } = Route.useSearch();
+  const freeTier = plan === "test";
   const navigate = useNavigate();
-  const [isSignUp, setIsSignUp] = useState(mode === "signup");
+  const [isSignUp, setIsSignUp] = useState(mode === "signup" || plan === "test");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -265,9 +270,19 @@ function AuthPage() {
               <div className="space-y-2">
                 <p className="text-eyebrow">{isSignUp ? "Create account" : "Welcome back"}</p>
                 <h1 className="text-display text-3xl">
-                  {isSignUp ? "Begin your blueprint" : "Sign in to continue"}
+                  {isSignUp && freeTier
+                    ? "Begin the Publisher Test"
+                    : isSignUp
+                      ? "Begin your blueprint"
+                      : "Sign in to continue"}
                 </h1>
+                {isSignUp && freeTier ? (
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Publisher Test™ — free, no card required. Approximately 12 minutes.
+                  </p>
+                ) : null}
               </div>
+
 
               <Button
                 variant="outline"

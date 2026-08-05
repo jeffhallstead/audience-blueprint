@@ -65,6 +65,8 @@ export type Plan = {
   tagline: string;
   priceLabel: string;
   cadence: string;
+  /** Extra line shown under the cadence on the pricing card. */
+  supportingLine?: string;
   priceId?: string;
   features: string[];
   excluded?: string[];
@@ -90,10 +92,10 @@ export const PLANS: Plan[] = [
     tier: "blueprint",
     name: "Publisher Blueprint™",
     tagline: "Your complete strategic assessment and plan.",
-    priceLabel: "$99",
-    cadence: "One-time — lifetime access",
+    priceLabel: "$49",
+    cadence: "Founding Member Pricing",
+    supportingLine: "Price increases after launch",
     priceId: PRICE_IDS.blueprint,
-    highlight: "Includes one month of Publisher OS™",
     features: [
       "Everything in Publisher Test™",
       "Full executive dashboard",
@@ -101,9 +103,9 @@ export const PLANS: Plan[] = [
       "90-day strategic roadmap",
       "AI strategy documents",
       "Executive PDF export",
-      "One month of Publisher OS™ included",
     ],
   },
+
   {
     tier: "os",
     name: "Publisher OS™",

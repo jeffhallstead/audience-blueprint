@@ -1,4 +1,5 @@
 import { Check, Minus } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { PLANS, TIER_RANK, type Tier } from "@/lib/commerce/plans";
 import { cn } from "@/lib/utils";
@@ -6,6 +7,8 @@ import { cn } from "@/lib/utils";
 type PricingTableProps = {
   currentTier: Tier;
   loading?: boolean;
+  /** True when a visitor is signed in. Drives the free-tier call to action. */
+  isAuthenticated?: boolean;
   /** True when there is an active or scheduled-to-cancel OS subscription. */
   hasSubscription?: boolean;
   /** True when the one-time Blueprint has actually been purchased. */
@@ -16,9 +19,11 @@ type PricingTableProps = {
   onManage?: (() => void) | undefined;
 };
 
+
 export function PricingTable({
   currentTier,
   loading,
+  isAuthenticated,
   hasSubscription,
   ownsBlueprint,
   includedOsUntil,
@@ -26,8 +31,9 @@ export function PricingTable({
   onManage,
 }: PricingTableProps) {
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
-      {PLANS.map((plan) => {
+    <div className="grid gap-6 md:grid-cols-2">
+      {/* Publisher OS™ is not sold on this page. */}
+      {PLANS.filter((plan) => plan.tier !== "os").map((plan) => {
         const featured = plan.tier === "blueprint";
         // The Blueprint is a one-time purchase: once owned it is never re-sold,
         // including to OS subscribers who reached that tier through it.
@@ -54,6 +60,12 @@ export function PricingTable({
 
         const disabled = loading || (!plan.priceId ? true : owned && !manageable);
 
+        // Free tier: unauthenticated visitors get a real signup CTA, paid
+        // customers get none at all.
+        const freeSignup = plan.tier === "free" && !isAuthenticated;
+        const hideCta = plan.tier === "free" && isAuthenticated && !isCurrent;
+
+
         return (
           <section
             key={plan.tier}
@@ -69,9 +81,12 @@ export function PricingTable({
               <h2 id={`plan-${plan.tier}`} className="text-display text-4xl">
                 {plan.priceLabel}
               </h2>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">
+              <p className="text-xs uppercase tracking-widest text-primary">
                 {plan.cadence}
               </p>
+              {plan.supportingLine ? (
+                <p className="text-sm font-medium text-foreground">{plan.supportingLine}</p>
+              ) : null}
               <p className="text-sm leading-relaxed text-muted-foreground">{plan.tagline}</p>
               {plan.highlight && !owned ? (
                 <p className="inline-flex rounded-full border border-primary/40 px-3 py-1 text-xs text-primary">
@@ -107,17 +122,25 @@ export function PricingTable({
               ))}
             </ul>
 
-            <Button
-              variant={featured && !owned ? "default" : "outline"}
-              size="lg"
-              disabled={disabled}
-              onClick={() => {
-                if (manageable) return onManage?.();
-                if (plan.priceId && !owned) onSelect(plan.priceId);
-              }}
-            >
-              {label}
-            </Button>
+            {hideCta ? null : freeSignup ? (
+              <Button asChild variant="outline" size="lg">
+                <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
+                  Start free — no card required
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                variant={featured && !owned ? "default" : "outline"}
+                size="lg"
+                disabled={disabled}
+                onClick={() => {
+                  if (manageable) return onManage?.();
+                  if (plan.priceId && !owned) onSelect(plan.priceId);
+                }}
+              >
+                {label}
+              </Button>
+            )}
           </section>
         );
       })}
