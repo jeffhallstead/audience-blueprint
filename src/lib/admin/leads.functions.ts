@@ -63,8 +63,9 @@ export const getQualifiedLeads = createServerFn({ method: "POST" })
 
 
 
-    if (data.tier) request = request.eq("tier", data.tier);
+    if (data.tier) request = request.eq("tier", data.tier as Database["public"]["Enums"]["qualification_tier"]);
     const { data: qualifications } = await request;
+
 
     const userIds = (qualifications ?? []).map((q) => q.user_id);
     if (userIds.length === 0) return { leads: [], count: 0 };
