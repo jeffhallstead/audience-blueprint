@@ -1180,10 +1180,13 @@ export type Database = {
           included_os_access_until: string | null
           invoice_url: string | null
           paddle_customer_id: string | null
-          paddle_transaction_id: string
+          paddle_transaction_id: string | null
           price_id: string
           product_id: string
           status: string
+          stripe_customer_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
           updated_at: string
           user_id: string
         }
@@ -1196,10 +1199,13 @@ export type Database = {
           included_os_access_until?: string | null
           invoice_url?: string | null
           paddle_customer_id?: string | null
-          paddle_transaction_id: string
+          paddle_transaction_id?: string | null
           price_id: string
           product_id: string
           status?: string
+          stripe_customer_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -1212,10 +1218,13 @@ export type Database = {
           included_os_access_until?: string | null
           invoice_url?: string | null
           paddle_customer_id?: string | null
-          paddle_transaction_id?: string
+          paddle_transaction_id?: string | null
           price_id?: string
           product_id?: string
           status?: string
+          stripe_customer_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -1466,11 +1475,13 @@ export type Database = {
           current_period_start: string | null
           environment: string
           id: string
-          paddle_customer_id: string
-          paddle_subscription_id: string
+          paddle_customer_id: string | null
+          paddle_subscription_id: string | null
           price_id: string
           product_id: string
           status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           updated_at: string
           user_id: string
         }
@@ -1481,11 +1492,13 @@ export type Database = {
           current_period_start?: string | null
           environment?: string
           id?: string
-          paddle_customer_id: string
-          paddle_subscription_id: string
+          paddle_customer_id?: string | null
+          paddle_subscription_id?: string | null
           price_id: string
           product_id: string
           status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -1496,11 +1509,13 @@ export type Database = {
           current_period_start?: string | null
           environment?: string
           id?: string
-          paddle_customer_id?: string
-          paddle_subscription_id?: string
+          paddle_customer_id?: string | null
+          paddle_subscription_id?: string | null
           price_id?: string
           product_id?: string
           status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           updated_at?: string
           user_id?: string
         }
