@@ -121,8 +121,9 @@ function Dashboard() {
     }
   }
 
-  return null;
-}
+  useEffect(() => {
+    if (blueprint) void trackBlueprintEvent("dashboard_viewed", { overall: blueprint.overall });
+  }, [blueprint]);
 
   if (isLoading) {
     return (
