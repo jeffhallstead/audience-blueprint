@@ -18,6 +18,9 @@ export type Feature =
   | "ai_chat"
   | "ai_chat_unlimited"
   | "pdf_export"
+  | "file_export"
+  | "email_report"
+  | "connector_export"
   | "progress_tracking"
   | "blueprint_history"
   | "reassessment";
@@ -32,11 +35,16 @@ export const FEATURE_MINIMUM: Record<Feature, Tier> = {
   ai_documents: "blueprint",
   ai_chat: "blueprint",
   pdf_export: "blueprint",
+  file_export: "blueprint",
+  email_report: "blueprint",
+  // Moves to "os" when Publisher OS™ launches.
+  connector_export: "blueprint",
   ai_chat_unlimited: "os",
   progress_tracking: "os",
   blueprint_history: "os",
   reassessment: "os",
 };
+
 
 export function tierAllows(tier: Tier, feature: Feature): boolean {
   return TIER_RANK[tier] >= TIER_RANK[FEATURE_MINIMUM[feature]];
