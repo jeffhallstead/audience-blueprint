@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
@@ -41,7 +41,7 @@ function DocumentDetail() {
         data: {
           objective: document!.kind as "strategy",
           supersedesDocumentId: documentId,
-          environment: getPaddleEnvironment(),
+          environment: getStripeEnvironment(),
         },
       }),
     onSuccess: (result) => {

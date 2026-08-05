@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { PaddleEnv } from "@/lib/paddle.server";
+import type { StripeEnv } from "@/lib/stripe.server";
 import type { Tier } from "@/lib/commerce/plans";
 import { generateBlueprint, type Blueprint } from "@/lib/blueprint/engine";
 
-const isEnv = (value: unknown): PaddleEnv => (value === "live" ? "live" : "sandbox");
+const isEnv = (value: unknown): StripeEnv => (value === "live" ? "live" : "sandbox");
 
 export type BlueprintPayload = {
   tier: Tier;
@@ -22,7 +22,7 @@ export type BlueprintPayload = {
  */
 export const getBlueprintPayload = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { environment: PaddleEnv }) => ({ environment: isEnv(data.environment) }))
+  .inputValidator((data: { environment: StripeEnv }) => ({ environment: isEnv(data.environment) }))
   .handler(async ({ data, context }): Promise<BlueprintPayload> => {
     const { fetchLatestScoresFor } = await import("@/lib/blueprint/scores.server");
     const { resolveEntitlement, tierMeets } = await import("@/lib/commerce/entitlement.server");

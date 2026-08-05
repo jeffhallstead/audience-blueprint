@@ -1,8 +1,8 @@
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 
 /** Renders nothing in live mode — safe to mount unconditionally. */
 export function PaymentTestModeBanner() {
-  if (getPaddleEnvironment() !== "sandbox") return null;
+  if (getStripeEnvironment() !== "sandbox") return null;
 
   return (
     <div className="w-full border-b border-accent/40 bg-accent/10 px-4 py-2 text-center text-xs tracking-wide text-accent-foreground">

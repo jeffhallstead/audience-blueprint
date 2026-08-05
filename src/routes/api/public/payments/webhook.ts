@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
-import { verifyWebhook, gatewayFetch, EventName, type PaddleEnv } from "@/lib/paddle.server";
+import { verifyWebhook, gatewayFetch, EventName, type StripeEnv } from "@/lib/paddle.server";
 import { PRICE_PRODUCT, PRODUCT_TIER } from "@/lib/commerce/plans";
 import type { Database } from "@/integrations/supabase/types";
 import { emitPlatformEvent } from "@/lib/events/emit.server";
@@ -66,7 +66,7 @@ async function logEvent(userId: string, eventName: string, metadata: Record<stri
 /** Paddle internal price id → human-readable external id, cached per worker. */
 const priceExternalIdCache = new Map<string, string>();
 
-async function lookupPriceExternalId(paddlePriceId: string, env: PaddleEnv): Promise<string | null> {
+async function lookupPriceExternalId(paddlePriceId: string, env: StripeEnv): Promise<string | null> {
   const cached = priceExternalIdCache.get(paddlePriceId);
   if (cached) return cached;
   try {
@@ -93,7 +93,7 @@ async function lookupPriceExternalId(paddlePriceId: string, env: PaddleEnv): Pro
  */
 async function resolveCatalog(
   item: any,
-  env: PaddleEnv,
+  env: StripeEnv,
 ): Promise<{ priceId: string; productId: string } | null> {
   const rawPriceId: string | undefined = item?.price?.id ?? item?.priceId;
   const priceId: string | null =
@@ -121,7 +121,7 @@ async function resolveCatalog(
 }
 
 
-async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
+async function handleSubscriptionCreated(data: any, env: StripeEnv) {
   const userId = data.customData?.userId;
   if (!userId) return console.error("[payments] subscription.created without customData.userId");
 
@@ -157,7 +157,7 @@ async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
  * Covers subscription.updated, .past_due, .paused and .resumed — Paddle sends
  * the same subscription entity on each, with `status` reflecting the change.
  */
-async function handleSubscriptionStateChange(data: any, env: PaddleEnv) {
+async function handleSubscriptionStateChange(data: any, env: StripeEnv) {
   const catalog = await resolveCatalog(data.items?.[0], env);
 
   await getSupabase()
@@ -179,7 +179,7 @@ async function handleSubscriptionStateChange(data: any, env: PaddleEnv) {
   }
 }
 
-async function handleSubscriptionCanceled(data: any, env: PaddleEnv) {
+async function handleSubscriptionCanceled(data: any, env: StripeEnv) {
   // Access is retained until current_period_end — see entitlement.server.ts.
   await getSupabase()
     .from("subscriptions")
@@ -195,7 +195,7 @@ async function handleSubscriptionCanceled(data: any, env: PaddleEnv) {
   if (userId) await logEvent(userId, "subscription_canceled", { environment: env });
 }
 
-async function handleTransactionCompleted(data: any, env: PaddleEnv) {
+async function handleTransactionCompleted(data: any, env: StripeEnv) {
   // Subscription renewals arrive here too; only one-time purchases are recorded.
   if (data.subscriptionId) return;
 
@@ -284,7 +284,7 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
  * Refunds and chargebacks. Access is revoked as soon as the adjustment is
  * approved: the purchase is marked refunded and the bundled OS month cleared.
  */
-async function handleAdjustment(data: any, env: PaddleEnv) {
+async function handleAdjustment(data: any, env: StripeEnv) {
   const action = String(data.action ?? "");
   const status = String(data.status ?? "");
   if (!["refund", "chargeback", "chargeback_warning"].includes(action)) return;
@@ -310,12 +310,12 @@ async function handleAdjustment(data: any, env: PaddleEnv) {
   if (userId) await logEvent(userId, "purchase_refunded", { action, environment: env });
 }
 
-async function handlePaymentFailed(data: any, env: PaddleEnv) {
+async function handlePaymentFailed(data: any, env: StripeEnv) {
   const userId = data.customData?.userId;
   if (userId) await logEvent(userId, "payment_failed", { environment: env });
 }
 
-async function handleWebhook(req: Request, env: PaddleEnv) {
+async function handleWebhook(req: Request, env: StripeEnv) {
   const event = await verifyWebhook(req, env);
 
   switch (event.eventType) {
@@ -353,7 +353,7 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
     handlers: {
       POST: async ({ request }) => {
         const url = new URL(request.url);
-        const env = (url.searchParams.get("env") || "sandbox") as PaddleEnv;
+        const env = (url.searchParams.get("env") || "sandbox") as StripeEnv;
         try {
           await handleWebhook(request, env);
           return Response.json({ received: true });

@@ -1,8 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { PaddleEnv } from "@/lib/paddle.server";
+import type { StripeEnv } from "@/lib/stripe.server";
 
-const isEnv = (value: unknown): PaddleEnv => (value === "live" ? "live" : "sandbox");
+const isEnv = (value: unknown): StripeEnv => (value === "live" ? "live" : "sandbox");
 
 /**
  * Permanently deletes the signed-in user. Any live subscription is scheduled
@@ -11,7 +11,7 @@ const isEnv = (value: unknown): PaddleEnv => (value === "live" ? "live" : "sandb
  */
 export const deleteAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { environment: PaddleEnv }) => ({ environment: isEnv(data.environment) }))
+  .inputValidator((data: { environment: StripeEnv }) => ({ environment: isEnv(data.environment) }))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 

@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Markdown } from "@/components/copilot/markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { copilotKeys } from "@/lib/copilot/queries";
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
 
 /** Attaches the caller's bearer token; /api/chat authenticates from it. */
@@ -47,7 +47,7 @@ export function ChatPanel({ sessionId, initialMessages, autoSend, onFirstMessage
     transport: new DefaultChatTransport({
       api: "/api/chat",
       fetch: authedFetch,
-      body: { sessionId, environment: getPaddleEnvironment() },
+      body: { sessionId, environment: getStripeEnvironment() },
     }),
     onError: (chatError) => toast.error(chatError.message || "Publisher Copilot™ could not respond."),
     onFinish: () => {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { initializePaddle, getPaddlePriceId, getPaddleEnvironment } from "@/lib/paddle";
+import { initializePaddle, getPaddlePriceId, getStripeEnvironment } from "@/lib/paddle";
 import { useAuth } from "@/hooks/use-auth";
 import { trackCommerceEvent } from "@/lib/commerce/analytics";
 
@@ -41,5 +41,5 @@ export function useCheckout() {
     }
   }
 
-  return { openCheckout, loading, environment: getPaddleEnvironment() };
+  return { openCheckout, loading, environment: getStripeEnvironment() };
 }

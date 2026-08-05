@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { grantEntitlement, revokeEntitlement } from "@/lib/admin/admin.functions";
 import type { AdminUserRow } from "@/lib/admin/shared";
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -30,7 +30,7 @@ import {
  * separately from purchases, so revenue metrics stay accurate.
  */
 export function GrantAccessDialog({ user }: { user: AdminUserRow }) {
-  const environment = getPaddleEnvironment();
+  const environment = getStripeEnvironment();
   const queryClient = useQueryClient();
   const grant = useServerFn(grantEntitlement);
   const revoke = useServerFn(revokeEntitlement);

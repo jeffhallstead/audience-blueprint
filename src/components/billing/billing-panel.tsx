@@ -7,7 +7,7 @@ import { DashboardCard } from "@/components/blueprint/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { createPortalSession, listInvoices } from "@/lib/commerce/payments.functions";
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { planForTier } from "@/lib/commerce/plans";
 import { trackCommerceEvent } from "@/lib/commerce/analytics";
 
@@ -27,7 +27,7 @@ export function BillingPanel() {
     setOpening(true);
     try {
       void trackCommerceEvent(target === "cancel" ? "cancel_started" : "portal_opened");
-      const session = await createPortalSession({ data: { environment: getPaddleEnvironment() } });
+      const session = await createPortalSession({ data: { environment: getStripeEnvironment() } });
       const url = target === "cancel" ? (session.cancelUrl ?? session.url) : session.url;
       if (!url) {
         toast.info("No billing account yet — make a purchase first.");
@@ -44,8 +44,8 @@ export function BillingPanel() {
 
   const subscription = entitlement?.subscription ?? null;
   const invoicesQuery = useQuery({
-    queryKey: ["invoices", getPaddleEnvironment()],
-    queryFn: () => listInvoices({ data: { environment: getPaddleEnvironment() } }),
+    queryKey: ["invoices", getStripeEnvironment()],
+    queryFn: () => listInvoices({ data: { environment: getStripeEnvironment() } }),
     staleTime: 60_000,
   });
   const invoices = invoicesQuery.data ?? [];

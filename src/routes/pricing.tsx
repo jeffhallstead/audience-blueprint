@@ -6,7 +6,7 @@ import { PricingTable } from "@/components/billing/pricing-table";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { useCheckout } from "@/lib/commerce/use-checkout";
 import { createPortalSession } from "@/lib/commerce/payments.functions";
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { trackCommerceEvent } from "@/lib/commerce/analytics";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/brand/logo";
@@ -43,7 +43,7 @@ function PricingPage() {
 
   async function manageSubscription() {
     try {
-      const { url } = await createPortalSession({ data: { environment: getPaddleEnvironment() } });
+      const { url } = await createPortalSession({ data: { environment: getStripeEnvironment() } });
       if (!url) {
         toast.info("No billing account yet.");
         return;

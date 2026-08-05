@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Check, Copy, Loader2, Wand2 } from "lucide-react";
@@ -85,7 +85,7 @@ function PromptLibrary() {
   const generate = useServerFn(generatePromptPack);
 
   const createPack = useMutation({
-    mutationFn: async () => generate({ data: { environment: getPaddleEnvironment() } }),
+    mutationFn: async () => generate({ data: { environment: getStripeEnvironment() } }),
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: copilotKeys.prompts });
       toast.success(`${result.count} tailored prompts added`);

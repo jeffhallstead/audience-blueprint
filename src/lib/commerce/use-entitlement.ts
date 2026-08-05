@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPaddleEnvironment } from "@/lib/paddle";
+import { getStripeEnvironment } from "@/lib/stripe";
 import { getEntitlement, type Entitlement } from "@/lib/commerce/entitlement.functions";
 import { tierAllows, type Feature, type Tier } from "@/lib/commerce/plans";
 
@@ -13,7 +13,7 @@ export function useEntitlement(options: { enabled?: boolean } = {}) {
   const query = useQuery({
     enabled: options.enabled ?? true,
     queryKey: entitlementQueryKey,
-    queryFn: () => getEntitlement({ data: { environment: getPaddleEnvironment() } }),
+    queryFn: () => getEntitlement({ data: { environment: getStripeEnvironment() } }),
     staleTime: 30_000,
   });
 
