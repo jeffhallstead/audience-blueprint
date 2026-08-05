@@ -236,6 +236,14 @@ function blobToBase64(blob: Blob): Promise<string> {
               )}
               {exporting ? "Preparing PDF…" : "Download PDF"}
             </Button>
+            <Button variant="ghost" onClick={() => void handleEmailPdf()} disabled={emailing}>
+              {emailing ? (
+                <Loader2 className="size-4 animate-spin" aria-hidden />
+              ) : (
+                <Mail className="size-4" aria-hidden />
+              )}
+              {emailing ? "Sending…" : "Email my report"}
+            </Button>
           </div>
         </div>
       </section>
