@@ -675,6 +675,36 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_outreach: {
+        Row: {
+          created_at: string
+          id: string
+          last_contacted_at: string | null
+          notes: string | null
+          status: Database["public"]["Enums"]["lead_outreach_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_contacted_at?: string | null
+          notes?: string | null
+          status?: Database["public"]["Enums"]["lead_outreach_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_contacted_at?: string | null
+          notes?: string | null
+          status?: Database["public"]["Enums"]["lead_outreach_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       organization_audience_profile: {
         Row: {
           audience_segments: string[]
@@ -1555,6 +1585,13 @@ export type Database = {
     Enums: {
       app_role: "admin" | "user"
       assessment_status: "draft" | "in_progress" | "completed"
+      lead_outreach_status:
+        | "new"
+        | "contacted"
+        | "responded"
+        | "meeting_booked"
+        | "no_fit"
+        | "nurtured"
       lifecycle_stage:
         | "visitor"
         | "registered"
@@ -1698,6 +1735,14 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "user"],
       assessment_status: ["draft", "in_progress", "completed"],
+      lead_outreach_status: [
+        "new",
+        "contacted",
+        "responded",
+        "meeting_booked",
+        "no_fit",
+        "nurtured",
+      ],
       lifecycle_stage: [
         "visitor",
         "registered",
