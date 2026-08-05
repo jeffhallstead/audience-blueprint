@@ -28,7 +28,7 @@ Free users keep a real, useful artifact so the value is credible, but every lock
 
 ## Technical notes
 
-- Add three features to `src/lib/commerce/plans.ts`: `file_export` (blueprint), `email_report` (blueprint), `connector_export` (os); add matching bullet copy to the plan cards.
+- Add three features to `src/lib/commerce/plans.ts`: `file_export`, `email_report`, and `connector_export`, all with a minimum tier of `blueprint` for now; add matching bullet copy to the Blueprint plan card ("Airtable and Asana sync" included).
 - Enforce server-side with `requireFeature` (from `entitlement.server`) in:
   - `pushExportRows`, `saveExportTarget`, `getExportDestinations`, `listExportAsanaProjects` → `connector_export`
   - `connectIntegration`, `selectAirtableBase`, `listMyAirtableBases` in `connections.functions.ts` → `connector_export`
