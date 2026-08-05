@@ -270,9 +270,19 @@ function AuthPage() {
               <div className="space-y-2">
                 <p className="text-eyebrow">{isSignUp ? "Create account" : "Welcome back"}</p>
                 <h1 className="text-display text-3xl">
-                  {isSignUp ? "Begin your blueprint" : "Sign in to continue"}
+                  {isSignUp && freeTier
+                    ? "Begin the Publisher Test"
+                    : isSignUp
+                      ? "Begin your blueprint"
+                      : "Sign in to continue"}
                 </h1>
+                {isSignUp && freeTier ? (
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Publisher Test™ — free, no card required. Approximately 12 minutes.
+                  </p>
+                ) : null}
               </div>
+
 
               <Button
                 variant="outline"
