@@ -80,7 +80,7 @@ export interface PlatformEventInput {
   userId?: string | null;
   organizationId?: string | null;
   environment?: string;
-  source?: "app" | "server" | "webhook" | "backfill";
+  source?: "app" | "server" | "webhook" | "backfill" | "admin";
   occurredAt?: string;
   /** Who/where context: section, route, assessment id, etc. */
   context?: Record<string, unknown>;
