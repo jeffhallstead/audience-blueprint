@@ -188,12 +188,11 @@ export interface BlueprintPdfOptions {
   locked?: boolean;
 }
 
-/** Builds the report and hands it to the browser as a download. */
-export async function downloadBlueprintPdf(
+/** Builds the report and returns it as a PDF Blob. */
+export async function buildBlueprintPdf(
   blueprint: Blueprint,
-  filenameStem: string,
   options: BlueprintPdfOptions = {},
-): Promise<void> {
+): Promise<Blob> {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "pt", format: "a4", compress: true });
   doc.setProperties({
@@ -243,8 +242,7 @@ export async function downloadBlueprintPdf(
     layout.paragraph(blueprint.cta.title, { size: 11, style: "bold" });
     layout.paragraph(blueprint.cta.body, { color: MUTED });
     footers(doc);
-    doc.save(`${filenameStem}.pdf`);
-    return;
+    return doc.output("blob");
   }
 
   // ---- Executive summary ----
