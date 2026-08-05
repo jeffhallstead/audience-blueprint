@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Download, Loader2, RefreshCw } from "lucide-react";
+import { ArrowRight, Download, Loader2, Mail, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/page-header";
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
