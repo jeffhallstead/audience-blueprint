@@ -169,3 +169,12 @@ export type AdminLeadFeed = {
   leads: AdminLeadRow[];
   count: number;
 };
+
+export type IntegrationsStatus = {
+  /** Contact providers with credentials wired up right now. */
+  contactProviders: string[];
+  /** Outbox row counts keyed by status. */
+  counts: Record<string, number>;
+  lastDeliveredAt: string | null;
+  qualifiedLeads: number;
+};

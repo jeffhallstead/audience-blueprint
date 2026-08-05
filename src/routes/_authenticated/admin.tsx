@@ -10,6 +10,7 @@ import { QualificationPanel } from "@/components/admin/qualification-panel";
 import { OrganizationsPanel } from "@/components/admin/organizations-panel";
 import { EventsPanel } from "@/components/admin/events-panel";
 import { LeadsPanel } from "@/components/admin/leads-panel";
+import { IntegrationsHealth } from "@/components/admin/integrations-health";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -289,6 +290,7 @@ function AdminConsole() {
         </TabsContent>
 
         <TabsContent value="integrations" className="mt-6 space-y-4">
+          <IntegrationsHealth />
           <div className="flex flex-wrap gap-2">
             {Object.entries(data.outboxCounts).map(([status, count]) => (
               <Badge key={status} variant={status === "failed" ? "destructive" : "secondary"}>

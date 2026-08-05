@@ -57,7 +57,14 @@ export async function enqueueIntegrationEvent(
     const { error } = await supabaseAdmin
       .from("integration_outbox")
       .upsert(rows, { onConflict: "provider,dedupe_key", ignoreDuplicates: true });
-    if (error) console.error("[integrations] enqueue failed:", error.message);
+    // Loud on purpose: a silent enqueue failure means the CRM quietly stops
+    // receiving leads while every user-facing flow still looks healthy.
+    if (error) {
+      console.error(
+        `[integrations] enqueue failed [${event.eventName}] code=${error.code ?? "none"}: ${error.message}`,
+      );
+    }
+
   } catch (err) {
     console.error("[integrations] enqueue threw:", err);
   }

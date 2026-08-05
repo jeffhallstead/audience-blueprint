@@ -125,3 +125,43 @@ export async function syncCrmFor(input: PlatformEventInput): Promise<void> {
     );
   }
 }
+
+/**
+ * Enqueues a current-state contact push for one user, independent of any new
+ * event. Used to backfill the CRM with accounts that qualified before the
+ * queue was working. Returns why it was skipped, when it was.
+ */
+export async function enqueueContactSnapshot(
+  userId: string,
+  organizationId: string | null = null,
+): Promise<{ queued: boolean; reason?: string }> {
+  const { CONTACT_PROVIDERS } = await import("./types");
+  const { configuredProviders, enqueueIntegrationEvent } = await import("./outbox.server");
+  if (configuredProviders(CONTACT_PROVIDERS).length === 0) {
+    return { queued: false, reason: "no contact provider configured" };
+  }
+
+  const identity = await resolveIdentity(userId, organizationId);
+  if (!identity.email) return { queued: false, reason: "no email on file" };
+
+  const occurredAt = new Date().toISOString();
+  await enqueueIntegrationEvent(
+    {
+      eventName: "qualification.tier_changed",
+      userId,
+      email: identity.email,
+      fullName: identity.fullName,
+      organization: identity.organization,
+      score: identity.score,
+      maturityLevel: identity.maturityLevel,
+      tier: identity.tier,
+      occurredAt,
+      metadata: { sourceEvent: "crm.backfill", to: identity.tier, organizationId },
+    },
+    // One backfill row per user per tier: re-running the backfill is a no-op
+    // unless the user's tier has moved since.
+    { dedupeKey: `crm.backfill:${userId}:${identity.tier ?? "none"}` },
+  );
+  return { queued: true };
+}
+
