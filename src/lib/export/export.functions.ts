@@ -52,7 +52,7 @@ export const getExportDestinations = createServerFn({ method: "GET" })
     }
     if (connections.some((c) => c.provider === "asana")) available.push("asana");
 
-    const { data } = await context.supabase
+    const { data: targets } = await context.supabase
       .from("export_targets")
       .select("provider, airtable_table, asana_project_id, asana_project_name, last_exported_at")
       .eq("user_id", context.userId);
@@ -60,7 +60,7 @@ export const getExportDestinations = createServerFn({ method: "GET" })
     return {
       available,
       connections,
-      targets: data ?? [],
+      targets: targets ?? [],
     };
   });
 
