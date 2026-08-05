@@ -4,16 +4,18 @@ Right now every download path (CSV, Excel, Copy for Sheets, PDF, email delivery)
 
 ## Recommended tiering
 
-| Capability | Free (Publisher Test™) | Blueprint ($49) | OS ($49/mo) |
-| --- | --- | --- | --- |
-| Limited PDF (score + category readings + upgrade page) | Yes | — | — |
-| Full executive PDF | No | Yes | Yes |
-| Email the report to my account | No | Yes | Yes |
-| CSV / Excel / Copy for Sheets export | No (preview only) | Yes | Yes |
-| Airtable + Asana connections | No | No | Yes |
-| Push plan rows to Airtable / Asana | No | No | Yes |
+| Capability | Free (Publisher Test™) | Blueprint ($49) |
+| --- | --- | --- |
+| Limited PDF (score + category readings + upgrade page) | Yes | — |
+| Full executive PDF | No | Yes |
+| Email the report to my account | No | Yes |
+| CSV / Excel / Copy for Sheets export | No (preview only) | Yes |
+| Airtable + Asana connections | No | Yes |
+| Push plan rows to Airtable / Asana | No | Yes |
 
-Reasoning: the one-time Blueprint should own "get my plan out of the app" (files + email). The recurring OS tier should own "keep my plan in sync with the tools my team runs on" — connectors are the strongest recurring-value story and the weakest one-time-purchase story.
+Reasoning: with OS not launching yet, the Blueprint purchase owns everything that gets the plan out of the app — files, email, and connectors. Free stays a credible diagnostic, paid is where the plan becomes usable.
+
+Future move (not built now): when Publisher OS™ launches, connectors become the recurring-value story and move to the OS tier. The implementation below keeps that a one-line change — connectors get their own `connector_export` feature flag whose minimum tier flips from `blueprint` to `os`.
 
 ## What the free user sees (the upgrade moment)
 
