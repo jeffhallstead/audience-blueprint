@@ -12,7 +12,7 @@ export interface SendReportPdfInput {
 
 export const sendReportPdf = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: SendReportPdfInput) => {
+  .validator((input: SendReportPdfInput) => {
     if (!input?.pdfBase64 || typeof input.pdfBase64 !== "string") {
       throw new Error("PDF data is required");
     }
