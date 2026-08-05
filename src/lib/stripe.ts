@@ -8,9 +8,9 @@ const clientToken = import.meta.env["VITE_PAYMENTS_CLIENT_TOKEN"] as string | un
 export function getStripeEnvironment(): StripeEnv {
   if (clientToken?.startsWith("pk_test_")) return "sandbox";
   if (clientToken?.startsWith("pk_live_")) return "live";
-  throw new Error(
-    "Payments are not configured for this build. Complete payment go-live to enable checkout.",
-  );
+  // No token yet (payments not configured): read/report as the test environment.
+  // Checkout itself is gated separately by paymentsConfigured().
+  return "sandbox";
 }
 
 /** True when checkout can be opened at all — use for UI guards. */
