@@ -184,28 +184,37 @@ export function ExportMenu({
 
         <Separator />
 
-        <div className="space-y-3">
-          <p className="text-eyebrow">Download</p>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void run("csv")}>
-              <Table2 className="size-4" aria-hidden /> CSV
-            </Button>
-            <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void run("xlsx")}>
-              {busy === "xlsx" ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden />
-              ) : (
-                <FileSpreadsheet className="size-4" aria-hidden />
-              )}{" "}
-              Excel
-            </Button>
-            <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void run("clipboard")}>
-              <ClipboardCopy className="size-4" aria-hidden /> Copy for Google Sheets
-            </Button>
+        {canExportFiles ? (
+          <div className="space-y-3">
+            <p className="text-eyebrow">Download</p>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void run("csv")}>
+                <Table2 className="size-4" aria-hidden /> CSV
+              </Button>
+              <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void run("xlsx")}>
+                {busy === "xlsx" ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : (
+                  <FileSpreadsheet className="size-4" aria-hidden />
+                )}{" "}
+                Excel
+              </Button>
+              <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => void run("clipboard")}>
+                <ClipboardCopy className="size-4" aria-hidden /> Copy for Google Sheets
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              For Google Sheets: copy, then paste into a blank sheet — or import the CSV.
+            </p>
           </div>
-          <p className="text-xs text-muted-foreground">
-            For Google Sheets: copy, then paste into a blank sheet — or import the CSV.
-          </p>
-        </div>
+        ) : (
+          <LockedFeature
+            feature="file_export"
+            title="Unlock exports"
+            description="CSV, Excel and Google Sheets exports of your opportunities, 90-day roadmap and KPIs come with Publisher Blueprint™."
+          />
+        )}
+
 
         <Separator />
 
