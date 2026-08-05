@@ -1,7 +1,15 @@
-import { getStripeEnvironment } from "@/lib/stripe";
+import { getStripeEnvironment, paymentsConfigured } from "@/lib/stripe";
 
 /** Renders nothing in live mode — safe to mount unconditionally. */
 export function PaymentTestModeBanner() {
+  if (!paymentsConfigured()) {
+    return (
+      <div className="w-full border-b border-destructive/40 bg-destructive/10 px-4 py-2 text-center text-xs tracking-wide text-destructive">
+        Checkout is not configured for this build yet. Payments are temporarily unavailable.
+      </div>
+    );
+  }
+
   if (getStripeEnvironment() !== "sandbox") return null;
 
   return (
