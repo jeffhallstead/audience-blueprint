@@ -200,7 +200,9 @@ export const listInvoices = createServerFn({ method: "GET" })
         invoices.data.map((inv) => inv.id).filter((id): id is string => !!id),
       );
       for (const charge of charges.data) {
-        const invoiceId = typeof charge.invoice === "string" ? charge.invoice : charge.invoice?.id;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const rawInvoice = (charge as any).invoice;
+        const invoiceId = typeof rawInvoice === "string" ? rawInvoice : rawInvoice?.id;
         if (invoiceId && invoicedCharges.has(invoiceId)) continue;
         if (charge.status !== "succeeded") continue;
         rows.push({
