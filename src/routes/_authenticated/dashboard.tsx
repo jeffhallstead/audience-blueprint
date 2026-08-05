@@ -96,6 +96,22 @@ function Dashboard() {
     }
   }
 
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result;
+      if (typeof result === "string") {
+        resolve(result);
+      } else {
+        reject(new Error("Could not read PDF as base64."));
+      }
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
   async function handleEmailPdf() {
     if (!blueprint) return;
     setEmailing(true);
