@@ -1,4 +1,5 @@
 import { Check, Minus } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { PLANS, TIER_RANK, type Tier } from "@/lib/commerce/plans";
 import { cn } from "@/lib/utils";
@@ -6,6 +7,8 @@ import { cn } from "@/lib/utils";
 type PricingTableProps = {
   currentTier: Tier;
   loading?: boolean;
+  /** True when a visitor is signed in. Drives the free-tier call to action. */
+  isAuthenticated?: boolean;
   /** True when there is an active or scheduled-to-cancel OS subscription. */
   hasSubscription?: boolean;
   /** True when the one-time Blueprint has actually been purchased. */
@@ -15,6 +18,7 @@ type PricingTableProps = {
   onSelect: (priceId: string) => void;
   onManage?: (() => void) | undefined;
 };
+
 
 export function PricingTable({
   currentTier,
