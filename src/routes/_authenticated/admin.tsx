@@ -9,6 +9,8 @@ import { LifecyclePanel } from "@/components/admin/lifecycle-panel";
 import { QualificationPanel } from "@/components/admin/qualification-panel";
 import { OrganizationsPanel } from "@/components/admin/organizations-panel";
 import { EventsPanel } from "@/components/admin/events-panel";
+import { LeadsPanel } from "@/components/admin/leads-panel";
+
 
 
 
