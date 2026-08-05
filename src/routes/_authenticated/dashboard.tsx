@@ -67,14 +67,14 @@ function Dashboard() {
         locked,
       });
       toast.success("PDF downloaded.");
-      void trackBlueprintEvent("blueprint_pdf_exported", { overall: blueprint.overall, locked });
-      // Paid reports carry the action list, so they count as a recommendation export.
-      if (!locked) {
-        void trackRecommendationExport(
-          blueprint.opportunities.map((item) => item.title),
-          "pdf",
-        );
-      }
+      // Logged through the same export analytics path as CSV/Excel. The free
+      // report has no opportunities, so it records the report itself.
+      void trackRecommendationExport(
+        locked
+          ? ["Publisher Index summary"]
+          : blueprint.opportunities.map((item) => item.title),
+        "pdf",
+      );
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not generate the PDF.");
     } finally {
