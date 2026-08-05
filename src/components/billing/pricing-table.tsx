@@ -59,6 +59,12 @@ export function PricingTable({
 
         const disabled = loading || (!plan.priceId ? true : owned && !manageable);
 
+        // Free tier: unauthenticated visitors get a real signup CTA, paid
+        // customers get none at all.
+        const freeSignup = plan.tier === "free" && !isAuthenticated;
+        const hideCta = plan.tier === "free" && isAuthenticated && !isCurrent;
+
+
         return (
           <section
             key={plan.tier}
