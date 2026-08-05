@@ -27,6 +27,9 @@ import { LockedFeature } from "@/components/billing/feature-gate";
 import { trackBlueprintEvent } from "@/lib/blueprint/analytics";
 import { useSavedRecommendations } from "@/lib/copilot/queries";
 import { exportFilename } from "@/lib/export/rows";
+import { buildBlueprintPdf } from "@/lib/export/pdf";
+import { sendReportPdf } from "@/lib/email/report.functions";
+import { useServerFn } from "@tanstack/react-start";
 import { trackRecommendationExport } from "@/lib/analytics/recommendation-metadata";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
