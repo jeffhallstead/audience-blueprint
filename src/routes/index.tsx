@@ -182,6 +182,14 @@ function Landing() {
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-xs text-muted-foreground sm:flex-row sm:justify-between">
           <span>© {new Date().getFullYear()} Publisher Blueprint™ · by Jeff Hallstead</span>
           <nav className="flex flex-wrap gap-4">
+            <a
+              href="https://jeffhallstead.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground"
+            >
+              Jeff Hallstead Consulting
+            </a>
             <Link to="/pricing" className="hover:text-foreground">
               Pricing
             </Link>
