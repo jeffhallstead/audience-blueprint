@@ -118,17 +118,25 @@ export function PricingTable({
               ))}
             </ul>
 
-            <Button
-              variant={featured && !owned ? "default" : "outline"}
-              size="lg"
-              disabled={disabled}
-              onClick={() => {
-                if (manageable) return onManage?.();
-                if (plan.priceId && !owned) onSelect(plan.priceId);
-              }}
-            >
-              {label}
-            </Button>
+            {hideCta ? null : freeSignup ? (
+              <Button asChild variant="outline" size="lg">
+                <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
+                  Start free — no card required
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                variant={featured && !owned ? "default" : "outline"}
+                size="lg"
+                disabled={disabled}
+                onClick={() => {
+                  if (manageable) return onManage?.();
+                  if (plan.priceId && !owned) onSelect(plan.priceId);
+                }}
+              >
+                {label}
+              </Button>
+            )}
           </section>
         );
       })}
