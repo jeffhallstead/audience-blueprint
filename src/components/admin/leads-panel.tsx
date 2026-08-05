@@ -40,9 +40,10 @@ const shortDate = (iso: string | null) =>
     : "—";
 
 function StatusBadge({ status }: { status: string }) {
-  const item = OUTREACH_STATUS.find((s) => s.value === status) ?? OUTREACH_STATUS[0];
+  const item = OUTREACH_STATUS.find((s) => s.value === status) ?? OUTREACH_STATUS[0]!;
   return <Badge variant={item.variant}>{item.label}</Badge>;
 }
+
 
 type LeadEditState = {
   userId: string;
@@ -88,7 +89,7 @@ export function LeadsPanel() {
   });
 
   const quickUpdateMutation = useMutation({
-    mutationFn: (payload: { userId: string; status: string; notes: string | null }) =>
+    mutationFn: (payload: { userId: string; status: string; notes: string }) =>
       saveOutreach({ data: { ...payload } }),
     onSuccess: () => {
       toast.success("Status updated.");
@@ -97,13 +98,16 @@ export function LeadsPanel() {
     onError: (err: Error) => toast.error(err.message),
   });
 
+
   const copyEmail = (email: string) => {
     void navigator.clipboard.writeText(email);
     toast.success("Email copied to clipboard.");
   };
 
   const leads = data?.leads ?? [];
-  const crmBaseUrl = typeof import.meta.env !== "undefined" ? import.meta.env.VITE_AIRTABLE_BASE_URL : undefined;
+  const crmBaseUrl =
+    typeof import.meta.env !== "undefined" ? import.meta.env["VITE_AIRTABLE_BASE_URL"] : undefined;
+
 
   if (isLoading) return <Skeleton className="h-96" />;
 
