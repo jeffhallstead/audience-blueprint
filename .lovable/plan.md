@@ -40,4 +40,13 @@ DNS control: Netlify (external to Lovable).
 
 - I cannot directly edit Netlify DNS; you will need to paste the records Lovable gives you.
 - Do not delete the old `.lovable.app` URL in Lovable; setting the new domain as Primary will handle the redirect.
-- If `jeffhallstead.com` is also hosted on Netlify and uses Netlify's own DNS, adding the new A record pointing away from Netlify's hosting may be unusual but is correct for a third-party Lovable deployment. If you prefer a different setup (e.g., a proxy), let me know before proceeding.
+- Because `jeffhallstead.com` is already hosted on Netlify, the A-record for `blueprint` will point that subdomain away from Netlify's hosting. This is the recommended setup for Lovable deployments. Using a Netlify proxy/rewrite instead would add a middle layer that can interfere with SSL, auth redirects, and Paddle checkout, so the direct A-record approach is preferred.
+
+## Proxy alternative (not recommended)
+
+If you later want to keep all traffic flowing through Netlify for analytics or rewriting, you could proxy `blueprint.jeffhallstead.com` to the Lovable origin. Trade-offs:
+
+- SSL must be configured and renewed on Netlify for the proxy.
+- Lovable's auto-managed SSL and domain verification would not apply.
+- WebSocket, auth cookies, and Paddle webhook signatures can fail or require extra headers.
+- This is more complex than the direct A-record approach and is only worthwhile if you need Netlify-specific edge rules.
