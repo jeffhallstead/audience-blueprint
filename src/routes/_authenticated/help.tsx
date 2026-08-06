@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_authenticated/help")({
 
 const STEPS: { title: string; body: string; to: string; cta: string }[] = [
   {
-    title: "Take the Publisher Index™ assessment",
+    title: "Take the Publisher Index assessment",
     body: "Answer seven short sections about your audience, content, distribution, operations, strategy, and alignment. Progress saves automatically, so you can stop and return anytime.",
     to: "/assessment",
     cta: "Open the assessment",
@@ -52,7 +52,7 @@ const STEPS: { title: string; body: string; to: string; cta: string }[] = [
     cta: "View roadmap",
   },
   {
-    title: "Ask Publisher Copilot™",
+    title: "Ask Publisher Copilot",
     body: "Copilot uses your assessment data to draft strategy documents, briefs, and recommendations. Save anything useful to your Strategy Library.",
     to: "/copilot",
     cta: "Open Copilot",
@@ -72,7 +72,7 @@ const FAQ: { question: string; answer: string }[] = [
       "Every account can complete the assessment and see a summary score with a limited PDF. The full Blueprint — detailed category analysis, complete recommendation set, the 90-day roadmap, and the full report export — unlocks with a Publisher Blueprint purchase.",
   },
   {
-    question: "How is my Publisher Index™ score calculated?",
+    question: "How is my Publisher Index score calculated?",
     answer:
       "Each answer maps to weighted points across six categories. Category scores roll up into a 0-100 overall score, which places you in one of five maturity levels from Ad Hoc to Publisher-Grade.",
   },

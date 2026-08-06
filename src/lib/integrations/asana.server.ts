@@ -108,7 +108,7 @@ export async function createAsanaProject(
       data: {
         name: name.slice(0, 120),
         workspace: workspaceId,
-        notes: "Created by Publisher Blueprint™ for strategic recommendation exports.",
+        notes: "Created by Publisher Blueprint for strategic recommendation exports.",
       },
     }),
   });

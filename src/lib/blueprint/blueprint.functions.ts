@@ -45,7 +45,7 @@ export const getBlueprintPayload = createServerFn({ method: "GET" })
 
     if (tierMeets(tier, "full_dashboard")) return { tier, locked: false, blueprint: full };
 
-    // Free tier keeps the Publisher Index™ score, maturity level and the
+    // Free tier keeps the Publisher Index score, maturity level and the
     // six category readings. Everything else is stripped server-side.
     const preview: Blueprint = {
       ...full,

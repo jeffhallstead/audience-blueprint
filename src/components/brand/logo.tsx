@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-/** Product-first wordmark for Publisher Blueprint™. */
+/** Product-first wordmark for Publisher Blueprint. */
 export function Logo({ className, inverted = false }: { className?: string; inverted?: boolean }) {
   return (
     <span className={cn("inline-flex items-center gap-2 leading-none", className)}>
@@ -22,7 +22,7 @@ export function Logo({ className, inverted = false }: { className?: string; inve
       >
         Publisher Blueprint
         <span className="ml-0.5 text-primary" aria-hidden>
-          ™
+          
         </span>
       </span>
     </span>

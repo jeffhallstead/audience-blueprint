@@ -17,7 +17,7 @@ import {
 
 const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional(),
-  /** "test" pre-selects the free Publisher Test™ entry point. */
+  /** "test" pre-selects the free Publisher Test entry point. */
   plan: z.string().optional(),
 });
 
@@ -32,9 +32,9 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in — Publisher Blueprint" },
-      { name: "description", content: "Access your Publisher Blueprint™ assessment, dashboard and 90-day roadmap." },
+      { name: "description", content: "Access your Publisher Blueprint assessment, dashboard and 90-day roadmap." },
       { property: "og:title", content: "Sign in — Publisher Blueprint" },
-      { property: "og:description", content: "Access your Publisher Blueprint™ assessment and strategic roadmap." },
+      { property: "og:description", content: "Access your Publisher Blueprint assessment and strategic roadmap." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:url", content: "https://blueprint.jeffhallstead.com/auth" },
@@ -280,7 +280,7 @@ function AuthPage() {
                 </h1>
                 {isSignUp && freeTier ? (
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    Publisher Test™ — free, no card required. Approximately 12 minutes.
+                    Publisher Test — free, no card required. Approximately 12 minutes.
                   </p>
                 ) : null}
               </div>

@@ -1,5 +1,5 @@
 /**
- * Publisher Copilot™ — client data layer.
+ * Publisher Copilot — client data layer.
  *
  * All Copilot reads go through these hooks so cache keys stay consistent and
  * every surface invalidates the same entries after a generation.

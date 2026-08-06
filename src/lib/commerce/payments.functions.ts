@@ -192,7 +192,7 @@ export const listInvoices = createServerFn({ method: "GET" })
           amountCents: inv.amount_paid ?? 0,
           currency: (inv.currency ?? "usd").toUpperCase(),
           status: inv.status ?? "paid",
-          description: inv.lines?.data?.[0]?.description ?? "Publisher OS™ — monthly",
+          description: inv.lines?.data?.[0]?.description ?? "Publisher OS — monthly",
           invoiceUrl: inv.hosted_invoice_url ?? null,
         }));
 
@@ -211,7 +211,7 @@ export const listInvoices = createServerFn({ method: "GET" })
           amountCents: charge.amount,
           currency: charge.currency.toUpperCase(),
           status: charge.refunded ? "refunded" : "paid",
-          description: charge.description ?? "Publisher Blueprint™",
+          description: charge.description ?? "Publisher Blueprint",
           invoiceUrl: charge.receipt_url ?? null,
         });
       }

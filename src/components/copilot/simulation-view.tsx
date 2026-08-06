@@ -87,7 +87,7 @@ export function SimulationView({ simulation }: { simulation: Simulation }) {
             <li key={index}>{item}</li>
           ))}
           <li>
-            This is a reasoned estimate, not a forecast. Only a re-assessment produces an actual Publisher Index™ score.
+            This is a reasoned estimate, not a forecast. Only a re-assessment produces an actual Publisher Index score.
           </li>
         </ul>
       </section>

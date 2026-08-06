@@ -1,5 +1,5 @@
 /**
- * Publisher Blueprint™ — export row model.
+ * Publisher Blueprint — export row model.
  *
  * Every destination (CSV, Excel, Google Sheets, Airtable, Asana) consumes this
  * same flat list, so the columns stay identical no matter where a plan lands.
@@ -226,7 +226,7 @@ export function buildExportRows(
       row({
         Type: "Score",
         Category: "Publisher Index",
-        Title: "Overall Publisher Index™",
+        Title: "Overall Publisher Index",
         Detail: `${blueprint.overall}/100 — ${blueprint.maturity.title}`,
         Status: blueprint.maturity.title,
         Key: "score:overall",

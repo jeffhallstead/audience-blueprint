@@ -32,7 +32,7 @@ export function PricingTable({
 }: PricingTableProps) {
   return (
     <div className="grid gap-6 md:grid-cols-2">
-      {/* Publisher OS™ is not sold on this page. */}
+      {/* Publisher OS is not sold on this page. */}
       {PLANS.filter((plan) => plan.tier !== "os").map((plan) => {
         const featured = plan.tier === "blueprint";
         // The Blueprint is a one-time purchase: once owned it is never re-sold,
@@ -95,7 +95,7 @@ export function PricingTable({
               ) : null}
               {overlaps ? (
                 <p className="rounded-md border border-primary/30 bg-primary/5 p-3 text-xs leading-relaxed text-muted-foreground">
-                  Publisher OS™ is already included with your Blueprint until{" "}
+                  Publisher OS is already included with your Blueprint until{" "}
                   {new Date(includedOsUntil!).toLocaleDateString(undefined, { dateStyle: "medium" })}
                   . If you subscribe now, billing starts today and overlaps with the included month.
                 </p>

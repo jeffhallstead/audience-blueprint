@@ -1,7 +1,7 @@
 /**
- * Publisher Blueprint™ — deterministic rule engine.
+ * Publisher Blueprint — deterministic rule engine.
  *
- * Input: Publisher Index™ scores. Output: the full blueprint the dashboard,
+ * Input: Publisher Index scores. Output: the full blueprint the dashboard,
  * roadmap, and resources screens render. This module contains selection and
  * ranking logic only — every string, threshold, and template lives in
  * `rules.ts`. A future AI service can replace `generateBlueprint` wholesale
@@ -169,7 +169,7 @@ function pickActions(rules: ActionRule[], readings: CategoryReading[], count: nu
     }));
 }
 
-/** Pure, deterministic blueprint generation from Publisher Index™ scores. */
+/** Pure, deterministic blueprint generation from Publisher Index scores. */
 export function generateBlueprint(input: BlueprintInput): Blueprint {
   const maturity =
     MATURITY_LEVELS.find((level) => level.level === input.maturityLevel) ?? MATURITY_LEVELS[0]!;

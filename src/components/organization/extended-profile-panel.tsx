@@ -107,7 +107,7 @@ export function ExtendedProfilePanel() {
             </CardTitle>
             <CardDescription>
               Optional depth on audience, marketing and content operations. It sharpens Copilot
-              context and how we read your fit — it never changes your Publisher Index™ score.
+              context and how we read your fit — it never changes your Publisher Index score.
             </CardDescription>
           </div>
           <div className="min-w-[10rem] space-y-1">

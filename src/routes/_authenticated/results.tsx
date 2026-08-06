@@ -13,12 +13,12 @@ import { fetchLatestScores } from "@/lib/assessment/persistence";
 export const Route = createFileRoute("/_authenticated/results")({
   head: () => ({
     meta: [
-      { title: "Your Publisher Index™ Results — Publisher Blueprint" },
+      { title: "Your Publisher Index Results — Publisher Blueprint" },
       {
         name: "description",
-        content: "Your Publisher Index™ score, six category scores, maturity level, strengths, and growth opportunities.",
+        content: "Your Publisher Index score, six category scores, maturity level, strengths, and growth opportunities.",
       },
-      { property: "og:title", content: "Publisher Index™ Results" },
+      { property: "og:title", content: "Publisher Index Results" },
       { property: "og:description", content: "Overall score, category breakdown, and maturity classification." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -49,7 +49,7 @@ function Results() {
     return (
       <div className="surface-panel space-y-4 p-8 text-center">
         <h1 className="text-display text-2xl">No results yet</h1>
-        <p className="text-sm text-muted-foreground">Complete the Publisher Index™ assessment to see your scores.</p>
+        <p className="text-sm text-muted-foreground">Complete the Publisher Index assessment to see your scores.</p>
         <Button asChild>
           <Link to="/wizard">Start assessment</Link>
         </Button>
@@ -72,7 +72,7 @@ function Results() {
   return (
     <div className="space-y-10">
       <PageHeader
-        eyebrow="Publisher Index™"
+        eyebrow="Publisher Index"
         title={data.organizationName ? `${data.organizationName} — assessment results` : "Your assessment results"}
         description={`Assessed ${assessedOn}. Scores are calculated from your seven-section diagnostic and drive every recommendation in your Blueprint.`}
         actions={
@@ -87,7 +87,7 @@ function Results() {
       <section className="surface-panel grid gap-8 p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_1.1fr]">
         <div className="space-y-6">
           <div>
-            <p className="text-eyebrow">Overall Publisher Index™</p>
+            <p className="text-eyebrow">Overall Publisher Index</p>
             <p className="text-display mt-2 text-7xl leading-none">{data.overall}</p>
             <p className="mt-2 text-xs text-muted-foreground">out of 100</p>
           </div>

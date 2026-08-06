@@ -1,5 +1,5 @@
 /**
- * Publisher Index™ — assessment configuration.
+ * Publisher Index — assessment configuration.
  *
  * Everything about the assessment (sections, questions, answer types, scoring
  * weights, category mapping, maturity thresholds, ordering, estimated time)
@@ -9,7 +9,7 @@
 
 export const ASSESSMENT_VERSION = "v1";
 
-/** Scoring categories the Publisher Index™ rolls up into. */
+/** Scoring categories the Publisher Index rolls up into. */
 export type CategoryId = "audience" | "content" | "distribution" | "operations" | "strategy" | "alignment";
 
 export interface CategoryConfig {

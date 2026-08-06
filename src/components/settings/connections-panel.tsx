@@ -136,7 +136,7 @@ export function ConnectionsPanel() {
       <LockedFeature
         feature="connector_export"
         title="Connect Airtable and Asana"
-        description="Sync your opportunities, 90-day roadmap and KPIs into the tools your team already runs on. Included with Publisher Blueprint™."
+        description="Sync your opportunities, 90-day roadmap and KPIs into the tools your team already runs on. Included with Publisher Blueprint."
       />
     );
   }

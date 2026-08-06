@@ -26,12 +26,12 @@ const WelcomeEmail = ({ name, welcomeUrl }: WelcomeEmailProps) => {
       <Preview>Your Publisher Blueprint account is ready — start your assessment.</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Text style={eyebrow}>PUBLISHER BLUEPRINT™</Text>
+          <Text style={eyebrow}>PUBLISHER BLUEPRINT</Text>
           <Heading style={heading}>
             {name ? `Welcome, ${name}.` : 'Welcome aboard.'}
           </Heading>
           <Text style={paragraph}>
-            Your account is ready. The Publisher Index™ assesses seven dimensions of publishing
+            Your account is ready. The Publisher Index assesses seven dimensions of publishing
             maturity and turns your answers into an executive score and a sequenced 90-day
             roadmap.
           </Text>
@@ -56,7 +56,7 @@ const WelcomeEmail = ({ name, welcomeUrl }: WelcomeEmailProps) => {
 
 export const template = {
   component: WelcomeEmail,
-  subject: 'Welcome to Publisher Blueprint™',
+  subject: 'Welcome to Publisher Blueprint',
   displayName: 'Welcome email',
   previewData: {
     name: 'Jordan',

@@ -22,12 +22,12 @@ export const Route = createFileRoute("/_authenticated/copilot/chat/$sessionId")(
     typeof search["q"] === "string" ? { q: search["q"] as string } : {},
   head: () => ({
     meta: [
-      { title: "Ask Publisher Copilot™ — Publisher Blueprint" },
+      { title: "Ask Publisher Copilot — Publisher Blueprint" },
       {
         name: "description",
-        content: "A working conversation with your AI strategist, grounded in your Publisher Index™ assessment.",
+        content: "A working conversation with your AI strategist, grounded in your Publisher Index assessment.",
       },
-      { property: "og:title", content: "Ask Publisher Copilot™" },
+      { property: "og:title", content: "Ask Publisher Copilot" },
       { property: "og:description", content: "Strategic answers grounded in your own assessment data." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

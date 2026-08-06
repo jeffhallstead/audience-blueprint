@@ -60,7 +60,7 @@ export function BillingPanel() {
           {subscription?.status === "past_due" ? (
             <p className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
               Your last payment failed. We are retrying it — update your payment method to keep
-              Publisher OS™ active.
+              Publisher OS active.
             </p>
           ) : null}
 
@@ -86,7 +86,7 @@ export function BillingPanel() {
             </dl>
           ) : entitlement?.includedOsUntil ? (
             <p className="text-muted-foreground">
-              Publisher OS™ is included with your Blueprint purchase until{" "}
+              Publisher OS is included with your Blueprint purchase until{" "}
               {formatDate(entitlement.includedOsUntil)}.
             </p>
           ) : null}

@@ -16,9 +16,9 @@ export const Route = createFileRoute("/_authenticated/copilot/documents/$documen
   head: () => ({
     meta: [
       { title: "Strategy Deliverable — Publisher Blueprint" },
-      { name: "description", content: "An AI-generated strategy deliverable produced from your Publisher Index™ results." },
+      { name: "description", content: "An AI-generated strategy deliverable produced from your Publisher Index results." },
       { property: "og:title", content: "Strategy Deliverable — Publisher Blueprint" },
-      { property: "og:description", content: "Edit, export, or regenerate your Publisher Copilot™ deliverable." },
+      { property: "og:description", content: "Edit, export, or regenerate your Publisher Copilot deliverable." },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
     ],

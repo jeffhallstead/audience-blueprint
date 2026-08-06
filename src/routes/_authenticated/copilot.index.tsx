@@ -19,16 +19,16 @@ import { useBlueprint } from "@/lib/blueprint/use-blueprint";
 export const Route = createFileRoute("/_authenticated/copilot/")({
   head: () => ({
     meta: [
-      { title: "Publisher Copilot™ — Publisher Blueprint" },
+      { title: "Publisher Copilot — Publisher Blueprint" },
       {
         name: "description",
         content:
-          "Your AI strategic advisor. Turn your Publisher Index™ results into strategy, roadmaps, content pillars, and board-ready deliverables.",
+          "Your AI strategic advisor. Turn your Publisher Index results into strategy, roadmaps, content pillars, and board-ready deliverables.",
       },
-      { property: "og:title", content: "Publisher Copilot™ — Publisher Blueprint" },
+      { property: "og:title", content: "Publisher Copilot — Publisher Blueprint" },
       {
         property: "og:description",
-        content: "AI strategy, roadmaps, and executive deliverables generated from your Publisher Index™ assessment.",
+        content: "AI strategy, roadmaps, and executive deliverables generated from your Publisher Index assessment.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -114,13 +114,13 @@ function CopilotHome() {
     return (
       <div className="space-y-8">
         <PageHeader
-          eyebrow="Publisher Copilot™"
+          eyebrow="Publisher Copilot"
           title="Your AI strategic advisor"
-          description="Copilot works from your Publisher Index™ results. Complete the assessment and it will know your business before you ask it anything."
+          description="Copilot works from your Publisher Index results. Complete the assessment and it will know your business before you ask it anything."
         />
         <BlueprintEmptyState
           title="Copilot needs your assessment first"
-          description="Publisher Copilot™ writes strategy against your real scores, gaps, and roadmap — not generic best practice. Ten minutes of assessment unlocks the entire AI layer."
+          description="Publisher Copilot writes strategy against your real scores, gaps, and roadmap — not generic best practice. Ten minutes of assessment unlocks the entire AI layer."
         />
       </div>
     );
@@ -140,7 +140,7 @@ function CopilotHome() {
   return (
     <div className="space-y-12">
       <PageHeader
-        eyebrow="Publisher Copilot™"
+        eyebrow="Publisher Copilot"
         title="Your AI strategic advisor"
         description="Copilot already knows your scores, gaps, and roadmap. Pick an objective and it produces a deliverable you can take to your leadership team."
         actions={
@@ -156,7 +156,7 @@ function CopilotHome() {
         <SectionHeading
           step={1}
           label="Start here: Strategy actions"
-          hint="Generate your core deliverables straight from your Publisher Index™ results."
+          hint="Generate your core deliverables straight from your Publisher Index results."
         />
         <div className="grid gap-5 sm:grid-cols-2">
           {PRIMARY_OBJECTIVES.map((objective) => {

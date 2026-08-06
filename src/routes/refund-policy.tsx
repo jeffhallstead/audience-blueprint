@@ -6,16 +6,16 @@ export const Route = createFileRoute("/refund-policy")({
   component: RefundPolicyPage,
   head: () => ({
     meta: [
-      { title: "Refund Policy | Publisher Blueprint™" },
+      { title: "Refund Policy | Publisher Blueprint" },
       {
         name: "description",
         content:
-          "Publisher Blueprint™ offers a 30-day money-back guarantee. Refunds are issued by Momentive Ventures LLC through our payment provider.",
+          "Publisher Blueprint offers a 30-day money-back guarantee. Refunds are issued by Momentive Ventures LLC through our payment provider.",
       },
-      { property: "og:title", content: "Refund Policy | Publisher Blueprint™" },
+      { property: "og:title", content: "Refund Policy | Publisher Blueprint" },
       {
         property: "og:description",
-        content: "30-day money-back guarantee on Publisher Blueprint™ purchases and subscriptions.",
+        content: "30-day money-back guarantee on Publisher Blueprint purchases and subscriptions.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -30,18 +30,18 @@ function RefundPolicyPage() {
     <LegalPage eyebrow="Legal" title="Refund Policy" updated="August 2026">
       <p>
         We offer a <strong>{SELLER.refundDays}-day money-back guarantee</strong>. If Publisher
-        Blueprint™ is not right for you, request a full refund within {SELLER.refundDays} days of
+        Blueprint is not right for you, request a full refund within {SELLER.refundDays} days of
         your order date and we will refund it.
       </p>
 
       <h2>What this covers</h2>
       <ul>
         <li>
-          The one-time Publisher Blueprint™ purchase — refundable within {SELLER.refundDays} days of
+          The one-time Publisher Blueprint purchase — refundable within {SELLER.refundDays} days of
           purchase.
         </li>
         <li>
-          Publisher OS™ monthly subscriptions — the most recent payment is refundable within{" "}
+          Publisher OS monthly subscriptions — the most recent payment is refundable within{" "}
           {SELLER.refundDays} days. Cancelling stops future renewals and access continues to the end
           of the paid period.
         </li>
@@ -59,7 +59,7 @@ function RefundPolicyPage() {
       <h2>After a refund</h2>
       <p>
         When a refund is approved, access to paid features ends and your account reverts to the free
-        Publisher Test™ tier. Your assessment results remain available.
+        Publisher Test tier. Your assessment results remain available.
       </p>
 
     </LegalPage>

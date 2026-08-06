@@ -8,7 +8,7 @@ import { useSavedRecommendations, useToggleSavedStatus } from "@/lib/copilot/que
 import { DOCUMENT_KIND_LABELS } from "@/lib/copilot/objectives";
 
 /**
- * Actions pushed into the Blueprint from Publisher Copilot™.
+ * Actions pushed into the Blueprint from Publisher Copilot.
  *
  * Presentation only — the list, its status transitions, and cache
  * invalidation all live in the Copilot data layer.

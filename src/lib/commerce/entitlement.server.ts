@@ -102,7 +102,7 @@ export async function requireFeature(
   const { tier } = await resolveEntitlement(supabase, userId, env);
   if (!tierMeets(tier, feature)) {
     throw new Error(
-      `Upgrade required: this feature is part of ${FEATURE_MINIMUM[feature] === "os" ? "Publisher OS™" : "Publisher Blueprint™"}.`,
+      `Upgrade required: this feature is part of ${FEATURE_MINIMUM[feature] === "os" ? "Publisher OS" : "Publisher Blueprint"}.`,
     );
   }
   return tier;

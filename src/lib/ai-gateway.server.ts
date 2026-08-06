@@ -1,7 +1,7 @@
 /**
  * Lovable AI Gateway provider for the AI SDK.
  *
- * Server-only. Every Publisher Copilot™ model call goes through this helper so
+ * Server-only. Every Publisher Copilot model call goes through this helper so
  * swapping providers or models never touches application code.
  */
 
@@ -173,6 +173,6 @@ export const COPILOT_MODEL = "google/gemini-3.6-flash";
 
 export function requireLovableApiKey(): string {
   const key = process.env["LOVABLE_API_KEY"];
-  if (!key) throw new Error("Publisher Copilot™ is not configured: missing AI credentials.");
+  if (!key) throw new Error("Publisher Copilot is not configured: missing AI credentials.");
   return key;
 }

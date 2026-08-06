@@ -104,8 +104,8 @@ export function GrantAccessDialog({ user }: { user: AdminUserRow }) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="blueprint">Publisher Blueprint™</SelectItem>
-                <SelectItem value="os">Publisher OS™</SelectItem>
+                <SelectItem value="blueprint">Publisher Blueprint</SelectItem>
+                <SelectItem value="os">Publisher OS</SelectItem>
               </SelectContent>
             </Select>
           </div>

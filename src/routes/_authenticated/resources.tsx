@@ -14,13 +14,13 @@ import { trackBlueprintEvent } from "@/lib/blueprint/analytics";
 export const Route = createFileRoute("/_authenticated/resources")({
   head: () => ({
     meta: [
-      { title: "Recommended Resources — Publisher Blueprint™" },
+      { title: "Recommended Resources — Publisher Blueprint" },
       {
         name: "description",
         content:
-          "Frameworks, templates, and playbooks matched to your Publisher Index™ gaps and 90-day roadmap priorities.",
+          "Frameworks, templates, and playbooks matched to your Publisher Index gaps and 90-day roadmap priorities.",
       },
-      { property: "og:title", content: "Recommended Resources — Publisher Blueprint™" },
+      { property: "og:title", content: "Recommended Resources — Publisher Blueprint" },
       { property: "og:description", content: "Frameworks and playbooks matched to your assessment gaps." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -61,7 +61,7 @@ function ResourcesPage() {
         />
         <BlueprintEmptyState
           title="Resources are matched to your assessment"
-          description="Complete the Publisher Index™ and this library narrows to the frameworks, templates, and playbooks that address your specific gaps."
+          description="Complete the Publisher Index and this library narrows to the frameworks, templates, and playbooks that address your specific gaps."
         />
       </div>
     );
@@ -78,7 +78,7 @@ function ResourcesPage() {
       {locked ? (
         <LockedFeature
           feature="full_dashboard"
-          title="Resource matching is part of Publisher Blueprint™"
+          title="Resource matching is part of Publisher Blueprint"
           description="Upgrade to see the frameworks, templates and playbooks matched to your lowest-scoring capabilities and each phase of your 90-day roadmap."
         />
       ) : (

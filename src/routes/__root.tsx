@@ -88,7 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Publisher Blueprint™ is a premium executive assessment that scores your publishing maturity and delivers a sequenced 90-day strategic roadmap.",
+          "Publisher Blueprint is a premium executive assessment that scores your publishing maturity and delivers a sequenced 90-day strategic roadmap.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

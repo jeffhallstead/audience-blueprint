@@ -7,7 +7,7 @@ import type { Blueprint } from "./engine";
 export const blueprintQueryKey = ["blueprint", "payload"] as const;
 
 /**
- * The single read path every Publisher Blueprint™ screen uses.
+ * The single read path every Publisher Blueprint screen uses.
  * `locked` means the server withheld the paid analysis for this tier.
  */
 export function useBlueprint() {

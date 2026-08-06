@@ -144,7 +144,7 @@ function AdminConsole() {
         <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Internal</p>
         <h1 className="text-3xl font-semibold tracking-tight">Admin Console</h1>
         <p className="text-sm text-muted-foreground">
-          Operations snapshot across accounts, the Publisher Index™, commerce, and integration
+          Operations snapshot across accounts, the Publisher Index, commerce, and integration
           health.
         </p>
       </header>
@@ -281,7 +281,7 @@ function AdminConsole() {
         <TabsContent value="maturity" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Publisher Index™ maturity distribution</CardTitle>
+              <CardTitle className="text-base">Publisher Index maturity distribution</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {data.scoreDistribution.map((row) => (

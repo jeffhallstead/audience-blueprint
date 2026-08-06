@@ -19,13 +19,13 @@ import { trackBlueprintEvent } from "@/lib/blueprint/analytics";
 export const Route = createFileRoute("/_authenticated/roadmap")({
   head: () => ({
     meta: [
-      { title: "90-Day Roadmap — Publisher Blueprint™" },
+      { title: "90-Day Roadmap — Publisher Blueprint" },
       {
         name: "description",
         content:
-          "A three-phase, 90-day implementation plan generated from your Publisher Index™ score, with objectives, activities, and success metrics.",
+          "A three-phase, 90-day implementation plan generated from your Publisher Index score, with objectives, activities, and success metrics.",
       },
-      { property: "og:title", content: "90-Day Roadmap — Publisher Blueprint™" },
+      { property: "og:title", content: "90-Day Roadmap — Publisher Blueprint" },
       { property: "og:description", content: "Three sequenced phases with objectives, activities, and success metrics." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -68,7 +68,7 @@ function RoadmapPage() {
         />
         <BlueprintEmptyState
           title="Your 90-day roadmap is generated from your results"
-          description="Complete the Publisher Index™ assessment and a three-phase implementation plan — calibrated to your maturity level — will be waiting here."
+          description="Complete the Publisher Index assessment and a three-phase implementation plan — calibrated to your maturity level — will be waiting here."
         />
       </div>
     );
@@ -97,7 +97,7 @@ function RoadmapPage() {
         <LockedFeature
           feature="roadmap"
           title="Unlock your 90-day implementation plan"
-          description="The full roadmap sequences three phases of objectives, activities, owners, and success metrics — calibrated to your Publisher Index™ result."
+          description="The full roadmap sequences three phases of objectives, activities, owners, and success metrics — calibrated to your Publisher Index result."
         />
       ) : null}
 
@@ -131,7 +131,7 @@ function RoadmapPage() {
 
       <ExportableSection
         id="copilot-actions"
-        eyebrow="From Publisher Copilot™"
+        eyebrow="From Publisher Copilot"
         title="Added from your strategy documents"
         description="Actions you pushed into the Blueprint, tracked alongside the generated plan."
       >

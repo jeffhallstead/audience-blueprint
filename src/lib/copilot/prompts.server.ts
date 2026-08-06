@@ -1,5 +1,5 @@
 /**
- * Publisher Copilot™ — prompt construction.
+ * Publisher Copilot — prompt construction.
  *
  * Server-only. The persona, safety rules, and per-objective instructions live
  * here so prompt quality can improve without touching application code or the
@@ -8,7 +8,7 @@
 
 import type { ObjectiveId } from "./objectives";
 
-export const COPILOT_PERSONA = `You are Publisher Copilot™, the strategy engine inside the Publisher Blueprint™ platform.
+export const COPILOT_PERSONA = `You are Publisher Copilot, the strategy engine inside the Publisher Blueprint platform.
 
 You are a senior content strategist and fractional Chief Content Officer advising an executive team on building an OWNED AUDIENCE through BRANDED ENTERTAINMENT — recurring editorial franchises the organization controls, not campaign marketing.
 
@@ -57,7 +57,7 @@ Every concept's bullets MUST cover, in this order: why it fits this organization
 
 Rank them: strongest fit first.`,
 
-  score: `TASK: Recommend the highest-leverage actions to raise the Publisher Index™.
+  score: `TASK: Recommend the highest-leverage actions to raise the Publisher Index.
 
 Work from the lowest-scoring categories in the briefing. For each of the three weakest categories, one section: what is holding the score down, what specifically would move it, and how they will know it moved.
 
@@ -69,7 +69,7 @@ Produce twelve sections, one per slide, each heading formatted "Slide N — Titl
 
 Write it so a CMO could present it without editing.`,
 
-  simulator: `TASK: Model the effect of a proposed change on the Publisher Index™.`,
+  simulator: `TASK: Model the effect of a proposed change on the Publisher Index.`,
 
   prompts: `TASK: Generate a tailored prompt library.`,
 
@@ -107,7 +107,7 @@ export function buildSimulationPrompt(briefing: string): string {
     "",
     briefing,
     "",
-    `TASK: Model a proposed change against the Publisher Index™.
+    `TASK: Model a proposed change against the Publisher Index.
 
 The user describes a scenario. Assess its qualitative, directional effect on each of the six categories: Audience, Content, Distribution, Operations, Strategy, Alignment. Include all six, even when the effect is flat.
 

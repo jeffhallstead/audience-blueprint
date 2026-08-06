@@ -1,5 +1,5 @@
 /**
- * Publisher Copilot™ — server functions.
+ * Publisher Copilot — server functions.
  *
  * Structured generation (documents, simulations, prompt packs) runs here rather
  * than through the chat transport: these produce typed deliverables, not
@@ -46,12 +46,12 @@ const generateDocumentInput = z.object({
 function friendlyAiError(error: unknown): Error {
   const message = error instanceof Error ? error.message : String(error);
   if (message.includes("429")) {
-    return new Error("Publisher Copilot™ is rate limited right now. Wait a moment and try again.");
+    return new Error("Publisher Copilot is rate limited right now. Wait a moment and try again.");
   }
   if (message.includes("402")) {
-    return new Error("AI credits are exhausted for this workspace. Add credits to continue using Publisher Copilot™.");
+    return new Error("AI credits are exhausted for this workspace. Add credits to continue using Publisher Copilot.");
   }
-  return new Error(`Publisher Copilot™ could not complete this request: ${message}`);
+  return new Error(`Publisher Copilot could not complete this request: ${message}`);
 }
 
 export const generateStrategyDocument = createServerFn({ method: "POST" })
@@ -65,7 +65,7 @@ export const generateStrategyDocument = createServerFn({ method: "POST" })
 
     const briefing = await buildCopilotContext(supabase, userId);
     if (!briefing.hasAssessment) {
-      throw new Error("Complete the Publisher Index™ assessment before generating strategy documents.");
+      throw new Error("Complete the Publisher Index assessment before generating strategy documents.");
     }
 
     // Strict json_schema mode: without it the gateway falls back to json_object
@@ -88,7 +88,7 @@ export const generateStrategyDocument = createServerFn({ method: "POST" })
       document = output;
     } catch (error) {
       if (NoObjectGeneratedError.isInstance(error)) {
-        throw new Error("Publisher Copilot™ returned an unusable response. Try regenerating.");
+        throw new Error("Publisher Copilot returned an unusable response. Try regenerating.");
       }
       throw friendlyAiError(error);
     }
@@ -148,7 +148,7 @@ export const simulateScenario = createServerFn({ method: "POST" })
 
     const briefing = await buildCopilotContext(supabase, userId);
     if (!briefing.hasAssessment) {
-      throw new Error("Complete the Publisher Index™ assessment before running scenarios.");
+      throw new Error("Complete the Publisher Index assessment before running scenarios.");
     }
 
     const gateway = createLovableAiGatewayProvider(requireLovableApiKey(), undefined, {
@@ -166,7 +166,7 @@ export const simulateScenario = createServerFn({ method: "POST" })
       simulation = output;
     } catch (error) {
       if (NoObjectGeneratedError.isInstance(error)) {
-        throw new Error("Publisher Copilot™ returned an unusable response. Try rephrasing the scenario.");
+        throw new Error("Publisher Copilot returned an unusable response. Try rephrasing the scenario.");
       }
       throw friendlyAiError(error);
     }
@@ -201,7 +201,7 @@ export const generatePromptPack = createServerFn({ method: "POST" })
 
     const briefing = await buildCopilotContext(supabase, userId);
     if (!briefing.hasAssessment) {
-      throw new Error("Complete the Publisher Index™ assessment before generating a prompt pack.");
+      throw new Error("Complete the Publisher Index assessment before generating a prompt pack.");
     }
 
     const gateway = createLovableAiGatewayProvider(requireLovableApiKey(), undefined, {
@@ -219,7 +219,7 @@ export const generatePromptPack = createServerFn({ method: "POST" })
       prompts = output.prompts.slice(0, 12);
     } catch (error) {
       if (NoObjectGeneratedError.isInstance(error)) {
-        throw new Error("Publisher Copilot™ returned an unusable prompt pack. Try again.");
+        throw new Error("Publisher Copilot returned an unusable prompt pack. Try again.");
       }
       throw friendlyAiError(error);
     }

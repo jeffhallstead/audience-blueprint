@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 /** Shown on every blueprint screen when no assessment has been completed. */
 export function BlueprintEmptyState({
   title = "Your blueprint is waiting on one assessment",
-  description = "The Publisher Blueprint™ is generated directly from your Publisher Index™ results. Complete the assessment — about ten minutes — and the full dashboard, roadmap, and resource set will be ready.",
+  description = "The Publisher Blueprint is generated directly from your Publisher Index results. Complete the assessment — about ten minutes — and the full dashboard, roadmap, and resource set will be ready.",
 }: {
   title?: string;
   description?: string;
@@ -20,7 +20,7 @@ export function BlueprintEmptyState({
         <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
       </div>
       <Button asChild>
-        <Link to="/wizard">Start the Publisher Index™ assessment</Link>
+        <Link to="/wizard">Start the Publisher Index assessment</Link>
       </Button>
     </section>
   );

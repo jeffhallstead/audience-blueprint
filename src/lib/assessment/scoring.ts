@@ -1,5 +1,5 @@
 /**
- * Publisher Index™ scoring.
+ * Publisher Index scoring.
  *
  * Pure functions over the configuration in `config.ts` — no question, weight,
  * or threshold is hardcoded here.

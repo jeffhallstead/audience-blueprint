@@ -1,5 +1,5 @@
 /**
- * Publisher Copilot™ — structured output contracts.
+ * Publisher Copilot — structured output contracts.
  *
  * Every generated deliverable conforms to one of these shapes so the UI renders
  * strategy documents rather than essays, and so outputs stay editable and

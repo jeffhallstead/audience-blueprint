@@ -38,7 +38,7 @@ export const TIER_DESCRIPTION: Record<QualificationTier, string> = {
   lead: "Known account with an early profile — nurture.",
   marketing_qualified: "Good ICP fit and real product engagement.",
   sales_qualified: "Strong fit plus buying intent — worth a direct approach.",
-  customer: "Paying for Publisher Blueprint™ or Publisher OS™.",
+  customer: "Paying for Publisher Blueprint or Publisher OS.",
 };
 
 /**
@@ -146,7 +146,7 @@ export interface QualificationFacts {
   /** Count of each qualifying event this user has produced. */
   eventCounts: Record<string, number>;
   assessmentCompleted: boolean;
-  /** Publisher Index™ score, when one exists. */
+  /** Publisher Index score, when one exists. */
   indexScore: number | null;
   isPaying: boolean;
 }
@@ -261,7 +261,7 @@ export function deriveQualification(facts: QualificationFacts): DerivedQualifica
     return {
       ...base,
       tier: "marketing_qualified",
-      reason: "Good fit with a completed Publisher Index™ and sustained engagement",
+      reason: "Good fit with a completed Publisher Index and sustained engagement",
     };
   }
   if (facts.organization && (fit.score >= 15 || engagement.score >= 5)) {
