@@ -21,17 +21,51 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Choose the Publisher Blueprint™ plan that fits: free Publisher Index™, one-time strategic blueprint, or the monthly Publisher OS™ operating system.",
+          "Choose the Publisher Blueprint™ plan that fits: the free Publisher Test™, or the one-time $49 Publisher Blueprint™ with your full 90-day roadmap.",
       },
       { property: "og:title", content: "Plans & Pricing | Publisher Blueprint™" },
       {
         property: "og:description",
-        content: "Free diagnostic, $99 one-time Publisher Blueprint™, or $49/month Publisher OS™.",
+        content: "Free Publisher Test™ diagnostic, or the $49 one-time Publisher Blueprint™ roadmap.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://blueprint.jeffhallstead.com/pricing" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://blueprint.jeffhallstead.com/pricing" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: "Publisher Blueprint™",
+          description:
+            "Strategic assessment and personalized 90-day roadmap for newsletter publishers and content entrepreneurs.",
+          brand: { "@type": "Brand", name: "Publisher Blueprint™" },
+          offers: [
+            {
+              "@type": "Offer",
+              name: "Publisher Test™",
+              description: "Free diagnostic that scores your publishing maturity across seven dimensions.",
+              price: "0",
+              priceCurrency: "USD",
+              url: "https://blueprint.jeffhallstead.com/pricing",
+            },
+            {
+              "@type": "Offer",
+              name: "Publisher Blueprint™",
+              description: "One-time purchase unlocking the full executive dashboard, 90-day roadmap and exports.",
+              price: "49",
+              priceCurrency: "USD",
+              url: "https://blueprint.jeffhallstead.com/pricing",
+            },
+          ],
+        }),
+      },
+    ],
   }),
+
 });
 
 function PricingPage() {
