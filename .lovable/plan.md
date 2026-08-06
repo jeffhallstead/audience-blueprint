@@ -20,7 +20,7 @@
 
 **[0:54] I also want to be clear: this is not me trying to replace the deep newsletter expertise people like Nathan bring. Newsletter writing and growth can absolutely show up as a priority in the roadmap, but executing on that piece still calls for someone who lives and breathes newsletters. The Blueprint just makes it obvious what needs attention, and when something like a newsletter strategy is the next step, that is where a specialist like Nathan comes in.**
 
-**[1:03] What is worth noting, especially for the non-engineers in the group: I built this with Lovable. I am not a software engineer, and Lovable is what let me turn this idea into a real mini SaaS product with auth, payments, a database, and a rule engine. If you are not using Lovable yet, it is worth looking at — it is wild what a product-led founder can ship now.**
+**[1:03] What is worth noting, especially for the non-engineers in the group: I built this with Lovable. I am not a software engineer, and Lovable is what let me turn this idea into a real mini SaaS product with auth, payments, a database, a rule engine, and an admin console. I can see accounts, Publisher Index scores, revenue, leads, and integration health in one place — which is a real operational backend, not just a landing page and a form.**
 
 **[1:16] So the whole funnel is: free test captures the lead, $49 Blueprint gives them a real plan they can run themselves, and the detail of that plan naturally qualifies the people who would rather just hire me to do it.**
 
