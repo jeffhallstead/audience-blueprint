@@ -42,7 +42,7 @@ export const Route = createFileRoute("/_authenticated/wizard")({
         name: "description",
         content: "A seven-section executive diagnostic that scores your organization's publishing maturity.",
       },
-      { property: "og:title", content: "Publisher Index™ Assessment" },
+      { property: "og:title", content: "Publisher Index Assessment" },
       { property: "og:description", content: "Score your organization's publishing maturity in under 12 minutes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -313,7 +313,7 @@ function Wizard() {
         ) : (
           <Button onClick={() => void handleSubmit()} disabled={submitting} size="lg">
             {submitting ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Check className="size-4" aria-hidden />}
-            {submitting ? "Calculating Publisher Index™…" : "Calculate my Publisher Index™"}
+            {submitting ? "Calculating Publisher Index…" : "Calculate my Publisher Index"}
           </Button>
         )}
       </div>
@@ -325,11 +325,11 @@ function Introduction({ onStart, resumeStep }: { onStart: () => void; resumeStep
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <div className="space-y-3">
-        <p className="text-eyebrow">The Publisher Index™</p>
+        <p className="text-eyebrow">The Publisher Index</p>
         <h1 className="text-display text-4xl sm:text-5xl">A diagnostic, not a quiz.</h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
           Seven sections benchmark your organization's publishing maturity across company, audience, content,
-          distribution, operations, goals, and constraints. Your answers produce a Publisher Index™ score, six category
+          distribution, operations, goals, and constraints. Your answers produce a Publisher Index score, six category
           scores, and a maturity classification used throughout your Blueprint.
         </p>
       </div>

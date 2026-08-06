@@ -1,8 +1,8 @@
 /**
- * Publisher Copilot™ — organizational context assembly.
+ * Publisher Copilot — organizational context assembly.
  *
  * Server-only. Every AI request runs through `buildCopilotContext`, which reads
- * the user's assessment, Publisher Index™ scores, generated blueprint, roadmap,
+ * the user's assessment, Publisher Index scores, generated blueprint, roadmap,
  * and previously saved recommendations, then renders them as a compact briefing
  * the model reads before answering. This is why the user never explains their
  * business twice.
@@ -79,7 +79,7 @@ export async function buildCopilotContext(supabase: Client, userId: string): Pro
       organizationName: null,
       blueprint: null,
       briefing:
-        "NO ASSESSMENT ON FILE. The user has not completed the Publisher Index™ assessment yet, so you have no organizational context. Say so plainly in one sentence, answer only in general terms, and direct them to complete the assessment so you can be specific.",
+        "NO ASSESSMENT ON FILE. The user has not completed the Publisher Index assessment yet, so you have no organizational context. Say so plainly in one sentence, answer only in general terms, and direct them to complete the assessment so you can be specific.",
     };
   }
 
@@ -152,7 +152,7 @@ export async function buildCopilotContext(supabase: Client, userId: string): Pro
     `Organization: ${blueprint.organizationName ?? "Unnamed organization"}`,
     profileLines.length ? renderList(profileLines) : "- No company profile detail on file.",
     "",
-    "--- PUBLISHER INDEX™ ---",
+    "--- PUBLISHER INDEX ---",
     `Overall score: ${blueprint.overall}/100`,
     `Publisher Level: ${blueprint.maturity.level} — ${blueprint.maturity.title} (${blueprint.tier} tier)`,
     `Level meaning: ${blueprint.maturity.summary}`,

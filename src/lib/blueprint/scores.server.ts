@@ -12,7 +12,7 @@ export type StoredScores = {
 };
 
 /**
- * Server-side read of the caller's latest Publisher Index™ scores.
+ * Server-side read of the caller's latest Publisher Index scores.
  * Uses the RLS-scoped client, so it can only ever return the caller's rows.
  */
 export async function fetchLatestScoresFor(

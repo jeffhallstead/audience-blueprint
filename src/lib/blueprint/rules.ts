@@ -1,5 +1,5 @@
 /**
- * Publisher Blueprint™ — business rules configuration.
+ * Publisher Blueprint — business rules configuration.
  *
  * Every recommendation the dashboard renders is derived from this file. No
  * rule, threshold, copy string, roadmap template, KPI, resource, or CTA is
@@ -665,7 +665,7 @@ export const RESOURCE_RULES: ResourceRule[] = [
   {
     id: "owned-audience-doctrine",
     title: "The Owned Audience Doctrine",
-    description: "The five-stage publisher maturity model behind your Publisher Index™ score.",
+    description: "The five-stage publisher maturity model behind your Publisher Index score.",
     kind: "Framework",
     readingMinutes: 12,
     ctaLabel: "Read the doctrine",
@@ -718,7 +718,7 @@ export const RESOURCE_RULES: ResourceRule[] = [
   },
   {
     id: "ai-toolkit-preview",
-    title: "Publisher Copilot™ in practice",
+    title: "Publisher Copilot in practice",
     description: "How to brief the AI strategist, and where generative tooling belongs in an editorial operation.",
     kind: "Reference",
     readingMinutes: 10,
@@ -739,7 +739,7 @@ export const CTA_RULES: Record<MaturityTier, CtaRule> = {
   foundational: {
     tier: "foundational",
     eyebrow: "Recommended next step",
-    title: "Unlock the complete Publisher Blueprint™",
+    title: "Unlock the complete Publisher Blueprint",
     body: "Your fastest gains are foundational. The full blueprint expands each 90-day phase into briefs, owners, and templates your team can execute directly.",
     action: "Unlock the full blueprint",
   },

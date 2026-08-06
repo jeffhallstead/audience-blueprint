@@ -49,7 +49,7 @@ export function ChatPanel({ sessionId, initialMessages, autoSend, onFirstMessage
       fetch: authedFetch,
       body: { sessionId, environment: getStripeEnvironment() },
     }),
-    onError: (chatError) => toast.error(chatError.message || "Publisher Copilot™ could not respond."),
+    onError: (chatError) => toast.error(chatError.message || "Publisher Copilot could not respond."),
     onFinish: () => {
       queryClient.invalidateQueries({ queryKey: copilotKeys.sessions });
     },
@@ -87,7 +87,7 @@ export function ChatPanel({ sessionId, initialMessages, autoSend, onFirstMessage
       <div className="flex-1 space-y-6 pb-6">
         {messages.length === 0 && !busy ? (
           <p className="text-sm text-muted-foreground">
-            Ask anything about your strategy. Publisher Copilot™ already has your Publisher Index™ scores, gaps, and
+            Ask anything about your strategy. Publisher Copilot already has your Publisher Index scores, gaps, and
             roadmap — you never need to explain your business.
           </p>
         ) : null}
@@ -105,7 +105,7 @@ export function ChatPanel({ sessionId, initialMessages, autoSend, onFirstMessage
           }
           return (
             <div key={message.id} className="space-y-2">
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-brass">Publisher Copilot™</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-brass">Publisher Copilot</p>
               <Markdown content={text} />
             </div>
           );

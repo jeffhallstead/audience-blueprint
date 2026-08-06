@@ -1,7 +1,7 @@
 /**
  * Organization profile — the persistent record of who the customer is.
  *
- * This is deliberately separate from the Publisher Index™ assessment answers.
+ * This is deliberately separate from the Publisher Index assessment answers.
  * Nothing in this file feeds scoring; it is identity + segmentation only.
  */
 

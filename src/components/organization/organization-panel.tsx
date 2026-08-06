@@ -80,7 +80,7 @@ export function OrganizationPanel() {
       <DashboardCard eyebrow="Organization" title={organization?.name ?? "Your organization"}>
         <div className="space-y-8">
           <p className="text-sm text-muted-foreground">
-            Identity and segmentation details. These never change your Publisher Index™ score.
+            Identity and segmentation details. These never change your Publisher Index score.
           </p>
 
           <div className="space-y-2">

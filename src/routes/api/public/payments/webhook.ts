@@ -218,7 +218,7 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
     return;
   }
 
-  // Buying the Blueprint includes one month of Publisher OS™ access.
+  // Buying the Blueprint includes one month of Publisher OS access.
   const includedUntil = new Date();
   includedUntil.setMonth(includedUntil.getMonth() + 1);
 

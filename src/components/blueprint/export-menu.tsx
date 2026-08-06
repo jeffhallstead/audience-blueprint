@@ -237,7 +237,7 @@ export function ExportMenu({
           <LockedFeature
             feature="file_export"
             title="Unlock exports"
-            description="CSV, Excel and Google Sheets exports of your opportunities, 90-day roadmap and KPIs come with Publisher Blueprint™."
+            description="CSV, Excel and Google Sheets exports of your opportunities, 90-day roadmap and KPIs come with Publisher Blueprint."
           />
         )}
 
@@ -248,7 +248,7 @@ export function ExportMenu({
           <LockedFeature
             feature="connector_export"
             title="Unlock Airtable and Asana sync"
-            description="Push every opportunity, roadmap activity and KPI straight into your tracker. Included with Publisher Blueprint™."
+            description="Push every opportunity, roadmap activity and KPI straight into your tracker. Included with Publisher Blueprint."
           />
         ) : (
         <div className="space-y-4">

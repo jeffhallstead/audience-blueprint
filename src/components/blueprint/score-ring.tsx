@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-/** Progress ring for the Publisher Index™ headline score. */
+/** Progress ring for the Publisher Index headline score. */
 export function ScoreRing({
   score,
   size = 168,

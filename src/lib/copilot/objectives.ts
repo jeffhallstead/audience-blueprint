@@ -1,5 +1,5 @@
 /**
- * Publisher Copilot™ — objective catalog.
+ * Publisher Copilot — objective catalog.
  *
  * The six strategy actions on Copilot home, plus the derived surfaces. This is
  * the single registry the UI, the router, and the server prompts all read from,
@@ -41,7 +41,7 @@ export const OBJECTIVES: ObjectiveConfig[] = [
     title: "Build My Strategy",
     tagline: "Executive strategy from your assessment",
     description:
-      "A consulting-grade owned-audience strategy written against your Publisher Index™ results, industry, and stated goals.",
+      "A consulting-grade owned-audience strategy written against your Publisher Index results, industry, and stated goals.",
     deliverable: "Strategy brief with actions, impact, effort, dependencies, and metrics",
     produces: "document",
     primary: true,
@@ -85,7 +85,7 @@ export const OBJECTIVES: ObjectiveConfig[] = [
     title: "Improve My Publisher Score",
     tagline: "Highest-leverage moves first",
     description:
-      "The specific actions most likely to move your Publisher Index™, ordered by leverage against the categories you score lowest on.",
+      "The specific actions most likely to move your Publisher Index, ordered by leverage against the categories you score lowest on.",
     deliverable: "Prioritized score-improvement plan",
     produces: "document",
     primary: true,
@@ -93,7 +93,7 @@ export const OBJECTIVES: ObjectiveConfig[] = [
   {
     id: "ask",
     icon: "MessagesSquare",
-    title: "Ask Publisher Copilot™",
+    title: "Ask Publisher Copilot",
     tagline: "Conversation with full context",
     description:
       "Ask anything about your program. Every answer is grounded in your assessment, blueprint, and roadmap — you never explain your business twice.",

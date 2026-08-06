@@ -22,10 +22,10 @@ export const Route = createFileRoute("/_authenticated/copilot/simulator")({
       { title: "Score Simulator — Publisher Blueprint" },
       {
         name: "description",
-        content: "Model how a strategic change would move your Publisher Index™ before you commit resources to it.",
+        content: "Model how a strategic change would move your Publisher Index before you commit resources to it.",
       },
       { property: "og:title", content: "Score Simulator — Publisher Blueprint" },
-      { property: "og:description", content: "Directional what-if modeling against your Publisher Index™ categories." },
+      { property: "og:description", content: "Directional what-if modeling against your Publisher Index categories." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -55,7 +55,7 @@ function Simulator() {
         <PageHeader eyebrow="Score simulator" title="Model a change before you make it" />
         <BlueprintEmptyState
           title="The simulator needs a baseline"
-          description="Complete the Publisher Index™ assessment and the simulator can model how a change would move each category."
+          description="Complete the Publisher Index assessment and the simulator can model how a change would move each category."
         />
       </div>
     );
@@ -70,7 +70,7 @@ function Simulator() {
       <PageHeader
         eyebrow="Score simulator"
         title="Model a change before you make it"
-        description="Describe a strategic move and Copilot estimates its directional effect on each Publisher Index™ category — including where it costs you before it pays."
+        description="Describe a strategic move and Copilot estimates its directional effect on each Publisher Index category — including where it costs you before it pays."
       />
 
       <div className="surface-panel space-y-4 p-6">

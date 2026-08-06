@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/copilot/documents/")({
       { title: "Strategy Library — Publisher Blueprint" },
       {
         name: "description",
-        content: "Every strategy brief, roadmap, and executive deliverable Publisher Copilot™ has generated for you.",
+        content: "Every strategy brief, roadmap, and executive deliverable Publisher Copilot has generated for you.",
       },
       { property: "og:title", content: "Strategy Library — Publisher Blueprint" },
       { property: "og:description", content: "Your saved AI-generated strategy deliverables, versioned and editable." },
@@ -37,7 +37,7 @@ function DocumentLibrary() {
       <PageHeader
         eyebrow="Strategy library"
         title="Your deliverables"
-        description="Everything Publisher Copilot™ has produced, versioned. Open any document to edit, export, or regenerate it."
+        description="Everything Publisher Copilot has produced, versioned. Open any document to edit, export, or regenerate it."
       />
 
       {isLoading ? (
@@ -99,11 +99,11 @@ function DocumentLibrary() {
         <div className="surface-panel space-y-4 p-8">
           <h2 className="text-display text-xl">Nothing generated yet</h2>
           <p className="max-w-lg text-sm leading-relaxed text-muted-foreground">
-            Run a strategy action in Publisher Copilot™ and your deliverables will collect here — each one versioned,
+            Run a strategy action in Publisher Copilot and your deliverables will collect here — each one versioned,
             editable, and exportable.
           </p>
           <Button asChild size="sm">
-            <Link to="/copilot">Open Publisher Copilot™</Link>
+            <Link to="/copilot">Open Publisher Copilot</Link>
           </Button>
         </div>
       )}

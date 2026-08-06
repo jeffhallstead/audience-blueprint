@@ -10,12 +10,12 @@ export const Route = createFileRoute("/_authenticated/checkout/success")({
   component: CheckoutSuccessPage,
   head: () => ({
     meta: [
-      { title: "Purchase confirmed | Publisher Blueprint™" },
+      { title: "Purchase confirmed | Publisher Blueprint" },
       {
         name: "description",
-        content: "Your Publisher Blueprint™ purchase is confirmed and your strategic plan is unlocked.",
+        content: "Your Publisher Blueprint purchase is confirmed and your strategic plan is unlocked.",
       },
-      { property: "og:title", content: "Purchase confirmed | Publisher Blueprint™" },
+      { property: "og:title", content: "Purchase confirmed | Publisher Blueprint" },
       { property: "og:description", content: "Your strategic blueprint is now unlocked." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -50,7 +50,7 @@ function CheckoutSuccessPage() {
           <h1 className="text-display text-3xl">Thank you — your purchase is confirmed</h1>
           <p className="text-sm leading-relaxed text-muted-foreground">
             {unlocked
-              ? "Your full blueprint, 90-day roadmap and Publisher Copilot™ deliverables are unlocked."
+              ? "Your full blueprint, 90-day roadmap and Publisher Copilot deliverables are unlocked."
               : "We're confirming your payment — this usually takes a few seconds."}
           </p>
           {!unlocked ? (

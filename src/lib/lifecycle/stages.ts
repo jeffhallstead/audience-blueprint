@@ -45,10 +45,10 @@ export const STAGE_LABEL: Record<LifecycleStage, string> = {
 export const STAGE_DESCRIPTION: Record<LifecycleStage, string> = {
   visitor: "Seen on the site but no account yet.",
   registered: "Account created, assessment not begun.",
-  assessment_started: "Working through the Publisher Index™ assessment.",
-  assessment_completed: "Has a Publisher Index™ score and a blueprint to act on.",
-  blueprint_owner: "Purchased Publisher Blueprint™.",
-  os_subscriber: "Active Publisher OS™ subscription.",
+  assessment_started: "Working through the Publisher Index assessment.",
+  assessment_completed: "Has a Publisher Index score and a blueprint to act on.",
+  blueprint_owner: "Purchased Publisher Blueprint.",
+  os_subscriber: "Active Publisher OS subscription.",
   churned: "Lapsed after a paid relationship ended.",
 };
 
@@ -94,7 +94,7 @@ export interface DerivedStage {
  */
 export function deriveStage(facts: LifecycleFacts): DerivedStage {
   if (facts.hasActiveSubscription) {
-    return { stage: "os_subscriber", reason: "Active Publisher OS™ access" };
+    return { stage: "os_subscriber", reason: "Active Publisher OS access" };
   }
   if (facts.hasPurchase) {
     return { stage: "blueprint_owner", reason: "Completed Blueprint purchase" };
@@ -103,7 +103,7 @@ export function deriveStage(facts: LifecycleFacts): DerivedStage {
     return { stage: "churned", reason: "Paid access ended without renewal" };
   }
   if (facts.assessmentCompleted) {
-    return { stage: "assessment_completed", reason: "Publisher Index™ assessment completed" };
+    return { stage: "assessment_completed", reason: "Publisher Index assessment completed" };
   }
   if (facts.assessmentStarted) {
     return { stage: "assessment_started", reason: "Assessment in progress" };

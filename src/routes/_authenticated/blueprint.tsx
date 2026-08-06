@@ -23,12 +23,12 @@ import { trackBlueprintEvent } from "@/lib/blueprint/analytics";
 export const Route = createFileRoute("/_authenticated/blueprint")({
   head: () => ({
     meta: [
-      { title: "Publisher Index™ Detail — Publisher Blueprint" },
+      { title: "Publisher Index Detail — Publisher Blueprint" },
       {
         name: "description",
-        content: "The full Publisher Index™ reading: overall score, six category diagnostics, and what each level means.",
+        content: "The full Publisher Index reading: overall score, six category diagnostics, and what each level means.",
       },
-      { property: "og:title", content: "Publisher Index™ Detail" },
+      { property: "og:title", content: "Publisher Index Detail" },
       { property: "og:description", content: "Overall score, category diagnostics, and maturity interpretation." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -63,7 +63,7 @@ function IndexDetail() {
   if (!blueprint) {
     return (
       <div className="space-y-8">
-        <PageHeader eyebrow="Publisher Index™" title="Index detail" description="Complete the assessment to see your index." />
+        <PageHeader eyebrow="Publisher Index" title="Index detail" description="Complete the assessment to see your index." />
         <BlueprintEmptyState />
       </div>
     );
@@ -74,7 +74,7 @@ function IndexDetail() {
   return (
     <div className="space-y-12">
       <PageHeader
-        eyebrow="Publisher Index™"
+        eyebrow="Publisher Index"
         title={blueprint.organizationName ? `${blueprint.organizationName} · Index detail` : "Index detail"}
         description="The complete diagnostic behind your score: how each capability was read and what your maturity level implies."
         actions={
@@ -132,7 +132,7 @@ function IndexDetail() {
         id="category-diagnostics"
         eyebrow="Diagnostics"
         title="How each capability reads"
-        description="Six categories, each banded against the Publisher Index™ thresholds."
+        description="Six categories, each banded against the Publisher Index thresholds."
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {blueprint.categories.map((reading) => (
@@ -182,7 +182,7 @@ function IndexDetail() {
 
       <ExportableSection
         id="saved-actions"
-        eyebrow="From Publisher Copilot™"
+        eyebrow="From Publisher Copilot"
         title="Saved to your Blueprint"
         description="Actions you added from your strategy deliverables. Mark them done as you ship them."
       >
@@ -193,7 +193,7 @@ function IndexDetail() {
         <LockedFeature
           feature="roadmap"
           title="Turn this diagnostic into a strategic plan"
-          description="Unlock the full executive dashboard, opportunity matrix, 90-day roadmap, AI strategy documents like The Branded Entertainment Brief, and PDF export — plus one month of Publisher OS™."
+          description="Unlock the full executive dashboard, opportunity matrix, 90-day roadmap, AI strategy documents like The Branded Entertainment Brief, and PDF export — plus one month of Publisher OS."
         />
       ) : null}
     </div>

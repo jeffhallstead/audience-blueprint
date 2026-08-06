@@ -1,6 +1,6 @@
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from "recharts";
 
-/** Placeholder radar visualization of the six Publisher Index™ categories. */
+/** Placeholder radar visualization of the six Publisher Index categories. */
 export function IndexRadar({ data }: { data: { label: string; score: number }[] }) {
   return (
     <div className="h-72 w-full">

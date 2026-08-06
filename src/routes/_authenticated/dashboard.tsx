@@ -37,13 +37,13 @@ import { trackRecommendationExport } from "@/lib/analytics/recommendation-metada
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Publisher Blueprint™ Dashboard — Executive Overview" },
+      { title: "Publisher Blueprint Dashboard — Executive Overview" },
       {
         name: "description",
         content:
-          "Your personalized Publisher Blueprint™: maturity level, Publisher Index™ score, category analysis, priority opportunities, and a 90-day roadmap.",
+          "Your personalized Publisher Blueprint: maturity level, Publisher Index score, category analysis, priority opportunities, and a 90-day roadmap.",
       },
-      { property: "og:title", content: "Publisher Blueprint™ Dashboard" },
+      { property: "og:title", content: "Publisher Blueprint Dashboard" },
       { property: "og:description", content: "Maturity, priorities, and a 90-day plan derived from your assessment." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -173,9 +173,9 @@ function blobToBase64(blob: Blob): Promise<string> {
     return (
       <div className="space-y-8">
         <PageHeader
-          eyebrow="Publisher Blueprint™"
+          eyebrow="Publisher Blueprint"
           title="Executive dashboard"
-          description="Your personalized strategic assessment appears here once the Publisher Index™ is complete."
+          description="Your personalized strategic assessment appears here once the Publisher Index is complete."
         />
         <BlueprintEmptyState />
       </div>
@@ -201,7 +201,7 @@ function blobToBase64(blob: Blob): Promise<string> {
         <div className="space-y-5">
           <div className="space-y-2">
             <p className="text-eyebrow">
-              {blueprint.organizationName ? `${blueprint.organizationName} · ` : ""}Publisher Blueprint™
+              {blueprint.organizationName ? `${blueprint.organizationName} · ` : ""}Publisher Blueprint
             </p>
             <h1 id="blueprint-hero-heading" className="text-display text-3xl sm:text-4xl">
               You are operating as a {maturity.title}
@@ -210,7 +210,7 @@ function blobToBase64(blob: Blob): Promise<string> {
           </div>
           <dl className="grid gap-4 sm:grid-cols-3">
             <div>
-              <dt className="text-eyebrow">Publisher Index™</dt>
+              <dt className="text-eyebrow">Publisher Index</dt>
               <dd className="mt-1 text-sm font-semibold tabular-nums text-foreground">{blueprint.overall}/100</dd>
             </div>
             <div>
@@ -260,7 +260,7 @@ function blobToBase64(blob: Blob): Promise<string> {
                 {emailing ? "Sending…" : "Email my report"}
               </Button>
             ) : (
-              <Button variant="ghost" disabled title="Emailing your report is part of Publisher Blueprint™">
+              <Button variant="ghost" disabled title="Emailing your report is part of Publisher Blueprint">
                 <Lock className="size-4" aria-hidden /> Email my report
               </Button>
             )}
@@ -273,7 +273,7 @@ function blobToBase64(blob: Blob): Promise<string> {
         <LockedFeature
           feature="full_dashboard"
           title="Unlock your executive summary"
-          description="Your Publisher Index™ score and category readings are always free. The strategic interpretation — position, biggest opportunity, primary risk, opportunity matrix, quick wins, 90-day roadmap and KPIs — comes with Publisher Blueprint™."
+          description="Your Publisher Index score and category readings are always free. The strategic interpretation — position, biggest opportunity, primary risk, opportunity matrix, quick wins, 90-day roadmap and KPIs — comes with Publisher Blueprint."
         />
       ) : (
       <ExportableSection
@@ -305,7 +305,7 @@ function blobToBase64(blob: Blob): Promise<string> {
       {/* Publisher Index */}
       <ExportableSection
         id="publisher-index"
-        eyebrow="Publisher Index™"
+        eyebrow="Publisher Index"
         title="Your score and what it means"
         actions={
           <Button asChild variant="ghost" size="sm">

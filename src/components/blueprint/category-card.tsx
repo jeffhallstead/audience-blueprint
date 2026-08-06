@@ -3,7 +3,7 @@ import type { CategoryReading } from "@/lib/blueprint/engine";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-/** One of the six Publisher Index™ category cards. */
+/** One of the six Publisher Index category cards. */
 export function CategoryCard({ reading }: { reading: CategoryReading }) {
   const tone = bandToneClasses(reading.band);
   return (

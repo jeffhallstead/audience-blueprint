@@ -15,7 +15,7 @@ interface OrgIntakeStepProps {
 }
 
 /**
- * Minimal gate collected before the Publisher Index™ assessment begins.
+ * Minimal gate collected before the Publisher Index assessment begins.
  * The remaining profile is requested after the score reveal.
  */
 export function OrgIntakeStep({ initialValues, saving, onSubmit }: OrgIntakeStepProps) {
@@ -39,7 +39,7 @@ export function OrgIntakeStep({ initialValues, saving, onSubmit }: OrgIntakeStep
         <p className="text-eyebrow">Step one of two</p>
         <h1 className="text-display text-4xl">Tell us who we're benchmarking.</h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Six details, under a minute. They shape how your Publisher Index™ is interpreted — and they never change your
+          Six details, under a minute. They shape how your Publisher Index is interpreted — and they never change your
           score. You'll complete the rest of your organization profile after your results.
         </p>
       </div>

@@ -6,13 +6,13 @@ export const Route = createFileRoute("/privacy")({
   component: PrivacyPage,
   head: () => ({
     meta: [
-      { title: "Privacy Notice | Publisher Blueprint™" },
+      { title: "Privacy Notice | Publisher Blueprint" },
       {
         name: "description",
         content:
-          "How Publisher Blueprint™ collects, uses, shares and retains personal data, and the rights you have over it.",
+          "How Publisher Blueprint collects, uses, shares and retains personal data, and the rights you have over it.",
       },
-      { property: "og:title", content: "Privacy Notice | Publisher Blueprint™" },
+      { property: "og:title", content: "Privacy Notice | Publisher Blueprint" },
       { property: "og:description", content: "How we handle your personal data." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -27,7 +27,7 @@ function PrivacyPage() {
     <LegalPage eyebrow="Legal" title="Privacy Notice" updated="August 2026">
       <p>
         <strong>{SELLER.legalName}</strong>, trading as {SELLER.tradingName}, is the data controller
-        for personal data processed through the Publisher Blueprint™ platform. This notice explains
+        for personal data processed through the Publisher Blueprint platform. This notice explains
         what we collect, why, who we share it with, and the rights you have. Contact us at{" "}
         <a href={`mailto:${SELLER.supportEmail}`}>{SELLER.supportEmail}</a>.
       </p>
@@ -40,7 +40,7 @@ function PrivacyPage() {
         </li>
         <li>
           <strong>Assessment and business data</strong> (organisation name, website, industry, team
-          size, answers to the Publisher Index™) — to generate your scores, blueprint and roadmap.
+          size, answers to the Publisher Index) — to generate your scores, blueprint and roadmap.
           Legal basis: performance of our contract.
         </li>
         <li>

@@ -1,5 +1,5 @@
 /**
- * Publisher Blueprint™ — PDF report generation (browser-side).
+ * Publisher Blueprint — PDF report generation (browser-side).
  *
  * A typographic document built from the same Blueprint object the dashboard
  * renders, not a screenshot: text stays selectable and the layout is print-safe
@@ -135,7 +135,7 @@ function coverPage(doc: Doc, layout: Layout, blueprint: Blueprint, locked: boole
   layout.y += 4;
   doc.setFont("helvetica", "normal").setFontSize(11).setTextColor(...MUTED);
   doc.text(
-    locked ? "Publisher Index™ summary" : "Executive strategic report",
+    locked ? "Publisher Index summary" : "Executive strategic report",
     MARGIN.left,
     layout.y,
   );
@@ -158,7 +158,7 @@ function coverPage(doc: Doc, layout: Layout, blueprint: Blueprint, locked: boole
   layout.y += 20;
 
   doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(...MUTED);
-  doc.text(`Publisher Index™ · Assessed ${formatDate(blueprint.completedAt)}`, MARGIN.left, layout.y);
+  doc.text(`Publisher Index · Assessed ${formatDate(blueprint.completedAt)}`, MARGIN.left, layout.y);
   layout.y += 40;
 
   layout.paragraph(blueprint.maturity.summary, { size: 10.5, color: INK });
@@ -176,7 +176,7 @@ function footers(doc: Doc) {
     doc.setDrawColor(...RULE).setLineWidth(0.5);
     doc.line(MARGIN.left, PAGE.height - 46, PAGE.width - MARGIN.right, PAGE.height - 46);
     doc.setFont("helvetica", "normal").setFontSize(8).setTextColor(...MUTED);
-    doc.text(`Publisher Blueprint™ · ${stamp}`, MARGIN.left, PAGE.height - 32);
+    doc.text(`Publisher Blueprint · ${stamp}`, MARGIN.left, PAGE.height - 32);
     const label = `${page} of ${total}`;
     doc.text(label, PAGE.width - MARGIN.right - doc.getTextWidth(label), PAGE.height - 32);
   }
@@ -197,7 +197,7 @@ export async function buildBlueprintPdf(
   const doc = new jsPDF({ unit: "pt", format: "a4", compress: true });
   doc.setProperties({
     title: `Publisher Blueprint — ${blueprint.organizationName ?? "Report"}`,
-    subject: "Publisher Index™ assessment and owned-audience strategy",
+    subject: "Publisher Index assessment and owned-audience strategy",
     creator: "Publisher Blueprint",
   });
 
@@ -210,7 +210,7 @@ export async function buildBlueprintPdf(
   layout.pageBreak();
   layout.heading("Category readings");
   layout.paragraph(
-    "Your Publisher Index™ broken down by the six capabilities that determine owned-audience performance.",
+    "Your Publisher Index broken down by the six capabilities that determine owned-audience performance.",
     { color: MUTED },
   );
   layout.gap(8);
@@ -224,7 +224,7 @@ export async function buildBlueprintPdf(
     layout.gap(20);
     layout.heading("Unlock the full report");
     layout.paragraph(
-      "This summary covers your Publisher Index™ score and category readings. The complete Publisher Blueprint™ adds the strategic interpretation behind those numbers:",
+      "This summary covers your Publisher Index score and category readings. The complete Publisher Blueprint adds the strategic interpretation behind those numbers:",
       { color: INK },
     );
     layout.gap(10);
@@ -234,7 +234,7 @@ export async function buildBlueprintPdf(
       "Strengths to protect and gaps to close",
       "A 90-day roadmap, month by month, with success metrics",
       "The KPIs to track as the plan runs",
-      "AI strategy documents from Publisher Copilot™",
+      "AI strategy documents from Publisher Copilot",
     ]) {
       layout.bullet(item);
     }
@@ -364,7 +364,7 @@ export async function buildBlueprintPdf(
   if (savedActions.length > 0) {
     layout.gap(12);
     layout.heading("Saved actions");
-    layout.paragraph("Actions you saved to your Blueprint from Publisher Copilot™ and the strategy library.", {
+    layout.paragraph("Actions you saved to your Blueprint from Publisher Copilot and the strategy library.", {
       color: MUTED,
     });
     layout.gap(10);

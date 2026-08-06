@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const LADDER = LIFECYCLE_STAGES.filter((s) => s !== "visitor" && s !== "churned");
 
-/** Shows the customer where they are in the Publisher Blueprint™ journey. */
+/** Shows the customer where they are in the Publisher Blueprint journey. */
 export function LifecycleStatus() {
   const fetchLifecycle = useServerFn(getMyLifecycle);
   const { data, isLoading } = useQuery({

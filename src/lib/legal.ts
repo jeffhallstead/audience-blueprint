@@ -5,7 +5,7 @@
  */
 export const SELLER = {
   legalName: "Momentive Ventures LLC",
-  tradingName: "Publisher Blueprint™",
+  tradingName: "Publisher Blueprint",
   supportEmail: "support@jeffhallstead.com",
   website: "https://jeffhallstead.com",
   jurisdiction: "the United States",

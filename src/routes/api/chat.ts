@@ -1,5 +1,5 @@
 /**
- * Publisher Copilot™ — conversational streaming endpoint.
+ * Publisher Copilot — conversational streaming endpoint.
  *
  * Raw HTTP route because the AI SDK chat transport POSTs to a URL and expects a
  * streaming Response. Auth comes from the bearer token the client attaches;
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/api/chat")({
         const { supabase, userId } = auth;
         const environment = body.environment === "live" ? "live" : "sandbox";
 
-        // Publisher Copilot™ chat is a paid capability — enforce it here, not
+        // Publisher Copilot chat is a paid capability — enforce it here, not
         // only in the UI. Free users get the assessment and their index score.
         const { requireFeature } = await import("@/lib/commerce/entitlement.server");
         try {

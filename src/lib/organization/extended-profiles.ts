@@ -2,7 +2,7 @@
  * Extended organization profiles — audience, marketing and content operations.
  *
  * These are identity/segmentation depth, not assessment answers: nothing here
- * changes the Publisher Index™ score. They enrich qualification fit and give
+ * changes the Publisher Index score. They enrich qualification fit and give
  * the Copilot better context about how the organization actually operates.
  *
  * Config-driven so a new question is one entry here plus nothing else.

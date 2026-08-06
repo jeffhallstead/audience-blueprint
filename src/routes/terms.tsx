@@ -6,14 +6,14 @@ export const Route = createFileRoute("/terms")({
   component: TermsPage,
   head: () => ({
     meta: [
-      { title: "Terms & Conditions | Publisher Blueprint™" },
+      { title: "Terms & Conditions | Publisher Blueprint" },
       {
         name: "description",
         content:
-          "The terms governing use of Publisher Blueprint™, including licensing, acceptable use, payments and termination.",
+          "The terms governing use of Publisher Blueprint, including licensing, acceptable use, payments and termination.",
       },
-      { property: "og:title", content: "Terms & Conditions | Publisher Blueprint™" },
-      { property: "og:description", content: "Terms governing use of Publisher Blueprint™." },
+      { property: "og:title", content: "Terms & Conditions | Publisher Blueprint" },
+      { property: "og:description", content: "Terms governing use of Publisher Blueprint." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { property: "og:url", content: "https://blueprint.jeffhallstead.com/terms" },
@@ -28,16 +28,16 @@ function TermsPage() {
       <p>
         These terms are an agreement between you and <strong>{SELLER.legalName}</strong>, trading as{" "}
         {SELLER.tradingName} (&ldquo;we&rdquo;, &ldquo;us&rdquo;), operator of the Publisher
-        Blueprint™ platform. By creating an account or continuing to use the service you agree to
+        Blueprint platform. By creating an account or continuing to use the service you agree to
         these terms. If you are accepting on behalf of an organisation, you confirm you have the
         authority to bind it; otherwise you confirm you are of legal age to contract.
       </p>
 
       <h2>The service</h2>
       <p>
-        Publisher Blueprint™ is a subscription and one-time-purchase software service that provides
-        a diagnostic assessment (the Publisher Index™), an executive dashboard, a strategic roadmap,
-        and AI-assisted strategy deliverables through Publisher Copilot™. We grant you a limited,
+        Publisher Blueprint is a subscription and one-time-purchase software service that provides
+        a diagnostic assessment (the Publisher Index), an executive dashboard, a strategic roadmap,
+        and AI-assisted strategy deliverables through Publisher Copilot. We grant you a limited,
         non-exclusive, non-transferable right to use the service within the plan you have selected.
       </p>
 
@@ -58,7 +58,7 @@ function TermsPage() {
 
       <h2>AI-generated content</h2>
       <p>
-        Publisher Copilot™ produces AI-generated strategy documents, recommendations and prompts.
+        Publisher Copilot produces AI-generated strategy documents, recommendations and prompts.
         You are responsible for the prompts and content you submit, for having the rights to any
         material you input, and for reviewing and verifying outputs before relying on or publishing
         them. You must not use the AI features to generate unlawful content, hate speech, deepfakes,
@@ -73,7 +73,7 @@ function TermsPage() {
       <h2>Intellectual property</h2>
       <p>
         We retain ownership of the service, its software, methodology, documentation and branding,
-        including the Publisher Index™, Publisher Blueprint™, Publisher OS™ and Publisher Copilot™
+        including the Publisher Index, Publisher Blueprint, Publisher OS and Publisher Copilot
         marks. You retain ownership of the content and data you submit, and grant us a limited
         licence to host and process it solely to provide the service to you.
       </p>
@@ -88,9 +88,9 @@ function TermsPage() {
           consumer terms
         </a>{" "}
         apply to the payment itself. Billing questions, cancellations and refunds are handled by us
-        at <a href={`mailto:${SELLER.supportEmail}`}>{SELLER.supportEmail}</a>. Publisher OS™ renews monthly until cancelled; cancelling stops future renewals and access
-        continues to the end of the paid period. The Publisher Blueprint™ purchase is one-time and
-        includes one month of Publisher OS™ access.
+        at <a href={`mailto:${SELLER.supportEmail}`}>{SELLER.supportEmail}</a>. Publisher OS renews monthly until cancelled; cancelling stops future renewals and access
+        continues to the end of the paid period. The Publisher Blueprint purchase is one-time and
+        includes one month of Publisher OS access.
       </p>
 
       <h2>Service level and warranties</h2>

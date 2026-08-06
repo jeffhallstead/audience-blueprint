@@ -24,13 +24,13 @@ const ReportDeliveredEmail = ({ downloadUrl, reportName }: ReportDeliveredEmailP
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>Your Publisher Blueprint™ report is ready for download.</Preview>
+      <Preview>Your Publisher Blueprint report is ready for download.</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Text style={eyebrow}>PUBLISHER BLUEPRINT™</Text>
+          <Text style={eyebrow}>PUBLISHER BLUEPRINT</Text>
           <Heading style={heading}>Your report is ready.</Heading>
           <Text style={paragraph}>
-            Your Publisher Blueprint™ report ({name}) has been generated and is ready to download.
+            Your Publisher Blueprint report ({name}) has been generated and is ready to download.
             The link below is private and will remain active for 7 days.
           </Text>
           <Section style={buttonWrap}>
@@ -58,7 +58,7 @@ const ReportDeliveredEmail = ({ downloadUrl, reportName }: ReportDeliveredEmailP
 
 export const template = {
   component: ReportDeliveredEmail,
-  subject: 'Your Publisher Blueprint™ report is ready',
+  subject: 'Your Publisher Blueprint report is ready',
   displayName: 'Report delivered email',
   previewData: {
     downloadUrl: 'https://jeffhallstead.com',

@@ -11,13 +11,13 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Publisher Blueprint™ — Strategy OS for Publishers" },
+      { title: "Publisher Blueprint — Strategy OS for Publishers" },
       {
         name: "description",
         content:
-          "Publisher Blueprint™ is a premium executive assessment that scores your publishing maturity and delivers a personalized 90-day strategic roadmap.",
+          "Publisher Blueprint is a premium executive assessment that scores your publishing maturity and delivers a personalized 90-day strategic roadmap.",
       },
-      { property: "og:title", content: "Publisher Blueprint™ — Strategy OS for Publishers" },
+      { property: "og:title", content: "Publisher Blueprint — Strategy OS for Publishers" },
       {
         property: "og:description",
         content:
@@ -36,7 +36,7 @@ export const Route = createFileRoute("/")({
           "@graph": [
             {
               "@type": "WebSite",
-              name: "Publisher Blueprint™",
+              name: "Publisher Blueprint",
               url: "https://blueprint.jeffhallstead.com/",
               description:
                 "A premium executive assessment that scores publishing maturity and delivers a sequenced 90-day strategic roadmap.",
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/")({
             {
               "@type": "Organization",
               name: "Momentive Ventures LLC",
-              alternateName: "Publisher Blueprint™",
+              alternateName: "Publisher Blueprint",
               url: "https://blueprint.jeffhallstead.com/",
               description:
                 "Strategic assessment and 90-day roadmap platform for newsletter publishers and content entrepreneurs.",
@@ -67,7 +67,7 @@ const PILLARS = [
   {
     icon: LineChart,
     title: "A score that tells you where you stand — and how far you are from where you need to be.",
-    body: "Your Publisher Index™ score places you on a five-tier maturity scale and identifies the highest-leverage gap to close first.",
+    body: "Your Publisher Index score places you on a five-tier maturity scale and identifies the highest-leverage gap to close first.",
   },
   {
     icon: ShieldCheck,
@@ -127,11 +127,15 @@ function Landing() {
       <main>
         <section className="mx-auto max-w-6xl px-6 pb-24 pt-16 sm:pt-24">
           <h1 className="text-display mt-6 max-w-4xl text-4xl leading-[1.1] sm:text-5xl">
-            Publisher Blueprint™: Strategy OS for Publishers
+            Publisher Blueprint: Strategy OS for Publishers
           </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground">
-            The Publisher Test scores your content maturity across seven dimensions and returns a prioritized roadmap
-            for the next 90 days. Free. 12 minutes.
+          <p className="text-display mt-6 max-w-3xl text-2xl leading-snug text-foreground sm:text-3xl">
+            Most brands rent their audience. The ones that win, own it.
+          </p>
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
+            You&rsquo;re spending to reach people who disappear the moment the budget stops. The Publisher Test scores
+            your content operation across seven dimensions, shows you exactly where you&rsquo;re leaking audience, and
+            hands you a prioritized 90-day plan to fix it.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <Button asChild size="lg">
@@ -211,7 +215,7 @@ function Landing() {
 
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-xs text-muted-foreground sm:flex-row sm:justify-between">
-          <span>© {new Date().getFullYear()} Publisher Blueprint™ · by Jeff Hallstead</span>
+          <span>© {new Date().getFullYear()} Publisher Blueprint · by Jeff Hallstead</span>
           <nav className="flex flex-wrap gap-4">
             <a
               href="https://jeffhallstead.com/"

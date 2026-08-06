@@ -37,7 +37,7 @@ export const FEATURE_MINIMUM: Record<Feature, Tier> = {
   pdf_export: "blueprint",
   file_export: "blueprint",
   email_report: "blueprint",
-  // Moves to "os" when Publisher OS™ launches.
+  // Moves to "os" when Publisher OS launches.
   connector_export: "blueprint",
   ai_chat_unlimited: "os",
   progress_tracking: "os",
@@ -84,13 +84,13 @@ export type Plan = {
 export const PLANS: Plan[] = [
   {
     tier: "free",
-    name: "Publisher Test™",
+    name: "Publisher Test",
     tagline: "Diagnose where you stand today.",
     priceLabel: "Free",
     cadence: "No card required",
     features: [
       "Full seven-section assessment",
-      "Publisher Index™ score",
+      "Publisher Index score",
       "Maturity level",
       "Category score breakdown",
     ],
@@ -104,14 +104,14 @@ export const PLANS: Plan[] = [
   },
   {
     tier: "blueprint",
-    name: "Publisher Blueprint™",
+    name: "Publisher Blueprint",
     tagline: "Your complete strategic assessment and plan.",
     priceLabel: "$49",
     cadence: "Founding Member Pricing",
     supportingLine: "Price increases after launch",
     priceId: PRICE_IDS.blueprint,
     features: [
-      "Everything in Publisher Test™",
+      "Everything in Publisher Test",
       "Full executive dashboard",
       "Opportunity matrix and gap analysis",
       "90-day strategic roadmap",
@@ -124,14 +124,14 @@ export const PLANS: Plan[] = [
 
   {
     tier: "os",
-    name: "Publisher OS™",
+    name: "Publisher OS",
     tagline: "Operate the plan, quarter after quarter.",
     priceLabel: "$49",
     cadence: "per month",
     priceId: PRICE_IDS.os,
     features: [
-      "Everything in Publisher Blueprint™",
-      "Unlimited Publisher Copilot™ sessions",
+      "Everything in Publisher Blueprint",
+      "Unlimited Publisher Copilot sessions",
       "Roadmap updates and progress tracking",
       "Blueprint history and version library",
       "Future reassessments",
