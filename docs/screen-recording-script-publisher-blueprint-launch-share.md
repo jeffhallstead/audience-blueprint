@@ -1,4 +1,4 @@
-# Screen Recording Script: Publisher Blueprint™ Launch Share
+# Screen Recording Script: Publisher Blueprint Launch Share
 
 ## Recording brief
 - **Length:** 1–2 minutes
@@ -6,40 +6,50 @@
 - **Audience:** Newsletter growth course peers
 - **Core message:** Show how the Publisher Blueprint evolved from a static assessment on my consulting site into a client acquisition and scoring tool, using the DIY / Do It With Help / Do It For You framework, with the free Publisher Test as a lead magnet for my ICP.
 
-## Word-for-word narration
+## Before you hit record
+- Sign in with the admin account so the Admin Console is available.
+- Pre-open tabs in this order: landing page, the test (partway through a section), dashboard, pricing, roadmap, Admin Console, consulting/contact page.
+- Have a completed profile loaded so the dashboard and roadmap show real scores, not an empty state.
+- Set browser zoom to ~110% so text is legible in the recording.
+- Close notifications, extra bookmarks, and any tab with private data.
 
-**[0:00] Hey everyone — I wanted to share what I just shipped because it ties directly to what we talked about in class today about the DIY, Do It With Help, and Do It For You offer ladder.**
+## Script (read straight down: DO, then SAY)
 
-**[0:08] On my consulting site I used to have a pretty static assessment for publishers. It was useful, but it was basically a one-off thing — someone filled it out, got a score, and then I had to figure out what came next. So I rebuilt it into a product called Publisher Blueprint™.**
+**[0:00] DO:** Start on the landing page, nothing clicked yet.
 
-**[0:20] The front door is the Publisher Test. It is a lead magnet designed for my ICP — newsletter operators, publishers, and content entrepreneurs who already have traction but feel stuck on strategy, revenue, or operations. It is free, no card required, takes about twelve minutes, and gives you a Publisher Index™ score plus six category scores. That is the DIY entry point — anyone can take it and walk away with something useful.**
+**SAY:** Hey everyone — I wanted to share what I just shipped because it ties directly to what we talked about in class today about the DIY, Do It With Help, and Do It For You offer ladder.
 
-**[0:31] Then, if you want more, you can upgrade for $49 to the Blueprint. That unlocks the full executive dashboard, a 90-day strategic roadmap, AI strategy documents, and exports — including Airtable, Asana, Excel, and Google Sheets. I have also left the door open to connect it to a CRM like HubSpot later as needed.**
+**[0:08] DO:** Stay on the homepage. Slowly scroll so the product name and the free-test CTA are both visible.
 
-**[0:43] And honestly, the roadmap is where a lot of the selling happens indirectly. When you see the roadmap that comes out of this — the phases, the priorities, the KPIs, the resources — it makes the size of doing this yourself really concrete. That is a natural bridge to the Do It For You consulting offer, where I help a team actually implement it.**
+**SAY:** On my consulting site I used to have a pretty static assessment for publishers. It was useful, but it was basically a one-off thing — someone filled it out, got a score, and then I had to figure out what came next. So I rebuilt it into a product called Publisher Blueprint.
 
-**[0:54] I also want to be clear: this is not me trying to replace the deep newsletter expertise people like Nathan bring. Newsletter writing and growth can absolutely show up as a priority in the roadmap, but executing on that piece still calls for someone who lives and breathes newsletters. The Blueprint just makes it obvious what needs attention, and when something like a newsletter strategy is the next step, that is where a specialist like Nathan comes in.**
+**[0:20] DO:** Click the free Publisher Test CTA and scroll through one or two question sections so people see the depth.
 
-**[1:03] What is worth noting, especially for the non-engineers in the group: I built this with Lovable. I am not a software engineer, and Lovable is what let me turn this idea into a real mini SaaS product with auth, payments, a database, a rule engine, and an admin console. I can see accounts, Publisher Index scores, revenue, leads, and integration health in one place — which is a real operational backend, not just a landing page and a form.**
+**SAY:** The front door is the Publisher Test. It is a lead magnet designed for my ICP — newsletter operators, publishers, and content entrepreneurs who already have traction but feel stuck on strategy, revenue, or operations. It is free, no card required, takes about twelve minutes, and gives you a Publisher Index score plus six category scores. That is the DIY entry point — anyone can take it and walk away with something useful.
 
-**[1:17] So the whole funnel is: free test captures the lead, $49 Blueprint gives them a real plan they can run themselves, and the detail of that plan naturally qualifies the people who would rather just hire me to do it.**
+**[0:31] DO:** Switch to the dashboard tab. Show the score, the radar, and the roadmap teaser. Around 0:36, switch to the pricing tab and hover the free Test card and then the $49 Blueprint card.
 
-**[1:28] If you want to play with it, it is live at blueprint.jeffhallstead.com. Happy to answer questions — and thanks for letting me share.**
+**SAY:** Then, if you want more, you can upgrade for $49 to the Blueprint. That unlocks the full executive dashboard, a 90-day strategic roadmap, AI strategy documents, and exports — including Airtable, Asana, Excel, and Google Sheets. I have also left the door open to connect it to a CRM like HubSpot later as needed.
 
-## Shot list / on-screen cues
+**[0:43] DO:** Switch to the roadmap tab. Scroll slowly through the 90-day roadmap so the density and detail land.
 
-| Time | What to show | Notes |
-|------|--------------|-------|
-| 0:08 | Landing page / homepage | Let the product name and free-test CTA be visible. |
-| 0:20 | Start the free Publisher Test | Scroll through one or two question sections so people see the depth. |
-| 0:31 | Results page / dashboard preview | Show the score, radar, and roadmap teaser. |
-| 0:36 | Pricing page | Highlight the free Test card and the $49 Blueprint card. |
-| 0:43 | Roadmap view | Slowly scroll the 90-day roadmap to show density and detail. This is the "size of the DIY work" beat. |
-| 0:54 | Roadmap with a newsletter-related priority | Pause on a roadmap item that mentions audience or newsletter growth, then gesture to the idea that this is where an expert like Nathan fits. |
-| 1:03 | Admin Console | Show accounts, scores, revenue, leads, and integration health. This is the operational-backend proof point. Keep it short. |
-| 1:12 | Builder view / Lovable | Optional: a quick glimpse of the Lovable editor or the project. If you do not want to show Lovable, use your voice over the Admin Console screen. |
-| 1:20 | Consulting link / contact page | Show the Do It For You path without over-selling it. |
-| 1:30 | Closing screen | Landing page URL visible: `blueprint.jeffhallstead.com`. |
+**SAY:** And honestly, the roadmap is where a lot of the selling happens indirectly. When you see the roadmap that comes out of this — the phases, the priorities, the KPIs, the resources — it makes the size of doing this yourself really concrete. That is a natural bridge to the Do It For You consulting offer, where I help a team actually implement it.
+
+**[0:54] DO:** Stop scrolling on a roadmap item that mentions audience or newsletter growth, and leave it on screen while you talk.
+
+**SAY:** I also want to be clear: this is not me trying to replace the deep newsletter expertise people like Nathan bring. Newsletter writing and growth can absolutely show up as a priority in the roadmap, but executing on that piece still calls for someone who lives and breathes newsletters. The Blueprint just makes it obvious what needs attention, and when something like a newsletter strategy is the next step, that is where a specialist like Nathan comes in.
+
+**[1:03] DO:** Switch to the Admin Console tab. Keep it brief — pan across accounts, scores, revenue, leads, and integration health. Optionally around 1:12, flash the builder view or leave the Admin Console up while you mention Lovable.
+
+**SAY:** What is worth noting, especially for the non-engineers in the group: I built this with Lovable. I am not a software engineer, and Lovable is what let me turn this idea into a real mini SaaS product with auth, payments, a database, a rule engine, and an admin console. I can see accounts, Publisher Index scores, revenue, leads, and integration health in one place — which is a real operational backend, not just a landing page and a form.
+
+**[1:17] DO:** Switch to the consulting or contact page. Show it briefly without lingering — no hard sell.
+
+**SAY:** So the whole funnel is: free test captures the lead, $49 Blueprint gives them a real plan they can run themselves, and the detail of that plan naturally qualifies the people who would rather just hire me to do it.
+
+**[1:28] DO:** Return to the landing page so `blueprint.jeffhallstead.com` is visible in the address bar as you close out.
+
+**SAY:** If you want to play with it, it is live at blueprint.jeffhallstead.com. Happy to answer questions — and thanks for letting me share.
 
 ## Talking-point backup bullets (if you go off-script)
 
