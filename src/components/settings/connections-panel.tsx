@@ -204,6 +204,9 @@ export function ConnectionsPanel() {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground">
+                    <strong>Before you connect:</strong> {copy.before}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
                     {copy.help}{" "}
                     <a
                       className="inline-flex items-center gap-1 underline"
@@ -217,6 +220,7 @@ export function ConnectionsPanel() {
                   <p className="text-xs text-muted-foreground">
                     Your token is encrypted and only used for your own exports.
                   </p>
+
                 </div>
               )}
 
