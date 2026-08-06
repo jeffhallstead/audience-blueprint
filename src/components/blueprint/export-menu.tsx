@@ -287,10 +287,15 @@ export function ExportMenu({
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              {asanaAvailable
-                ? "One task per row, with roadmap months mapped to due dates."
-                : "Connect your own Asana account in Settings → Connections."}
+              {!asanaAvailable
+                ? "Connect your own Asana account in Settings → Connections."
+                : asanaProjects.data?.error
+                  ? `Asana couldn't list your projects: ${asanaProjects.data.error}`
+                  : !asanaProjects.isLoading && (asanaProjects.data?.projects.length ?? 0) === 0
+                    ? "No projects found in your Asana workspaces. Create one in Asana, then reopen this dialog."
+                    : "One task per row, with roadmap months mapped to due dates."}
             </p>
+
           </div>
         </div>
         )}
