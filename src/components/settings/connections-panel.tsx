@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, ExternalLink, Loader2, Plug, Unplug } from "lucide-react";
+import { CheckCircle2, ExternalLink, Loader2, Plus, Plug, Unplug } from "lucide-react";
 import { toast } from "sonner";
 
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import {
   connectIntegration,
+  createAsanaProject,
   disconnectIntegration,
   listMyAirtableBases,
   listMyAsanaProjects,
@@ -22,6 +23,7 @@ import {
 import { getStripeEnvironment } from "@/lib/stripe";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { LockedFeature } from "@/components/billing/feature-gate";
+
 
 type Provider = "airtable" | "asana";
 
