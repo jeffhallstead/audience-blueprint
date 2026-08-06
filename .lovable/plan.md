@@ -46,6 +46,8 @@
 - The $49 upgrade is positioned as a low-risk next step, not a high-ticket sale.
 - The roadmap detail makes the value of "done with you" or "done for you" visible without being pushy.
 - The scoring data also lets me see who is a qualified consulting lead before they ever email me.
+- The tool is built with Lovable, which is a strong signal for product-led founders who are not engineers.
+- The Blueprint complements newsletter experts like Nathan; it identifies the priority, but execution can still belong to a specialist.
 
 ## Optional closing CTA (use if you want one)
 
