@@ -117,7 +117,7 @@ export const selectAirtableBase = createServerFn({ method: "POST" })
     return { saved: true as const };
   });
 
-/** Asana projects the user's connected account can write to, plus the saved default. */
+/** Asana projects and workspaces for the user's connected account. */
 export const listMyAsanaProjects = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { environment?: string } | undefined) => ({
@@ -138,14 +138,25 @@ export const listMyAsanaProjects = createServerFn({ method: "GET" })
     const selectedProjectId = target?.asana_project_id ?? null;
 
     if (!credential?.token) {
-      return { connected: false as const, projects: [], selectedProjectId, error: null as string | null };
+      return {
+        connected: false as const,
+        projects: [],
+        workspaces: [],
+        selectedProjectId,
+        error: null as string | null,
+      };
     }
 
     try {
-      const { listAsanaProjects } = await import("@/lib/integrations/asana.server");
+      const { listAsanaProjects, listAsanaWorkspaces } = await import("@/lib/integrations/asana.server");
+      const [projects, workspaces] = await Promise.all([
+        listAsanaProjects(credential.token),
+        listAsanaWorkspaces(credential.token),
+      ]);
       return {
         connected: true as const,
-        projects: await listAsanaProjects(credential.token),
+        projects,
+        workspaces: workspaces.map((w) => ({ id: w.gid, name: w.name })),
         selectedProjectId,
         error: null as string | null,
       };
@@ -154,11 +165,13 @@ export const listMyAsanaProjects = createServerFn({ method: "GET" })
       return {
         connected: true as const,
         projects: [],
+        workspaces: [],
         selectedProjectId,
         error: (err as Error).message,
       };
     }
   });
+
 
 /**
  * Creates a new Asana project in the user's workspace and saves it as the
