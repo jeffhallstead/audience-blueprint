@@ -103,6 +103,20 @@ export function ExportMenu({
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["export", "destinations"] }),
   });
 
+  const createAsanaProjectMutation = useMutation({
+    mutationFn: (input: { workspaceId?: string | null; projectName?: string | null }) =>
+      createAsanaProject({ data: { ...input, environment } }),
+    onSuccess: (result) => {
+      toast.success("Asana project created and selected.");
+      setAsanaWorkspaceId("");
+      setAsanaProject(result.project.id);
+      queryClient.invalidateQueries({ queryKey: ["export", "asana-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["export", "destinations"] });
+    },
+    onError: (error) => toast.error((error as Error).message),
+  });
+
+
   const rows = buildExportRows({ blueprint, saved: saved ?? null }, scopes, {
     locked: !canExportFiles,
   });
