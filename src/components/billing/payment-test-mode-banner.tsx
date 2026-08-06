@@ -21,7 +21,7 @@ export function PaymentTestModeBanner() {
         rel="noopener noreferrer"
         className="font-medium underline underline-offset-4"
       >
-        Read more
+        Read about test payments
       </a>
     </div>
   );
