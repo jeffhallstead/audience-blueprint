@@ -11,22 +11,50 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Publisher Blueprint™ — Strategy Operating System for Marketing Leaders" },
+      { title: "Publisher Blueprint™ — Strategy OS for Publishers" },
       {
         name: "description",
         content:
           "Publisher Blueprint™ is a premium executive assessment that scores your publishing maturity and delivers a personalized 90-day strategic roadmap.",
       },
-      { property: "og:title", content: "Publisher Blueprint™ — Strategy Operating System for Marketing Leaders" },
+      { property: "og:title", content: "Publisher Blueprint™ — Strategy OS for Publishers" },
       {
         property: "og:description",
         content:
           "A premium executive assessment that scores publishing maturity and delivers a sequenced 90-day roadmap.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://blueprint.jeffhallstead.com/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://blueprint.jeffhallstead.com/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebSite",
+              name: "Publisher Blueprint™",
+              url: "https://blueprint.jeffhallstead.com/",
+              description:
+                "A premium executive assessment that scores publishing maturity and delivers a sequenced 90-day strategic roadmap.",
+            },
+            {
+              "@type": "Organization",
+              name: "Momentive Ventures LLC",
+              alternateName: "Publisher Blueprint™",
+              url: "https://blueprint.jeffhallstead.com/",
+              description:
+                "Strategic assessment and 90-day roadmap platform for newsletter publishers and content entrepreneurs.",
+            },
+          ],
+        }),
+      },
+    ],
   }),
+
   component: Landing,
 });
 
