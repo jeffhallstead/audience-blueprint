@@ -127,9 +127,7 @@ function Landing() {
       <main>
         <section className="mx-auto max-w-6xl px-6 pb-24 pt-16 sm:pt-24">
           <h1 className="text-display mt-6 max-w-4xl text-4xl leading-[1.1] sm:text-5xl">
-            Your brand is producing content, but may not be building an audience it owns. There&rsquo;s a measurable
-            difference between the two — and most brand leaders don&rsquo;t have a clear picture of where they actually
-            stand.
+            Publisher Blueprint™: Strategy OS for Publishers
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground">
             The Publisher Test scores your content maturity across seven dimensions and returns a prioritized roadmap
