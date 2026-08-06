@@ -19,7 +19,9 @@ export const Route = createFileRoute("/refund-policy")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: "https://blueprint.jeffhallstead.com/refund-policy" },
     ],
+    links: [{ rel: "canonical", href: "https://blueprint.jeffhallstead.com/refund-policy" }],
   }),
 });
 

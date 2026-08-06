@@ -16,7 +16,9 @@ export const Route = createFileRoute("/terms")({
       { property: "og:description", content: "Terms governing use of Publisher Blueprint™." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: "https://blueprint.jeffhallstead.com/terms" },
     ],
+    links: [{ rel: "canonical", href: "https://blueprint.jeffhallstead.com/terms" }],
   }),
 });
 
