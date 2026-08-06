@@ -20,11 +20,11 @@
 
 **[0:54] I also want to be clear: this is not me trying to replace the deep newsletter expertise people like Nathan bring. Newsletter writing and growth can absolutely show up as a priority in the roadmap, but executing on that piece still calls for someone who lives and breathes newsletters. The Blueprint just makes it obvious what needs attention, and when something like a newsletter strategy is the next step, that is where a specialist like Nathan comes in.**
 
-**[1:03] What is worth noting, especially for the non-engineers in the group: I built this with Lovable. I am not a software engineer, and Lovable is what let me turn this idea into a real mini SaaS product with auth, payments, a database, and a rule engine. If you are not using Lovable yet, it is worth looking at — it is wild what a product-led founder can ship now.**
+**[1:03] What is worth noting, especially for the non-engineers in the group: I built this with Lovable. I am not a software engineer, and Lovable is what let me turn this idea into a real mini SaaS product with auth, payments, a database, a rule engine, and an admin console. I can see accounts, Publisher Index scores, revenue, leads, and integration health in one place — which is a real operational backend, not just a landing page and a form.**
 
-**[1:16] So the whole funnel is: free test captures the lead, $49 Blueprint gives them a real plan they can run themselves, and the detail of that plan naturally qualifies the people who would rather just hire me to do it.**
+**[1:17] So the whole funnel is: free test captures the lead, $49 Blueprint gives them a real plan they can run themselves, and the detail of that plan naturally qualifies the people who would rather just hire me to do it.**
 
-**[1:27] If you want to play with it, it is live at blueprint.jeffhallstead.com. Happy to answer questions — and thanks for letting me share.**
+**[1:28] If you want to play with it, it is live at blueprint.jeffhallstead.com. Happy to answer questions — and thanks for letting me share.**
 
 ## Shot list / on-screen cues
 
@@ -36,9 +36,10 @@
 | 0:36 | Pricing page | Highlight the free Test card and the $49 Blueprint card. |
 | 0:43 | Roadmap view | Slowly scroll the 90-day roadmap to show density and detail. This is the "size of the DIY work" beat. |
 | 0:54 | Roadmap with a newsletter-related priority | Pause on a roadmap item that mentions audience or newsletter growth, then gesture to the idea that this is where an expert like Nathan fits. |
-| 1:03 | Builder view / Lovable | Optional: a quick glimpse of the Lovable editor or the project. Keep it short. If you do not want to show Lovable, just use your voice over the product screen. |
-| 1:16 | Consulting link / contact page | Show the Do It For You path without over-selling it. |
-| 1:27 | Closing screen | Landing page URL visible: `blueprint.jeffhallstead.com`. |
+| 1:03 | Admin Console | Show accounts, scores, revenue, leads, and integration health. This is the operational-backend proof point. Keep it short. |
+| 1:12 | Builder view / Lovable | Optional: a quick glimpse of the Lovable editor or the project. If you do not want to show Lovable, use your voice over the Admin Console screen. |
+| 1:20 | Consulting link / contact page | Show the Do It For You path without over-selling it. |
+| 1:30 | Closing screen | Landing page URL visible: `blueprint.jeffhallstead.com`. |
 
 ## Talking-point backup bullets (if you go off-script)
 
@@ -48,6 +49,7 @@
 - The scoring data also lets me see who is a qualified consulting lead before they ever email me.
 - Blueprint exports already work with Airtable, Asana, Excel, and Google Sheets, and the architecture can extend to a CRM like HubSpot.
 - The tool is built with Lovable, which is a strong signal for product-led founders who are not engineers.
+- The Admin Console shows accounts, scores, revenue, leads, and integration health — it is a real operational backend, not a facade.
 - The Blueprint complements newsletter experts like Nathan; it identifies the priority, but execution can still belong to a specialist.
 
 ## Optional closing CTA (use if you want one)
