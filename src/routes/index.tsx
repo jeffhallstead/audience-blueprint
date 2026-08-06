@@ -129,9 +129,13 @@ function Landing() {
           <h1 className="text-display mt-6 max-w-4xl text-4xl leading-[1.1] sm:text-5xl">
             Publisher Blueprint: Strategy OS for Publishers
           </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground">
-            The Publisher Test scores your content maturity across seven dimensions and returns a prioritized roadmap
-            for the next 90 days. Free. 12 minutes.
+          <p className="text-display mt-6 max-w-3xl text-2xl leading-snug text-foreground sm:text-3xl">
+            Most brands rent their audience. The ones that win, own it.
+          </p>
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
+            You&rsquo;re spending to reach people who disappear the moment the budget stops. The Publisher Test scores
+            your content operation across seven dimensions, shows you exactly where you&rsquo;re leaking audience, and
+            hands you a prioritized 90-day plan to fix it.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <Button asChild size="lg">
