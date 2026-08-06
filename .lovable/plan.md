@@ -14,7 +14,7 @@
 
 **[0:20] The front door is the Publisher Test. It is completely free, no card required. It takes about twelve minutes and gives you a Publisher Index™ score plus six category scores. That is the DIY entry point — anyone can take it and walk away with something useful.**
 
-**[0:31] Then, if you want more, you can upgrade for $49 to the Blueprint. That unlocks the full executive dashboard, a 90-day strategic roadmap, AI strategy documents, and exports. So it is still DIY, but you are not starting from scratch — you get the actual plan.**
+**[0:31] Then, if you want more, you can upgrade for $49 to the Blueprint. That unlocks the full executive dashboard, a 90-day strategic roadmap, AI strategy documents, and exports — including Airtable, Asana, Excel, and Google Sheets. I have also left the door open to connect it to a CRM like HubSpot later as needed.**
 
 **[0:43] And honestly, the roadmap is where a lot of the selling happens indirectly. When you see the roadmap that comes out of this — the phases, the priorities, the KPIs, the resources — it makes the size of doing this yourself really concrete. That is a natural bridge to the Do It For You consulting offer, where I help a team actually implement it.**
 
@@ -46,6 +46,7 @@
 - The $49 upgrade is positioned as a low-risk next step, not a high-ticket sale.
 - The roadmap detail makes the value of "done with you" or "done for you" visible without being pushy.
 - The scoring data also lets me see who is a qualified consulting lead before they ever email me.
+- Blueprint exports already work with Airtable, Asana, Excel, and Google Sheets, and the architecture can extend to a CRM like HubSpot.
 - The tool is built with Lovable, which is a strong signal for product-led founders who are not engineers.
 - The Blueprint complements newsletter experts like Nathan; it identifies the priority, but execution can still belong to a specialist.
 
