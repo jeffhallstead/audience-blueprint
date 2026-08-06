@@ -195,8 +195,9 @@ export const createAsanaProject = createServerFn({ method: "POST" })
       if (workspaces.length > 1) {
         throw new Error("Choose a workspace first — you have more than one.");
       }
-      workspaceId = workspaces[0].gid;
+      workspaceId = workspaces[0]!.gid;
     }
+
 
     const project = await asanaCreateProject(credential.token, workspaceId, data.projectName);
 
