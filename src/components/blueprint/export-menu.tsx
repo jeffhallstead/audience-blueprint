@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, ClipboardCopy, Download, FileSpreadsheet, Loader2, Send, Table2 } from "lucide-react";
+import { Check, ClipboardCopy, Download, FileSpreadsheet, Loader2, Plus, Send, Table2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -29,9 +29,11 @@ import {
   pushExportRows,
   saveExportTarget,
 } from "@/lib/export/export.functions";
+import { createAsanaProject } from "@/lib/integrations/connections.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { LockedFeature } from "@/components/billing/feature-gate";
+
 
 /**
  * One export surface for every destination. File downloads happen in the
