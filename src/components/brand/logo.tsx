@@ -21,9 +21,6 @@ export function Logo({ className, inverted = false }: { className?: string; inve
         )}
       >
         Publisher Blueprint
-        <span className="ml-0.5 text-primary" aria-hidden>
-          
-        </span>
       </span>
     </span>
   );
