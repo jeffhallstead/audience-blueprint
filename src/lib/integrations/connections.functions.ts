@@ -160,7 +160,62 @@ export const listMyAsanaProjects = createServerFn({ method: "GET" })
     }
   });
 
+/**
+ * Creates a new Asana project in the user's workspace and saves it as the
+ * default export target. This removes the dead-end empty-project state.
+ */
+export const createAsanaProject = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (input: {
+      workspaceId?: string | null;
+      projectName?: string | null;
+      environment?: string;
+    }) => ({
+      environment: assertEnv(input?.environment),
+      workspaceId: input?.workspaceId ? String(input.workspaceId).trim().slice(0, 100) : null,
+      projectName: input?.projectName ? String(input.projectName).trim().slice(0, 120) : "Publisher Blueprint Actions",
+    }),
+  )
+  .handler(async ({ data, context }) => {
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(context.supabase, context.userId, data.environment, "connector_export");
+    const { getUserCredential } = await import("@/lib/integrations/credentials.server");
+    const credential = await getUserCredential(context.userId, "asana");
+    if (!credential?.token) throw new Error("Connect your Asana account first.");
+
+    const { createAsanaProject: asanaCreateProject, listAsanaWorkspaces } = await import(
+      "@/lib/integrations/asana.server"
+    );
+
+    let workspaceId = data.workspaceId;
+    if (!workspaceId) {
+      const workspaces = await listAsanaWorkspaces(credential.token);
+      if (workspaces.length === 0) throw new Error("Your Asana account has no workspaces.");
+      if (workspaces.length > 1) {
+        throw new Error("Choose a workspace first — you have more than one.");
+      }
+      workspaceId = workspaces[0].gid;
+    }
+
+    const project = await asanaCreateProject(credential.token, workspaceId, data.projectName);
+
+    const { error } = await context.supabase.from("export_targets").upsert(
+      {
+        user_id: context.userId,
+        provider: "asana",
+        asana_project_id: project.id,
+        asana_project_name: project.name,
+      },
+      { onConflict: "user_id,provider" },
+    );
+    if (error) throw new Error(error.message);
+
+    return { project };
+  });
+
 /** Stores which Asana project this user exports into. */
+
 export const selectAsanaProject = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { projectId: string; projectName?: string | null; environment?: string }) => ({
