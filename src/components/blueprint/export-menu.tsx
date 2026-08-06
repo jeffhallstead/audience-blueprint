@@ -51,6 +51,8 @@ export function ExportMenu({
   const [busy, setBusy] = useState<string | null>(null);
   const [airtableTable, setAirtableTable] = useState("Publisher Blueprint Actions");
   const [asanaProject, setAsanaProject] = useState<string>("");
+  const [asanaWorkspaceId, setAsanaWorkspaceId] = useState<string>("");
+
 
   const queryClient = useQueryClient();
   const { data: saved } = useSavedRecommendations();
