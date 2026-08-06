@@ -116,3 +116,72 @@ export const selectAirtableBase = createServerFn({ method: "POST" })
     await saveUserCredential(context.userId, "airtable", { airtableBaseId: data.baseId });
     return { saved: true as const };
   });
+
+/** Asana projects the user's connected account can write to, plus the saved default. */
+export const listMyAsanaProjects = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { environment?: string } | undefined) => ({
+    environment: assertEnv(input?.environment),
+  }))
+  .handler(async ({ data, context }) => {
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(context.supabase, context.userId, data.environment, "connector_export");
+    const { getUserCredential } = await import("@/lib/integrations/credentials.server");
+    const credential = await getUserCredential(context.userId, "asana");
+
+    const { data: target } = await context.supabase
+      .from("export_targets")
+      .select("asana_project_id")
+      .eq("user_id", context.userId)
+      .eq("provider", "asana")
+      .maybeSingle();
+    const selectedProjectId = target?.asana_project_id ?? null;
+
+    if (!credential?.token) {
+      return { connected: false as const, projects: [], selectedProjectId, error: null as string | null };
+    }
+
+    try {
+      const { listAsanaProjects } = await import("@/lib/integrations/asana.server");
+      return {
+        connected: true as const,
+        projects: await listAsanaProjects(credential.token),
+        selectedProjectId,
+        error: null as string | null,
+      };
+    } catch (err) {
+      console.error("[integrations] asana project list failed:", err);
+      return {
+        connected: true as const,
+        projects: [],
+        selectedProjectId,
+        error: (err as Error).message,
+      };
+    }
+  });
+
+/** Stores which Asana project this user exports into. */
+export const selectAsanaProject = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { projectId: string; projectName?: string | null; environment?: string }) => ({
+    environment: assertEnv(input?.environment),
+    projectId: String(input?.projectId ?? "").trim().slice(0, 100),
+    projectName: input?.projectName ? String(input.projectName).slice(0, 200) : null,
+  }))
+  .handler(async ({ data, context }) => {
+    if (!data.projectId) throw new Error("Choose a project");
+    const { requireFeature } = await import("@/lib/commerce/entitlement.server");
+    await requireFeature(context.supabase, context.userId, data.environment, "connector_export");
+    const { error } = await context.supabase.from("export_targets").upsert(
+      {
+        user_id: context.userId,
+        provider: "asana",
+        asana_project_id: data.projectId,
+        asana_project_name: data.projectName,
+      },
+      { onConflict: "user_id,provider" },
+    );
+    if (error) throw new Error(error.message);
+    return { saved: true as const };
+  });
+

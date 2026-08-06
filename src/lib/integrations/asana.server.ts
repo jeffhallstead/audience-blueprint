@@ -80,17 +80,51 @@ export const asanaAdapter: IntegrationAdapter = {
   },
 };
 
-/** Projects the user's connected Asana account can write to, for the target picker. */
-export async function listAsanaProjects(token: string): Promise<Array<{ id: string; name: string }>> {
-  const response = await fetch(`${ASANA_API}/projects?limit=100&opt_fields=gid,name&archived=false`, {
+/** Workspaces the connected Asana account belongs to. */
+async function listAsanaWorkspaces(token: string): Promise<Array<{ gid: string; name: string }>> {
+  const response = await fetch(`${ASANA_API}/users/me?opt_fields=workspaces.name,workspaces.gid`, {
     headers: authHeaders(token),
   });
   if (!response.ok) {
-    throw new Error(`Asana project list failed [${response.status}]: ${await response.text()}`);
+    throw new Error(`Asana workspace list failed [${response.status}]: ${await response.text()}`);
   }
-  const json = (await response.json()) as { data?: Array<{ gid: string; name: string }> };
-  return (json.data ?? []).map((project) => ({ id: project.gid, name: project.name }));
+  const json = (await response.json()) as { data?: { workspaces?: Array<{ gid: string; name: string }> } };
+  return json.data?.workspaces ?? [];
 }
+
+/**
+ * Projects the user's connected Asana account can write to, for the target picker.
+ * Asana requires a workspace (or team) scope on /projects, so we page per workspace.
+ */
+export async function listAsanaProjects(
+  token: string,
+): Promise<Array<{ id: string; name: string; workspaceId: string; workspaceName: string }>> {
+  const workspaces = await listAsanaWorkspaces(token);
+  const multiple = workspaces.length > 1;
+  const projects: Array<{ id: string; name: string; workspaceId: string; workspaceName: string }> = [];
+
+  for (const workspace of workspaces) {
+    const response = await fetch(
+      `${ASANA_API}/workspaces/${workspace.gid}/projects?limit=100&opt_fields=gid,name&archived=false`,
+      { headers: authHeaders(token) },
+    );
+    if (!response.ok) {
+      throw new Error(`Asana project list failed [${response.status}]: ${await response.text()}`);
+    }
+    const json = (await response.json()) as { data?: Array<{ gid: string; name: string }> };
+    for (const project of json.data ?? []) {
+      projects.push({
+        id: project.gid,
+        name: multiple ? `${workspace.name} / ${project.name}` : project.name,
+        workspaceId: workspace.gid,
+        workspaceName: workspace.name,
+      });
+    }
+  }
+
+  return projects;
+}
+
 
 /** Verifies a personal access token and returns the account name. */
 export async function fetchAsanaUser(token: string): Promise<{ name: string; email: string | null }> {

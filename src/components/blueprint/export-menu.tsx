@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, ClipboardCopy, Download, FileSpreadsheet, Loader2, Send, Table2 } from "lucide-react";
 import { toast } from "sonner";
@@ -71,6 +71,14 @@ export function ExportMenu({
     queryFn: () => listExportAsanaProjects({ data: { environment } }),
     enabled: open && asanaAvailable && canUseConnectors,
   });
+
+  const savedAsanaProject =
+    destinations.data?.targets.find((target) => target.provider === "asana")?.asana_project_id ?? null;
+
+  useEffect(() => {
+    if (savedAsanaProject && !asanaProject) setAsanaProject(savedAsanaProject);
+  }, [savedAsanaProject, asanaProject]);
+
 
   const push = useMutation({
     mutationFn: (provider: "airtable_records" | "asana") =>
@@ -279,10 +287,15 @@ export function ExportMenu({
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              {asanaAvailable
-                ? "One task per row, with roadmap months mapped to due dates."
-                : "Connect your own Asana account in Settings → Connections."}
+              {!asanaAvailable
+                ? "Connect your own Asana account in Settings → Connections."
+                : asanaProjects.data?.error
+                  ? `Asana couldn't list your projects: ${asanaProjects.data.error}`
+                  : !asanaProjects.isLoading && (asanaProjects.data?.projects.length ?? 0) === 0
+                    ? "No projects found in your Asana workspaces. Create one in Asana, then reopen this dialog."
+                    : "One task per row, with roadmap months mapped to due dates."}
             </p>
+
           </div>
         </div>
         )}

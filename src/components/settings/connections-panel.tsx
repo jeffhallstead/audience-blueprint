@@ -13,9 +13,12 @@ import {
   connectIntegration,
   disconnectIntegration,
   listMyAirtableBases,
+  listMyAsanaProjects,
   listMyConnections,
   selectAirtableBase,
+  selectAsanaProject,
 } from "@/lib/integrations/connections.functions";
+
 import { getStripeEnvironment } from "@/lib/stripe";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { LockedFeature } from "@/components/billing/feature-gate";
@@ -83,6 +86,12 @@ export function ConnectionsPanel() {
     onError: (error) => toast.error((error as Error).message),
   });
 
+  const asanaProjects = useQuery({
+    queryKey: ["integrations", "asana-projects"],
+    queryFn: () => listMyAsanaProjects({ data: { environment } }),
+    enabled: canUseConnectors && Boolean(connected("asana")),
+  });
+
   const chooseBase = useMutation({
     mutationFn: (baseId: string) => selectAirtableBase({ data: { baseId, environment } }),
     onSuccess: () => {
@@ -91,6 +100,17 @@ export function ConnectionsPanel() {
     },
     onError: (error) => toast.error((error as Error).message),
   });
+
+  const chooseProject = useMutation({
+    mutationFn: (input: { projectId: string; projectName: string | null }) =>
+      selectAsanaProject({ data: { ...input, environment } }),
+    onSuccess: () => {
+      toast.success("Asana project saved.");
+      refresh();
+    },
+    onError: (error) => toast.error((error as Error).message),
+  });
+
 
   if (!entitlementLoading && !canUseConnectors) {
     return (
@@ -207,6 +227,45 @@ export function ConnectionsPanel() {
                   </p>
                 </div>
               ) : null}
+
+              {provider === "asana" && link ? (
+                <div className="space-y-2">
+                  <Label htmlFor="asana-project" className="text-sm">
+                    Default project to export into
+                  </Label>
+                  <Select
+                    value={asanaProjects.data?.selectedProjectId ?? ""}
+                    onValueChange={(value) =>
+                      chooseProject.mutate({
+                        projectId: value,
+                        projectName:
+                          asanaProjects.data?.projects.find((project) => project.id === value)?.name ?? null,
+                      })
+                    }
+                  >
+                    <SelectTrigger id="asana-project">
+                      <SelectValue
+                        placeholder={asanaProjects.isLoading ? "Loading projects…" : "Choose a project"}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(asanaProjects.data?.projects ?? []).map((project) => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    {asanaProjects.data?.error
+                      ? `Asana couldn't list your projects: ${asanaProjects.data.error}`
+                      : !asanaProjects.isLoading && (asanaProjects.data?.projects.length ?? 0) === 0
+                        ? "No projects found in your Asana workspaces. Create one in Asana, then reload."
+                        : "Exports create one Asana task per recommendation in this project."}
+                  </p>
+                </div>
+              ) : null}
+
             </div>
           );
         })}
