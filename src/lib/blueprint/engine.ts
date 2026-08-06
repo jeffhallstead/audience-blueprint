@@ -83,9 +83,28 @@ export interface GapReading {
   categoryLabel: string;
 }
 
+/** A score-driven priority injected into a roadmap phase. */
+export interface PhasePriority {
+  id: string;
+  title: string;
+  description: string;
+  categoryLabel: string;
+  timeframe: string;
+}
+
 export interface RoadmapPhase extends RoadmapPhaseTemplate {
   id: string;
+  /**
+   * Priorities selected from this user's own scores. Month 1 carries their
+   * quick wins, month 2 their ranked opportunities, month 3 their long-term
+   * moves — so the 90-day plan itself varies with the assessment, not just
+   * the surrounding narrative.
+   */
+  priorities: PhasePriority[];
+  /** Label describing where the priorities came from. */
+  prioritiesLabel: string;
 }
+
 
 export interface ActionReading {
   id: string;
