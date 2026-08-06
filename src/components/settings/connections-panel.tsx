@@ -207,6 +207,45 @@ export function ConnectionsPanel() {
                   </p>
                 </div>
               ) : null}
+
+              {provider === "asana" && link ? (
+                <div className="space-y-2">
+                  <Label htmlFor="asana-project" className="text-sm">
+                    Default project to export into
+                  </Label>
+                  <Select
+                    value={asanaProjects.data?.selectedProjectId ?? ""}
+                    onValueChange={(value) =>
+                      chooseProject.mutate({
+                        projectId: value,
+                        projectName:
+                          asanaProjects.data?.projects.find((project) => project.id === value)?.name ?? null,
+                      })
+                    }
+                  >
+                    <SelectTrigger id="asana-project">
+                      <SelectValue
+                        placeholder={asanaProjects.isLoading ? "Loading projects…" : "Choose a project"}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(asanaProjects.data?.projects ?? []).map((project) => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    {asanaProjects.data?.error
+                      ? `Asana couldn't list your projects: ${asanaProjects.data.error}`
+                      : !asanaProjects.isLoading && (asanaProjects.data?.projects.length ?? 0) === 0
+                        ? "No projects found in your Asana workspaces. Create one in Asana, then reload."
+                        : "Exports create one Asana task per recommendation in this project."}
+                  </p>
+                </div>
+              ) : null}
+
             </div>
           );
         })}
