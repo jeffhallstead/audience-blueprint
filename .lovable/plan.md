@@ -22,9 +22,9 @@
 
 **[1:03] What is worth noting, especially for the non-engineers in the group: I built this with Lovable. I am not a software engineer, and Lovable is what let me turn this idea into a real mini SaaS product with auth, payments, a database, a rule engine, and an admin console. I can see accounts, Publisher Index scores, revenue, leads, and integration health in one place — which is a real operational backend, not just a landing page and a form.**
 
-**[1:16] So the whole funnel is: free test captures the lead, $49 Blueprint gives them a real plan they can run themselves, and the detail of that plan naturally qualifies the people who would rather just hire me to do it.**
+**[1:17] So the whole funnel is: free test captures the lead, $49 Blueprint gives them a real plan they can run themselves, and the detail of that plan naturally qualifies the people who would rather just hire me to do it.**
 
-**[1:27] If you want to play with it, it is live at blueprint.jeffhallstead.com. Happy to answer questions — and thanks for letting me share.**
+**[1:28] If you want to play with it, it is live at blueprint.jeffhallstead.com. Happy to answer questions — and thanks for letting me share.**
 
 ## Shot list / on-screen cues
 
