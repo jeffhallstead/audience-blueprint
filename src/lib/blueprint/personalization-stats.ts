@@ -8,8 +8,13 @@
  * pages cannot silently drift.
  */
 export const PERSONALIZATION_STATS = {
-  /** Distinct 90-day roadmaps (tier template + score-driven phase priorities). */
-  roadmaps: 5502,
+  /**
+   * Distinct 90-day roadmaps (tier template + score-driven phase priorities).
+   * Measured at 10,700 across a 2,000,000-profile sample; published
+   * conservatively as 10,000.
+   */
+  roadmaps: 10000,
+
   /** Distinct full blueprint configurations, Chao1 lower-bound estimate. */
   blueprints: 250000,
   /** Distinct priority-opportunity sets. */
