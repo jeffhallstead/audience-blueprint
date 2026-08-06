@@ -16,7 +16,9 @@ export const Route = createFileRoute("/privacy")({
       { property: "og:description", content: "How we handle your personal data." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: "https://blueprint.jeffhallstead.com/privacy" },
     ],
+    links: [{ rel: "canonical", href: "https://blueprint.jeffhallstead.com/privacy" }],
   }),
 });
 

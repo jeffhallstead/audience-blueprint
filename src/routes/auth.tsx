@@ -37,7 +37,9 @@ export const Route = createFileRoute("/auth")({
       { property: "og:description", content: "Access your Publisher Blueprint™ assessment and strategic roadmap." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "https://blueprint.jeffhallstead.com/auth" },
     ],
+    links: [{ rel: "canonical", href: "https://blueprint.jeffhallstead.com/auth" }],
   }),
   component: AuthPage,
 });
