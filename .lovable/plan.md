@@ -36,9 +36,10 @@
 | 0:36 | Pricing page | Highlight the free Test card and the $49 Blueprint card. |
 | 0:43 | Roadmap view | Slowly scroll the 90-day roadmap to show density and detail. This is the "size of the DIY work" beat. |
 | 0:54 | Roadmap with a newsletter-related priority | Pause on a roadmap item that mentions audience or newsletter growth, then gesture to the idea that this is where an expert like Nathan fits. |
-| 1:03 | Builder view / Lovable | Optional: a quick glimpse of the Lovable editor or the project. Keep it short. If you do not want to show Lovable, just use your voice over the product screen. |
-| 1:16 | Consulting link / contact page | Show the Do It For You path without over-selling it. |
-| 1:27 | Closing screen | Landing page URL visible: `blueprint.jeffhallstead.com`. |
+| 1:03 | Admin Console | Show accounts, scores, revenue, leads, and integration health. This is the operational-backend proof point. Keep it short. |
+| 1:12 | Builder view / Lovable | Optional: a quick glimpse of the Lovable editor or the project. If you do not want to show Lovable, use your voice over the Admin Console screen. |
+| 1:20 | Consulting link / contact page | Show the Do It For You path without over-selling it. |
+| 1:30 | Closing screen | Landing page URL visible: `blueprint.jeffhallstead.com`. |
 
 ## Talking-point backup bullets (if you go off-script)
 
