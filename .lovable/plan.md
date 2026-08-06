@@ -18,9 +18,13 @@
 
 **[0:43] And honestly, the roadmap is where a lot of the selling happens indirectly. When you see the roadmap that comes out of this — the phases, the priorities, the KPIs, the resources — it makes the size of doing this yourself really concrete. That is a natural bridge to the Do It For You consulting offer, where I help a team actually implement it.**
 
-**[0:57] So the whole funnel is: free test captures the lead, $49 Blueprint gives them a real plan they can run themselves, and the detail of that plan naturally qualifies the people who would rather just hire me to do it.**
+**[0:54] I also want to be clear: this is not me trying to replace the deep newsletter expertise people like Nathan bring. Newsletter writing and growth can absolutely show up as a priority in the roadmap, but executing on that piece still calls for someone who lives and breathes newsletters. The Blueprint just makes it obvious what needs attention, and when something like a newsletter strategy is the next step, that is where a specialist like Nathan comes in.**
 
-**[1:08] If you want to play with it, it is live at blueprint.jeffhallstead.com. Happy to answer questions — and thanks for letting me share.**
+**[1:03] What is worth noting, especially for the non-engineers in the group: I built this with Lovable. I am not a software engineer, and Lovable is what let me turn this idea into a real mini SaaS product with auth, payments, a database, and a rule engine. If you are not using Lovable yet, it is worth looking at — it is wild what a product-led founder can ship now.**
+
+**[1:16] So the whole funnel is: free test captures the lead, $49 Blueprint gives them a real plan they can run themselves, and the detail of that plan naturally qualifies the people who would rather just hire me to do it.**
+
+**[1:27] If you want to play with it, it is live at blueprint.jeffhallstead.com. Happy to answer questions — and thanks for letting me share.**
 
 ## Shot list / on-screen cues
 
