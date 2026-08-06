@@ -1,0 +1,46 @@
+# Screen Recording Script: Publisher Blueprint™ Launch Share
+
+## Recording brief
+- **Length:** 1–2 minutes
+- **Tone:** Casual cohort share
+- **Audience:** Newsletter growth course peers
+- **Core message:** Show how the Publisher Blueprint evolved from a static assessment on my consulting site into a client acquisition and scoring tool, using the DIY / Do It With Help / Do It For You framework.
+
+## Word-for-word narration
+
+**[0:00] Hey everyone — I wanted to share what I just shipped because it ties directly to what we talked about in class today about the DIY, Do It With Help, and Do It For You offer ladder.**
+
+**[0:08] On my consulting site I used to have a pretty static assessment for publishers. It was useful, but it was basically a one-off thing — someone filled it out, got a score, and then I had to figure out what came next. So I rebuilt it into a product called Publisher Blueprint™.**
+
+**[0:20] The front door is the Publisher Test. It is completely free, no card required. It takes about twelve minutes and gives you a Publisher Index™ score plus six category scores. That is the DIY entry point — anyone can take it and walk away with something useful.**
+
+**[0:31] Then, if you want more, you can upgrade for $49 to the Blueprint. That unlocks the full executive dashboard, a 90-day strategic roadmap, AI strategy documents, and exports. So it is still DIY, but you are not starting from scratch — you get the actual plan.**
+
+**[0:43] And honestly, the roadmap is where a lot of the selling happens indirectly. When you see the roadmap that comes out of this — the phases, the priorities, the KPIs, the resources — it makes the size of doing this yourself really concrete. That is a natural bridge to the Do It For You consulting offer, where I help a team actually implement it.**
+
+**[0:57] So the whole funnel is: free test captures the lead, $49 Blueprint gives them a real plan they can run themselves, and the detail of that plan naturally qualifies the people who would rather just hire me to do it.**
+
+**[1:08] If you want to play with it, it is live at blueprint.jeffhallstead.com. Happy to answer questions — and thanks for letting me share.**
+
+## Shot list / on-screen cues
+
+| Time | What to show | Notes |
+|------|--------------|-------|
+| 0:08 | Landing page / homepage | Let the product name and free-test CTA be visible. |
+| 0:20 | Start the free Publisher Test | Scroll through one or two question sections so people see the depth. |
+| 0:31 | Results page / dashboard preview | Show the score, radar, and roadmap teaser. |
+| 0:36 | Pricing page | Highlight the free Test card and the $49 Blueprint card. |
+| 0:43 | Roadmap view | Slowly scroll the 90-day roadmap to show density and detail. This is the "size of the DIY work" beat. |
+| 0:57 | Consulting link / contact page | Show the Do It For You path without over-selling it. |
+| 1:08 | Closing screen | Landing page URL visible: `blueprint.jeffhallstead.com`. |
+
+## Talking-point backup bullets (if you go off-script)
+
+- The free test is not a lead magnet in disguise — it is a real, 12-minute diagnostic.
+- The $49 upgrade is positioned as a low-risk next step, not a high-ticket sale.
+- The roadmap detail makes the value of "done with you" or "done for you" visible without being pushy.
+- The scoring data also lets me see who is a qualified consulting lead before they ever email me.
+
+## Optional closing CTA (use if you want one)
+
+"If you know a publisher or newsletter operator who needs a clearer strategy, send them the link — they can start the test free."
