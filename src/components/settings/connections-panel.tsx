@@ -13,9 +13,12 @@ import {
   connectIntegration,
   disconnectIntegration,
   listMyAirtableBases,
+  listMyAsanaProjects,
   listMyConnections,
   selectAirtableBase,
+  selectAsanaProject,
 } from "@/lib/integrations/connections.functions";
+
 import { getStripeEnvironment } from "@/lib/stripe";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { LockedFeature } from "@/components/billing/feature-gate";
