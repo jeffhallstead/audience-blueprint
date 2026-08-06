@@ -149,7 +149,10 @@ function Landing() {
           </div>
         </section>
 
+        <PersonalizationProof />
+
         <section className="border-y border-border">
+
           <div className="mx-auto max-w-3xl px-6 py-20">
             <p className="text-display text-2xl leading-snug sm:text-3xl">
               Brands that stay in campaign mode keep spending without building an audience. Every dollar goes toward
