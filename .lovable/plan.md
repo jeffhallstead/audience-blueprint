@@ -4,7 +4,7 @@
 - **Length:** 1–2 minutes
 - **Tone:** Casual cohort share
 - **Audience:** Newsletter growth course peers
-- **Core message:** Show how the Publisher Blueprint evolved from a static assessment on my consulting site into a client acquisition and scoring tool, using the DIY / Do It With Help / Do It For You framework.
+- **Core message:** Show how the Publisher Blueprint evolved from a static assessment on my consulting site into a client acquisition and scoring tool, using the DIY / Do It With Help / Do It For You framework, with the free Publisher Test as a lead magnet for my ICP.
 
 ## Word-for-word narration
 
