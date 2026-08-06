@@ -72,6 +72,14 @@ export function ExportMenu({
     enabled: open && asanaAvailable && canUseConnectors,
   });
 
+  const savedAsanaProject =
+    destinations.data?.targets.find((target) => target.provider === "asana")?.asana_project_id ?? null;
+
+  useEffect(() => {
+    if (savedAsanaProject && !asanaProject) setAsanaProject(savedAsanaProject);
+  }, [savedAsanaProject, asanaProject]);
+
+
   const push = useMutation({
     mutationFn: (provider: "airtable_records" | "asana") =>
       pushExportRows({ data: { provider, rows, environment } }),
