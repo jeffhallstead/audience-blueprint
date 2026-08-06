@@ -27,20 +27,23 @@ import { LockedFeature } from "@/components/billing/feature-gate";
 
 type Provider = "airtable" | "asana";
 
-const PROVIDER_COPY: Record<Provider, { name: string; help: string; tokenUrl: string; placeholder: string }> = {
+const PROVIDER_COPY: Record<Provider, { name: string; help: string; before: string; tokenUrl: string; placeholder: string }> = {
   airtable: {
     name: "Airtable",
     help: "Create a personal access token with data.records:read/write and schema.bases:read, then give it access to the base you want your plan written into.",
+    before: "You need an existing Airtable base. The export will create a table inside it.",
     tokenUrl: "https://airtable.com/create/tokens",
     placeholder: "pat...",
   },
   asana: {
     name: "Asana",
     help: "Create a personal access token in your Asana developer console. Tasks are created in the project you pick when exporting.",
+    before: "You need at least one Asana workspace. The project itself can be empty — we create tasks in it.",
     tokenUrl: "https://app.asana.com/0/my-apps",
     placeholder: "1/12345...",
   },
 };
+
 
 /** Lets each user connect their own Airtable and Asana accounts for exports. */
 export function ConnectionsPanel() {
