@@ -42,7 +42,7 @@
 
 ## Talking-point backup bullets (if you go off-script)
 
-- The free test is not a lead magnet in disguise — it is a real, 12-minute diagnostic.
+- The Publisher Test is a lead magnet designed for the ICP: newsletter operators and publishers with traction who feel stuck on strategy, revenue, or operations.
 - The $49 upgrade is positioned as a low-risk next step, not a high-ticket sale.
 - The roadmap detail makes the value of "done with you" or "done for you" visible without being pushy.
 - The scoring data also lets me see who is a qualified consulting lead before they ever email me.
