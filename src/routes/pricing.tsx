@@ -10,6 +10,8 @@ import { getStripeEnvironment } from "@/lib/stripe";
 import { trackCommerceEvent } from "@/lib/commerce/analytics";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/brand/logo";
+import { PersonalizationProof } from "@/components/marketing/personalization-proof";
+
 
 export const Route = createFileRoute("/pricing")({
   component: PricingPage,
