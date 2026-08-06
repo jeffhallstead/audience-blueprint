@@ -83,6 +83,12 @@ export function ConnectionsPanel() {
     onError: (error) => toast.error((error as Error).message),
   });
 
+  const asanaProjects = useQuery({
+    queryKey: ["integrations", "asana-projects"],
+    queryFn: () => listMyAsanaProjects({ data: { environment } }),
+    enabled: canUseConnectors && Boolean(connected("asana")),
+  });
+
   const chooseBase = useMutation({
     mutationFn: (baseId: string) => selectAirtableBase({ data: { baseId, environment } }),
     onSuccess: () => {
@@ -91,6 +97,17 @@ export function ConnectionsPanel() {
     },
     onError: (error) => toast.error((error as Error).message),
   });
+
+  const chooseProject = useMutation({
+    mutationFn: (input: { projectId: string; projectName: string | null }) =>
+      selectAsanaProject({ data: { ...input, environment } }),
+    onSuccess: () => {
+      toast.success("Asana project saved.");
+      refresh();
+    },
+    onError: (error) => toast.error((error as Error).message),
+  });
+
 
   if (!entitlementLoading && !canUseConnectors) {
     return (
