@@ -49,6 +49,7 @@
 - The scoring data also lets me see who is a qualified consulting lead before they ever email me.
 - Blueprint exports already work with Airtable, Asana, Excel, and Google Sheets, and the architecture can extend to a CRM like HubSpot.
 - The tool is built with Lovable, which is a strong signal for product-led founders who are not engineers.
+- The Admin Console shows accounts, scores, revenue, leads, and integration health — it is a real operational backend, not a facade.
 - The Blueprint complements newsletter experts like Nathan; it identifies the priority, but execution can still belong to a specialist.
 
 ## Optional closing CTA (use if you want one)
