@@ -442,7 +442,13 @@ function blobToBase64(blob: Blob): Promise<string> {
                 Month {phase.month} · {phase.phase}
               </p>
               <p className="text-sm leading-relaxed text-foreground">{phase.objective}</p>
+              {phase.priorities.length > 0 ? (
+                <p className="text-xs leading-relaxed text-brass">
+                  {phase.priorities.map((priority) => priority.title).join(" · ")}
+                </p>
+              ) : null}
               <p className="text-xs text-muted-foreground">{phase.activities.length} key activities</p>
+
             </div>
           ))}
         </div>

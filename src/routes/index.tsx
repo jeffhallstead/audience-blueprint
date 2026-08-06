@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, LineChart, Layers } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
+import { PersonalizationProof } from "@/components/marketing/personalization-proof";
+
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -149,7 +151,10 @@ function Landing() {
           </div>
         </section>
 
+        <PersonalizationProof />
+
         <section className="border-y border-border">
+
           <div className="mx-auto max-w-3xl px-6 py-20">
             <p className="text-display text-2xl leading-snug sm:text-3xl">
               Brands that stay in campaign mode keep spending without building an audience. Every dollar goes toward

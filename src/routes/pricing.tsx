@@ -10,6 +10,8 @@ import { getStripeEnvironment } from "@/lib/stripe";
 import { trackCommerceEvent } from "@/lib/commerce/analytics";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/brand/logo";
+import { PersonalizationProof } from "@/components/marketing/personalization-proof";
+
 
 export const Route = createFileRoute("/pricing")({
   component: PricingPage,
@@ -93,7 +95,10 @@ function PricingPage() {
         onManage={() => void manageSubscription()}
       />
 
+      <PersonalizationProof heading="Every Blueprint is built from your own scores." />
+
       <section className="max-w-2xl space-y-3">
+
         <h2 className="text-lg font-semibold tracking-tight text-foreground">Working with your team directly</h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
           The Publisher Blueprint™ is a starting point. Brand leaders who want to move faster — or want experienced

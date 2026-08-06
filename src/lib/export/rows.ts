@@ -162,7 +162,21 @@ export function buildExportRows(
 
   if (wants("roadmap")) {
     for (const phase of blueprint.roadmap) {
+      for (const priority of phase.priorities) {
+        rows.push(
+          row({
+            Type: "Roadmap priority",
+            Category: phase.phase,
+            Title: priority.title,
+            Detail: priority.description,
+            Phase: `Month ${phase.month}`,
+            Status: "To do",
+            Key: `roadmap-priority:${phase.id}:${priority.id}`,
+          }),
+        );
+      }
       for (const [index, activity] of phase.activities.entries()) {
+
         rows.push(
           row({
             Type: "Roadmap activity",

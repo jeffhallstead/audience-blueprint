@@ -318,6 +318,15 @@ export async function buildBlueprintPdf(
       layout.subheading(`Month ${phase.month} · ${phase.phase}`);
       layout.paragraph(phase.objective, { size: 9.5, color: MUTED });
       layout.gap(8);
+      if (phase.priorities.length > 0) {
+        layout.paragraph(phase.prioritiesLabel, { size: 9, style: "bold" });
+        for (const priority of phase.priorities) {
+          layout.bullet(`${priority.title} — ${priority.description}`, { size: 9.5 });
+        }
+        layout.gap(6);
+        layout.paragraph("Supporting activities", { size: 9, style: "bold", color: MUTED });
+      }
+
       for (const activity of phase.activities) layout.bullet(activity, { size: 9.5 });
       if (phase.metrics.length > 0) {
         layout.gap(6);

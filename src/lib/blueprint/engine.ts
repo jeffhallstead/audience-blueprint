@@ -83,9 +83,28 @@ export interface GapReading {
   categoryLabel: string;
 }
 
+/** A score-driven priority injected into a roadmap phase. */
+export interface PhasePriority {
+  id: string;
+  title: string;
+  description: string;
+  categoryLabel: string;
+  timeframe: string;
+}
+
 export interface RoadmapPhase extends RoadmapPhaseTemplate {
   id: string;
+  /**
+   * Priorities selected from this user's own scores. Month 1 carries their
+   * quick wins, month 2 their ranked opportunities, month 3 their long-term
+   * moves — so the 90-day plan itself varies with the assessment, not just
+   * the surrounding narrative.
+   */
+  priorities: PhasePriority[];
+  /** Label describing where the priorities came from. */
+  prioritiesLabel: string;
 }
+
 
 export interface ActionReading {
   id: string;
@@ -236,6 +255,45 @@ export function generateBlueprint(input: BlueprintInput): Blueprint {
   const weakest = weakestOrder[0]!;
   const strongest = byScoreDesc[0]!;
 
+  const quickWins = pickActions(QUICK_WIN_RULES, categories, 3);
+  const longTerm = pickActions(LONG_TERM_RULES, categories, 3);
+
+  // Month 1 executes the quick wins, month 2 the ranked opportunities, month 3
+  // the long-term moves. Each set is selected from this user's own scores, so
+  // the 90-day plan varies with the assessment rather than by tier alone.
+  const phasePriorities: Record<1 | 2 | 3, { label: string; items: PhasePriority[] }> = {
+    1: {
+      label: "Your priority actions",
+      items: quickWins.map((action) => ({
+        id: action.id,
+        title: action.title,
+        description: action.description,
+        categoryLabel: action.categoryLabel,
+        timeframe: action.timeframe,
+      })),
+    },
+    2: {
+      label: "Your highest-leverage opportunities",
+      items: opportunities.map((opportunity) => ({
+        id: opportunity.id,
+        title: opportunity.title,
+        description: opportunity.rationale,
+        categoryLabel: opportunity.categoryLabel,
+        timeframe: `${opportunity.impact} impact · ${opportunity.effort} effort`,
+      })),
+    },
+    3: {
+      label: "Your long-term moves to stage",
+      items: longTerm.map((action) => ({
+        id: action.id,
+        title: action.title,
+        description: action.description,
+        categoryLabel: action.categoryLabel,
+        timeframe: action.timeframe,
+      })),
+    },
+  };
+
   return {
     version: BLUEPRINT_RULES_VERSION,
     generatedFrom: "rules",
@@ -256,10 +314,16 @@ export function generateBlueprint(input: BlueprintInput): Blueprint {
     opportunities,
     strengths,
     gaps,
-    roadmap: ROADMAP_TEMPLATES[tier].map((phase) => ({ ...phase, id: `${tier}-month-${phase.month}` })),
-    quickWins: pickActions(QUICK_WIN_RULES, categories, 3),
-    longTerm: pickActions(LONG_TERM_RULES, categories, 3),
+    roadmap: ROADMAP_TEMPLATES[tier].map((phase) => ({
+      ...phase,
+      id: `${tier}-month-${phase.month}`,
+      priorities: phasePriorities[phase.month].items,
+      prioritiesLabel: phasePriorities[phase.month].label,
+    })),
+    quickWins,
+    longTerm,
     kpis: KPI_RULES[tier],
+
     resources,
     cta: CTA_RULES[tier],
   };

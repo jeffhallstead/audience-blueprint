@@ -191,9 +191,10 @@ export async function buildCopilotContext(supabase: Client, userId: string): Pro
     blueprint.roadmap
       .map(
         (phase) =>
-          `Month ${phase.month} — ${phase.phase}\nObjective: ${phase.objective}\nActivities: ${phase.activities.join("; ")}\nMetrics: ${phase.metrics.join("; ")}`,
+          `Month ${phase.month} — ${phase.phase}\nObjective: ${phase.objective}\n${phase.prioritiesLabel}: ${phase.priorities.map((priority) => priority.title).join("; ")}\nActivities: ${phase.activities.join("; ")}\nMetrics: ${phase.metrics.join("; ")}`,
       )
       .join("\n\n"),
+
     "",
     "--- RECOMMENDED KPIS AT THIS LEVEL ---",
     renderList(blueprint.kpis.map((kpi) => `${kpi.label} — target ${kpi.target}. ${kpi.description}`)),

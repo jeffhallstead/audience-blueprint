@@ -16,6 +16,24 @@ export function RoadmapPhaseCard({ phase }: { phase: RoadmapPhase }) {
 
       <p className="text-sm leading-relaxed text-foreground">{phase.objective}</p>
 
+      {phase.priorities.length > 0 ? (
+        <div className="space-y-3 rounded-lg border border-brass/30 bg-brass/5 p-4">
+          <p className="text-eyebrow text-brass">{phase.prioritiesLabel}</p>
+          <ul className="space-y-3">
+            {phase.priorities.map((priority) => (
+              <li key={priority.id} className="space-y-1">
+                <p className="text-sm font-semibold tracking-tight text-foreground">{priority.title}</p>
+                <p className="text-sm leading-relaxed text-muted-foreground">{priority.description}</p>
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground">
+                  {priority.categoryLabel} · {priority.timeframe}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+
       <div className="grid gap-6 border-t border-border pt-5 sm:grid-cols-2">
         <div className="space-y-2">
           <p className="text-eyebrow">Key activities</p>
