@@ -12,7 +12,7 @@
 
 **[0:08] On my consulting site I used to have a pretty static assessment for publishers. It was useful, but it was basically a one-off thing — someone filled it out, got a score, and then I had to figure out what came next. So I rebuilt it into a product called Publisher Blueprint™.**
 
-**[0:20] The front door is the Publisher Test. It is completely free, no card required. It takes about twelve minutes and gives you a Publisher Index™ score plus six category scores. That is the DIY entry point — anyone can take it and walk away with something useful.**
+**[0:20] The front door is the Publisher Test. It is a lead magnet designed for my ICP — newsletter operators, publishers, and content entrepreneurs who already have traction but feel stuck on strategy, revenue, or operations. It is free, no card required, takes about twelve minutes, and gives you a Publisher Index™ score plus six category scores. That is the DIY entry point — anyone can take it and walk away with something useful.**
 
 **[0:31] Then, if you want more, you can upgrade for $49 to the Blueprint. That unlocks the full executive dashboard, a 90-day strategic roadmap, AI strategy documents, and exports — including Airtable, Asana, Excel, and Google Sheets. I have also left the door open to connect it to a CRM like HubSpot later as needed.**
 
