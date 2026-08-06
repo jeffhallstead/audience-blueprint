@@ -116,6 +116,20 @@ export function ConnectionsPanel() {
     onError: (error) => toast.error((error as Error).message),
   });
 
+  const [asanaWorkspaceId, setAsanaWorkspaceId] = useState<string>("");
+  const createAsanaProjectMutation = useMutation({
+    mutationFn: (input: { workspaceId?: string | null; projectName?: string | null }) =>
+      createAsanaProject({ data: { ...input, environment } }),
+    onSuccess: () => {
+      toast.success("Asana project created and selected.");
+      setAsanaWorkspaceId("");
+      refresh();
+    },
+    onError: (error) => toast.error((error as Error).message),
+  });
+
+
+
 
   if (!entitlementLoading && !canUseConnectors) {
     return (
