@@ -1,33 +1,48 @@
-# Add Google OAuth Redirect URI for Custom Domain
+# Google OAuth Redirect URI for Custom Domain
 
 ## Current State
 - The custom domain `blueprint.jeffhallstead.com` is already live and listed in the project URLs.
 - The app already uses `https://blueprint.jeffhallstead.com/oauth/callback` as the Google sign-in callback in `src/routes/auth.tsx` (line 190) for non-embedded browsers.
-- The Lovable Cloud / Supabase-managed Google provider is configured for the app.
-- The missing piece is the **Google Cloud Console OAuth 2.0 client** redirect URI allow-list, which only the project owner can edit.
+- This project uses **Lovable Cloud managed Google OAuth**. There is no separate Google Cloud Console OAuth 2.0 client for you to edit.
+- The previous plan incorrectly assumed a self-managed Google OAuth client existed in your Google Cloud Console.
 
-## Remaining Manual Action
+## Managed OAuth Behavior
+- Lovable Cloud handles the Google OAuth client, Site URL, and redirect allow-list automatically.
+- For custom domains, the OAuth broker infrastructure intercepts `/~oauth/initiate` and `/~oauth/callback` and routes through `oauth.lovable.app`, so the managed client accepts the callback.
+- The managed flow is designed to work on `*.lovable.app`, custom domains, and previews without manual Google Cloud Console changes.
 
-1. Open Google Cloud Console at https://console.cloud.google.com/ and sign in to the account that owns the Google OAuth 2.0 client used for this project.
-2. Navigate to **APIs & Services → Credentials**.
-3. Find the **OAuth 2.0 Client ID** used for this app (likely the one created when Google sign-in was first enabled).
-4. Click the client to edit it.
-5. Under **Authorized redirect URIs**, add the following URL exactly:
-   ```
-   https://blueprint.jeffhallstead.com/oauth/callback
-   ```
-   - Do not include a trailing slash unless it matches the app callback exactly.
-   - Keep the existing `https://audience-blueprint-pro.lovable.app/oauth/callback` URI if it is present, so sign-in continues to work on the old `.lovable.app` domain.
-6. Click **Save**.
+## Recommended Action
 
-## Verification After Saving
+1. **No manual Google Cloud Console action is required** for the managed OAuth path.
+2. Verify Google sign-in on the custom domain after the domain is set to primary:
+   - Open an incognito window at `https://blueprint.jeffhallstead.com/auth`.
+   - Click **Continue with Google** and complete the sign-in.
+   - Confirm the callback returns to `/oauth/callback` and then redirects into the app.
+3. If Google sign-in fails with a `redirect_uri_mismatch` error, notify Lovable support so they can confirm the managed OAuth client includes the custom domain callback.
 
-- Wait 1–2 minutes for Google’s allow-list to propagate, then open an incognito window.
-- Visit `https://blueprint.jeffhallstead.com/auth` and click **Continue with Google**.
-- Confirm the sign-in completes and redirects to the app dashboard or onboarding flow.
-- If Google shows a **redirect_uri_mismatch** error, double-check the exact URI in the Google Cloud Console matches the one above.
+## Optional: Use Your Own Google OAuth Client
+
+If you prefer to use your own Google OAuth client for branding or control:
+
+1. In Google Cloud Console, create a new project (or use an existing one).
+2. Go to **APIs & Services → OAuth consent screen** and configure the consent screen:
+   - User Type: External
+   - App name: Publisher Blueprint
+   - User support email: your email
+   - Authorized domains: add `jeffhallstead.com` and `blueprint.jeffhallstead.com`
+3. Go to **APIs & Services → Credentials** and click **Create Credentials → OAuth client ID**.
+   - Application type: Web application
+   - Name: Publisher Blueprint
+   - Authorized redirect URIs: add exactly:
+     ```
+     https://blueprint.jeffhallstead.com/oauth/callback
+     https://audience-blueprint-pro.lovable.app/oauth/callback
+     https://id-preview--6d4e5e38-ebb7-4aa9-b55b-9a7cad324fe2.lovable.app/oauth/callback
+     ```
+4. Copy the **Client ID** and **Client Secret**.
+5. In Lovable Cloud, open **Cloud → Users → Auth Settings → Sign In Methods → Google**, switch from managed credentials to your own credentials, and paste the Client ID and Secret.
+6. Save and re-test sign-in on the custom domain.
 
 ## Notes
-- No code changes are required for this step; the route `/oauth/callback` already exists and is wired for the managed OAuth callback.
-- If you are using the managed Lovable Cloud Google OAuth credentials (recommended), the same Google Cloud Console is used by the Lovable managed OAuth project, so adding the URI there is the correct path.
-- If you are using your own custom OAuth client, this is the same client you already configured.
+- The existing app code uses `/oauth/callback` (not `/auth/callback`). Any custom OAuth client must use `/oauth/callback` exactly.
+- If you stay on managed credentials, no code or console changes are needed for the custom domain to work.
