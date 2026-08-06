@@ -81,7 +81,7 @@ export const asanaAdapter: IntegrationAdapter = {
 };
 
 /** Workspaces the connected Asana account belongs to. */
-async function listAsanaWorkspaces(token: string): Promise<Array<{ gid: string; name: string }>> {
+export async function listAsanaWorkspaces(token: string): Promise<Array<{ gid: string; name: string }>> {
   const response = await fetch(`${ASANA_API}/users/me?opt_fields=workspaces.name,workspaces.gid`, {
     headers: authHeaders(token),
   });
@@ -91,6 +91,45 @@ async function listAsanaWorkspaces(token: string): Promise<Array<{ gid: string; 
   const json = (await response.json()) as { data?: { workspaces?: Array<{ gid: string; name: string }> } };
   return json.data?.workspaces ?? [];
 }
+
+/**
+ * Creates a new project in the given Asana workspace.
+ * The project can be empty; the export writes tasks into it later.
+ */
+export async function createAsanaProject(
+  token: string,
+  workspaceId: string,
+  name: string,
+): Promise<{ id: string; name: string; workspaceId: string; workspaceName: string }> {
+  const response = await fetch(`${ASANA_API}/projects`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify({
+      data: {
+        name: name.slice(0, 120),
+        workspace: workspaceId,
+        notes: "Created by Publisher Blueprint™ for strategic recommendation exports.",
+      },
+    }),
+  });
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Asana project create failed [${response.status}]: ${body}`);
+  }
+  const json = (await response.json()) as {
+    data?: { gid: string; name: string; workspace?: { gid: string; name: string } };
+  };
+  const project = json.data;
+  if (!project?.gid) throw new Error("Asana did not return a project.");
+
+  return {
+    id: project.gid,
+    name: project.name,
+    workspaceId: project.workspace?.gid ?? workspaceId,
+    workspaceName: project.workspace?.name ?? "",
+  };
+}
+
 
 /**
  * Projects the user's connected Asana account can write to, for the target picker.

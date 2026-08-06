@@ -99,7 +99,7 @@ export const saveExportTarget = createServerFn({ method: "POST" })
     return { saved: true as const };
   });
 
-/** Asana projects this user's connected account can write to. */
+/** Asana projects and workspaces this user's connected account can write to. */
 export const listExportAsanaProjects = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { environment?: string } | undefined) => ({
@@ -110,19 +110,25 @@ export const listExportAsanaProjects = createServerFn({ method: "GET" })
     await requireFeature(context.supabase, context.userId, data.environment, "connector_export");
     const { getUserCredential } = await import("@/lib/integrations/credentials.server");
     const credential = await getUserCredential(context.userId, "asana");
-    if (!credential?.token) return { connected: false as const, projects: [], error: null as string | null };
+    if (!credential?.token) return { connected: false as const, projects: [], workspaces: [], error: null as string | null };
     try {
-      const { listAsanaProjects } = await import("@/lib/integrations/asana.server");
+      const { listAsanaProjects, listAsanaWorkspaces } = await import("@/lib/integrations/asana.server");
+      const [projects, workspaces] = await Promise.all([
+        listAsanaProjects(credential.token),
+        listAsanaWorkspaces(credential.token),
+      ]);
       return {
         connected: true as const,
-        projects: await listAsanaProjects(credential.token),
+        projects,
+        workspaces: workspaces.map((w) => ({ id: w.gid, name: w.name })),
         error: null as string | null,
       };
     } catch (err) {
       console.error("[export] asana project list failed:", err);
-      return { connected: true as const, projects: [], error: (err as Error).message };
+      return { connected: true as const, projects: [], workspaces: [], error: (err as Error).message };
     }
   });
+
 
 
 

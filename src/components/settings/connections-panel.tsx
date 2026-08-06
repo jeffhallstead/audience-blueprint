@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, ExternalLink, Loader2, Plug, Unplug } from "lucide-react";
+import { CheckCircle2, ExternalLink, Loader2, Plus, Plug, Unplug } from "lucide-react";
 import { toast } from "sonner";
 
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import {
   connectIntegration,
+  createAsanaProject,
   disconnectIntegration,
   listMyAirtableBases,
   listMyAsanaProjects,
@@ -23,22 +24,26 @@ import { getStripeEnvironment } from "@/lib/stripe";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { LockedFeature } from "@/components/billing/feature-gate";
 
+
 type Provider = "airtable" | "asana";
 
-const PROVIDER_COPY: Record<Provider, { name: string; help: string; tokenUrl: string; placeholder: string }> = {
+const PROVIDER_COPY: Record<Provider, { name: string; help: string; before: string; tokenUrl: string; placeholder: string }> = {
   airtable: {
     name: "Airtable",
     help: "Create a personal access token with data.records:read/write and schema.bases:read, then give it access to the base you want your plan written into.",
+    before: "You need an existing Airtable base. The export will create a table inside it.",
     tokenUrl: "https://airtable.com/create/tokens",
     placeholder: "pat...",
   },
   asana: {
     name: "Asana",
     help: "Create a personal access token in your Asana developer console. Tasks are created in the project you pick when exporting.",
+    before: "You need at least one Asana workspace. The project itself can be empty — we create tasks in it.",
     tokenUrl: "https://app.asana.com/0/my-apps",
     placeholder: "1/12345...",
   },
 };
+
 
 /** Lets each user connect their own Airtable and Asana accounts for exports. */
 export function ConnectionsPanel() {
@@ -110,6 +115,20 @@ export function ConnectionsPanel() {
     },
     onError: (error) => toast.error((error as Error).message),
   });
+
+  const [asanaWorkspaceId, setAsanaWorkspaceId] = useState<string>("");
+  const createAsanaProjectMutation = useMutation({
+    mutationFn: (input: { workspaceId?: string | null; projectName?: string | null }) =>
+      createAsanaProject({ data: { ...input, environment } }),
+    onSuccess: () => {
+      toast.success("Asana project created and selected.");
+      setAsanaWorkspaceId("");
+      refresh();
+    },
+    onError: (error) => toast.error((error as Error).message),
+  });
+
+
 
 
   if (!entitlementLoading && !canUseConnectors) {
@@ -185,6 +204,9 @@ export function ConnectionsPanel() {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground">
+                    <strong>Before you connect:</strong> {copy.before}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
                     {copy.help}{" "}
                     <a
                       className="inline-flex items-center gap-1 underline"
@@ -198,6 +220,7 @@ export function ConnectionsPanel() {
                   <p className="text-xs text-muted-foreground">
                     Your token is encrypted and only used for your own exports.
                   </p>
+
                 </div>
               )}
 
@@ -233,38 +256,84 @@ export function ConnectionsPanel() {
                   <Label htmlFor="asana-project" className="text-sm">
                     Default project to export into
                   </Label>
-                  <Select
-                    value={asanaProjects.data?.selectedProjectId ?? ""}
-                    onValueChange={(value) =>
-                      chooseProject.mutate({
-                        projectId: value,
-                        projectName:
-                          asanaProjects.data?.projects.find((project) => project.id === value)?.name ?? null,
-                      })
-                    }
-                  >
-                    <SelectTrigger id="asana-project">
-                      <SelectValue
-                        placeholder={asanaProjects.isLoading ? "Loading projects…" : "Choose a project"}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(asanaProjects.data?.projects ?? []).map((project) => (
-                        <SelectItem key={project.id} value={project.id}>
-                          {project.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {(asanaProjects.data?.projects.length ?? 0) > 0 || asanaProjects.isLoading ? (
+                    <Select
+                      value={asanaProjects.data?.selectedProjectId ?? ""}
+                      onValueChange={(value) =>
+                        chooseProject.mutate({
+                          projectId: value,
+                          projectName:
+                            asanaProjects.data?.projects.find((project) => project.id === value)?.name ?? null,
+                        })
+                      }
+                    >
+                      <SelectTrigger id="asana-project">
+                        <SelectValue
+                          placeholder={asanaProjects.isLoading ? "Loading projects…" : "Choose a project"}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(asanaProjects.data?.projects ?? []).map((project) => (
+                          <SelectItem key={project.id} value={project.id}>
+                            {project.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className="rounded-md border border-dashed p-3 space-y-3">
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium">No projects found in your Asana workspace</p>
+                        <p className="text-xs text-muted-foreground">
+                          Create a project now and we will start writing tasks there.
+                        </p>
+                      </div>
+                      {(asanaProjects.data?.workspaces.length ?? 0) > 1 && (
+                        <Select value={asanaWorkspaceId} onValueChange={setAsanaWorkspaceId}>
+                          <SelectTrigger id="asana-workspace">
+                            <SelectValue placeholder="Choose a workspace" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {(asanaProjects.data?.workspaces ?? []).map((workspace) => (
+                              <SelectItem key={workspace.id} value={workspace.id}>
+                                {workspace.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={
+                          createAsanaProjectMutation.isPending ||
+                          ((asanaProjects.data?.workspaces.length ?? 0) > 1 && !asanaWorkspaceId)
+                        }
+                        onClick={() =>
+                          createAsanaProjectMutation.mutate({
+                            workspaceId: asanaWorkspaceId,
+                          })
+                        }
+                      >
+                        {createAsanaProjectMutation.isPending ? (
+                          <Loader2 className="size-4 animate-spin" aria-hidden />
+                        ) : (
+                          <Plus className="size-4" aria-hidden />
+                        )}
+                        Create default project
+                      </Button>
+                    </div>
+                  )}
                   <p className="text-xs text-muted-foreground">
                     {asanaProjects.data?.error
                       ? `Asana couldn't list your projects: ${asanaProjects.data.error}`
-                      : !asanaProjects.isLoading && (asanaProjects.data?.projects.length ?? 0) === 0
-                        ? "No projects found in your Asana workspaces. Create one in Asana, then reload."
-                        : "Exports create one Asana task per recommendation in this project."}
+                      : (asanaProjects.data?.projects.length ?? 0) > 0
+                        ? "Exports create one Asana task per recommendation in this project."
+                        : "The project can be empty — we create tasks as you export."}
                   </p>
                 </div>
               ) : null}
+
 
             </div>
           );
