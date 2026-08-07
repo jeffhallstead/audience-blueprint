@@ -13,6 +13,7 @@ import { LeadsPanel } from "@/components/admin/leads-panel";
 import { IntegrationsHealth } from "@/components/admin/integrations-health";
 import { FeedbackPanel } from "@/components/admin/feedback-panel";
 import { GrantAccessDialog } from "@/components/admin/grant-access-dialog";
+import { DeleteUserDialog } from "@/components/admin/delete-user-dialog";
 
 
 import { Badge } from "@/components/ui/badge";
@@ -165,9 +166,9 @@ function AdminConsole() {
           value={m.avgIndexScore === null ? "—" : String(m.avgIndexScore)}
           hint="Latest score per account"
         />
-        <Metric label="Revenue" value={currency(m.revenueCents)} hint="Completed purchases" />
-        <Metric label="Blueprint customers" value={String(m.blueprintCustomers)} />
-        <Metric label="Active OS subscriptions" value={String(m.activeSubscriptions)} />
+        <Metric label="Revenue" value={currency(m.revenueCents)} hint="Historical — nothing is sold today" />
+        <Metric label="Blueprint customers" value={String(m.blueprintCustomers)} hint="Historical" />
+        <Metric label="Active OS subscriptions" value={String(m.activeSubscriptions)} hint="Historical" />
         <Metric label="Copilot sessions" value={String(m.aiSessions)} />
         <Metric label="Documents generated" value={String(m.documentsGenerated)} />
       </section>
@@ -247,17 +248,21 @@ function AdminConsole() {
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
                           <Badge variant={u.tier === "free" ? "outline" : "secondary"}>
-                            {TIER_LABEL[u.tier]}
+                            {u.isAdmin || u.isAnalyst ? "Internal" : TIER_LABEL[u.tier]}
                           </Badge>
-                          {u.grantedTier ? <Badge variant="outline">Manual</Badge> : null}
                           {u.isAdmin ? <Badge>Admin</Badge> : null}
+                          {u.isAnalyst && !u.isAdmin ? <Badge variant="secondary">Analyst</Badge> : null}
+                          {u.grantedTier ? <Badge variant="outline">Legacy grant</Badge> : null}
                         </div>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         {shortDate(u.createdAt)}
                       </TableCell>
                       <TableCell className="text-right">
-                        <GrantAccessDialog user={u} />
+                        <div className="flex items-center justify-end gap-1">
+                          <GrantAccessDialog user={u} />
+                          <DeleteUserDialog user={u} />
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

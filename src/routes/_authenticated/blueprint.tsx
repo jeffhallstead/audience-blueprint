@@ -193,7 +193,7 @@ function IndexDetail() {
         <LockedFeature
           feature="roadmap"
           title="Turn this diagnostic into a strategic plan"
-          description="Unlock the full executive dashboard, opportunity matrix, 90-day roadmap, AI strategy documents like The Branded Entertainment Brief, and PDF export — plus one month of Publisher OS."
+          description="The full executive dashboard, opportunity matrix, 90-day roadmap, AI strategy documents and PDF export are built with you. Book a call and Jeff walks you through your Blueprint live."
         />
       ) : null}
     </div>

@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { CORE_SALES_PERSONAS } from "@/lib/personas";
 import { Button } from "@/components/ui/button";
+import { BookACallButton } from "@/lib/marketing/book-a-call";
 
 export function PersonaCards() {
   return (
@@ -25,11 +26,22 @@ export function PersonaCards() {
               </h3>
               <p className="text-sm leading-relaxed text-muted-foreground">{persona.body}</p>
             </div>
-            <Button asChild variant="outline" size="sm" className="w-full">
-              <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
-                {persona.cta.label} <ArrowRight className="size-4" aria-hidden />
-              </Link>
-            </Button>
+            {persona.cta.external ? (
+              <BookACallButton
+                surface="homepage_persona_card"
+                personaId={persona.id}
+                label={persona.cta.label}
+                variant="outline"
+                size="sm"
+                className="w-full"
+              />
+            ) : (
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
+                  {persona.cta.label} <ArrowRight className="size-4" aria-hidden />
+                </Link>
+              </Button>
+            )}
           </div>
         ))}
       </div>

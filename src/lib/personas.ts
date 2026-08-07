@@ -29,6 +29,8 @@ export interface SalesPersona {
   };
 }
 
+const CONTACT_HREF = "https://jeffhallstead.com/contact";
+
 export const SALES_PERSONAS: SalesPersona[] = [
   {
     id: "paid-media-plateau",
@@ -36,8 +38,8 @@ export const SALES_PERSONAS: SalesPersona[] = [
     label: "Paid Media Plateau",
     headline: "You built the brand on paid media. Now the CAC curve is bending the wrong way.",
     body: "Your content works, but every view is rented. I help marketing leaders turn performance spend into owned audience infrastructure.",
-    primaryOffer: "3–6 month consulting engagement",
-    cta: { label: "Start with the free Publisher Test", href: "/auth?mode=signup&plan=test" },
+    primaryOffer: "We review your Blueprint together on a call",
+    cta: { label: "Book a call", href: CONTACT_HREF, external: true },
     match: { levels: [2], weakest: ["distribution"] },
   },
   {
@@ -46,8 +48,8 @@ export const SALES_PERSONAS: SalesPersona[] = [
     label: "Campaign Factory",
     headline: "Your team ships constantly, but nothing compounds.",
     body: "Campaigns launch, then vanish. I help teams build an editorial operating cadence so the work keeps working when nobody is forcing it.",
-    primaryOffer: "Blueprint → OS → consulting",
-    cta: { label: "Start with the free Publisher Test", href: "/auth?mode=signup&plan=test" },
+    primaryOffer: "We review your Blueprint together on a call",
+    cta: { label: "Book a call", href: CONTACT_HREF, external: true },
     match: { levels: [1, 2], weakest: ["operations"] },
   },
   {
@@ -57,7 +59,7 @@ export const SALES_PERSONAS: SalesPersona[] = [
     headline: "You have the content. You do not own the audience.",
     body: "Followers, lists, and subscribers are scattered across platforms you do not control. I help brands build a direct audience relationship that survives an algorithm change.",
     primaryOffer: "3–6 month consulting engagement",
-    cta: { label: "Start with the free Publisher Test", href: "/auth?mode=signup&plan=test" },
+    cta: { label: "Book a call", href: CONTACT_HREF, external: true },
     match: { levels: [2, 3], weakest: ["audience"] },
   },
   {
@@ -67,7 +69,7 @@ export const SALES_PERSONAS: SalesPersona[] = [
     headline: "The content operation is real. The board cannot see it.",
     body: "You have a funded team, recurring formats, and no measurement story. I help leaders translate content into a board-level narrative with numbers behind it.",
     primaryOffer: "Senior consulting engagement",
-    cta: { label: "Start with the free Publisher Test", href: "/auth?mode=signup&plan=test" },
+    cta: { label: "Book a call", href: CONTACT_HREF, external: true },
     match: { levels: [3], weakest: ["operations", "alignment"] },
   },
   {
@@ -76,7 +78,7 @@ export const SALES_PERSONAS: SalesPersona[] = [
     label: "Funded Builder",
     headline: "You have money and ambition. You need a sequence.",
     body: "Eight priorities is the same as zero. I help founders and first marketing leaders decide which two moves matter now and which can wait.",
-    primaryOffer: "$49 Blueprint → OS",
+    primaryOffer: "Start with the free Publisher Test, then we talk sequencing",
     cta: { label: "Start with the free Publisher Test", href: "/auth?mode=signup&plan=test" },
     match: { levels: [1, 2], weakest: ["strategy"] },
   },
@@ -85,8 +87,8 @@ export const SALES_PERSONAS: SalesPersona[] = [
     number: 6,
     label: "Curious Observer",
     headline: "You are just getting started. That is the right place to begin.",
-    body: "Start with one owned channel. The free Publisher Test shows you which one, and the 90-day roadmap tells you what to do first.",
-    primaryOffer: "Free Publisher Test → $49 Blueprint → OS waitlist",
+    body: "Start with one owned channel. The free Publisher Test shows you which one, and points to what to do first.",
+    primaryOffer: "Free Publisher Test",
     cta: { label: "Start with the free Publisher Test", href: "/auth?mode=signup&plan=test" },
     match: { levels: [1] },
   },
@@ -95,9 +97,9 @@ export const SALES_PERSONAS: SalesPersona[] = [
     number: 8,
     label: "Category Leader",
     headline: "You are already operating at a high level.",
-    body: "Your Blueprint shows few critical gaps. If you are open to it, I would love to compare notes or feature your work as a reference case.",
+    body: "Your scores show few critical gaps. If you are open to it, I would love to compare notes or feature your work as a reference case.",
     primaryOffer: "Partner or referral conversation",
-    cta: { label: "Get in touch", href: "https://jeffhallstead.com/contact", external: true },
+    cta: { label: "Book a call", href: CONTACT_HREF, external: true },
     match: { levels: [4, 5] },
   },
 ];

@@ -469,9 +469,9 @@ function blobToBase64(blob: Blob): Promise<string> {
 
       <UpgradeCta
         cta={blueprint.cta}
+        surface="results"
         onClick={() => {
           void trackBlueprintEvent("upgrade_cta_clicked", { tier: blueprint.tier });
-          toast.info("Booking opens in the next phase — your blueprint is saved.");
         }}
       />
         </>

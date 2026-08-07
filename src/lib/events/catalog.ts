@@ -69,6 +69,13 @@ export const PLATFORM_EVENTS = {
 
   // In-app feedback
   "feedback.submitted": 1,
+
+  // Consulting funnel
+  "consulting.book_call_clicked": 1,
+
+  // Admin actions
+  "admin.user_deleted": 1,
+  "admin.role_changed": 1,
 } as const;
 
 export type PlatformEventType = keyof typeof PLATFORM_EVENTS;

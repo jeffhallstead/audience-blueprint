@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { resolveSalesPersona, type SalesPersona } from "@/lib/personas";
+import { BookACallButton } from "@/lib/marketing/book-a-call";
 import type { Blueprint } from "@/lib/blueprint/engine";
 
 interface PersonaBannerProps {
@@ -12,11 +13,24 @@ export function PersonaBanner({ blueprint }: PersonaBannerProps) {
   const weakest = blueprint.categories.find((c) => c.priority === 1);
   const persona = resolveSalesPersona(blueprint.maturity.level, weakest?.id);
 
-  return <PersonaBannerCard persona={persona} />;
+  return (
+    <PersonaBannerCard
+      persona={persona}
+      maturityLevel={blueprint.maturity.level}
+      {...(weakest?.id ? { weakestCategory: weakest.id } : {})}
+    />
+  );
 }
 
-function PersonaBannerCard({ persona }: { persona: SalesPersona }) {
-  const isExternal = persona.cta.external;
+function PersonaBannerCard({
+  persona,
+  maturityLevel,
+  weakestCategory,
+}: {
+  persona: SalesPersona;
+  maturityLevel?: number;
+  weakestCategory?: string;
+}) {
   return (
     <div className="surface-panel border-l-4 border-l-primary p-6 sm:p-8">
       <div className="space-y-4">
@@ -25,16 +39,15 @@ function PersonaBannerCard({ persona }: { persona: SalesPersona }) {
         <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
           {persona.body} {persona.primaryOffer}.
         </p>
-        {isExternal ? (
-          <Button asChild size="sm">
-            <a
-              href={persona.cta.href}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {persona.cta.label} <ArrowRight className="size-4" aria-hidden />
-            </a>
-          </Button>
+        {persona.cta.external ? (
+          <BookACallButton
+            surface="persona_banner"
+            personaId={persona.id}
+            {...(maturityLevel != null ? { maturityLevel } : {})}
+            {...(weakestCategory ? { weakestCategory } : {})}
+            label={persona.cta.label}
+            size="sm"
+          />
         ) : (
           <Button asChild size="sm">
             <Link to="/auth" search={{ mode: "signup", plan: "test" }}>

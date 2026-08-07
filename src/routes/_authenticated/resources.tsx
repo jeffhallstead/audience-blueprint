@@ -79,7 +79,7 @@ function ResourcesPage() {
         <LockedFeature
           feature="full_dashboard"
           title="Resource matching is part of Publisher Blueprint"
-          description="Upgrade to see the frameworks, templates and playbooks matched to your lowest-scoring capabilities and each phase of your 90-day roadmap."
+          description="The frameworks, templates and playbooks matched to your lowest-scoring capabilities are part of the Blueprint session."
         />
       ) : (
       <ExportableSection id="recommended-resources" eyebrow="Recommended" title="Start here">
@@ -100,9 +100,9 @@ function ResourcesPage() {
 
       <UpgradeCta
         cta={blueprint.cta}
+        surface="results"
         onClick={() => {
           void trackBlueprintEvent("upgrade_cta_clicked", { tier: blueprint.tier, surface: "resources" });
-          toast.info("Booking opens in the next phase — your blueprint is saved.");
         }}
       />
     </div>

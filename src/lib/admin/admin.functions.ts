@@ -40,6 +40,9 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     const profileById = new Map((profiles.data ?? []).map((p) => [p.id, p]));
     const orgByOwner = new Map((orgs.data ?? []).map((o) => [o.owner_id, o.name]));
     const adminIds = new Set((roles.data ?? []).filter((r) => r.role === "admin").map((r) => r.user_id));
+    const analystIds = new Set(
+      (roles.data ?? []).filter((r) => (r.role as string) === "analyst").map((r) => r.user_id),
+    );
 
     const latestScoreByUser = new Map<string, { overall: number; level: number }>();
     for (const row of scores.data ?? []) {
@@ -80,16 +83,11 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     const userRows: AdminUserRow[] = users
       .map((u) => {
         const score = latestScoreByUser.get(u.id) ?? null;
-        const paidTier: AdminUserRow["tier"] = activeSubUsers.has(u.id)
-          ? "os"
-          : completedPurchaseUsers.has(u.id)
-            ? "blueprint"
-            : "free";
         const grant = grantByUser.get(u.id) ?? null;
-        const tier: AdminUserRow["tier"] =
-          grant && rank[grant.tier] > (paidTier === "free" ? 0 : rank[paidTier])
-            ? grant.tier
-            : paidTier;
+        // Access is internal-only now: the Blueprint is delivered on a call,
+        // so only admin/analyst roles resolve above `free`.
+        const internal = adminIds.has(u.id) || analystIds.has(u.id);
+        const tier: AdminUserRow["tier"] = internal ? "os" : "free";
         return {
           userId: u.id,
           email: u.email ?? "—",
@@ -100,6 +98,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           maturityLevel: score?.level ?? null,
           tier,
           isAdmin: adminIds.has(u.id),
+          isAnalyst: analystIds.has(u.id),
           grantedTier: grant?.tier ?? null,
           grantExpiresAt: grant?.expiresAt ?? null,
         };
@@ -333,4 +332,119 @@ export const revokeEntitlement = createServerFn({ method: "POST" })
     });
 
     return { ok: true as const };
+  });
+
+/**
+ * Grants or removes the internal `analyst` role. Analysts get full Blueprint
+ * access without a payment; this is how internal delivery access is managed
+ * now that the Blueprint is not sold. Admin only.
+ */
+export const setAnalystRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { userId: string; enabled: boolean }) => {
+    if (!data?.userId) throw new Error("userId is required");
+    return { userId: data.userId, enabled: !!data.enabled };
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    if (data.enabled) {
+      const { error } = await supabaseAdmin
+        .from("user_roles")
+        .upsert({ user_id: data.userId, role: "analyst" as never }, { onConflict: "user_id,role" });
+      if (error) throw new Error(error.message);
+    } else {
+      const { error } = await supabaseAdmin
+        .from("user_roles")
+        .delete()
+        .eq("user_id", data.userId)
+        .eq("role", "analyst" as never);
+      if (error) throw new Error(error.message);
+    }
+
+    const { emitPlatformEvent } = await import("@/lib/events/emit.server");
+    await emitPlatformEvent({
+      type: "admin.role_changed",
+      userId: data.userId,
+      source: "admin",
+      payload: { role: "analyst", enabled: data.enabled, changedBy: context.userId },
+    });
+
+    return { ok: true as const };
+  });
+
+/**
+ * Permanently deletes an account. Any live subscription is scheduled to cancel
+ * first so billing never continues, then the auth user is removed and every
+ * owned row cascades. Admin only, and an admin cannot delete themselves.
+ */
+export const deleteUserAccount = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { userId: string; environment: "sandbox" | "live" }) => {
+    if (!data?.userId) throw new Error("userId is required");
+    return {
+      userId: data.userId,
+      environment: data.environment === "live" ? ("live" as const) : ("sandbox" as const),
+    };
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as never);
+    if (data.userId === context.userId) {
+      throw new Error("You cannot delete your own admin account from the console.");
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: subscriptions } = await supabaseAdmin
+      .from("subscriptions")
+      .select("stripe_subscription_id, status, cancel_at_period_end")
+      .eq("user_id", data.userId)
+      .eq("environment", data.environment);
+
+    const cancellable = (subscriptions ?? []).filter(
+      (row) =>
+        !row.cancel_at_period_end &&
+        ["active", "trialing", "past_due", "paused"].includes(row.status),
+    );
+
+    let canceled = 0;
+    if (cancellable.length > 0) {
+      const { createStripeClient } = await import("@/lib/stripe.server");
+      const stripe = createStripeClient(data.environment);
+      for (const row of cancellable) {
+        if (!row.stripe_subscription_id) continue;
+        try {
+          await stripe.subscriptions.update(row.stripe_subscription_id, {
+            cancel_at_period_end: true,
+          });
+          canceled += 1;
+        } catch (error) {
+          console.error("[admin] cancel-before-delete failed", error);
+          throw new Error(
+            "Could not cancel this account's subscription automatically. Cancel it in Stripe, then retry.",
+          );
+        }
+      }
+    }
+
+    // Audit the deletion before the user row disappears; the event store keeps
+    // a null user reference afterwards, so record the email in the payload.
+    const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(data.userId);
+    const { emitPlatformEvent } = await import("@/lib/events/emit.server");
+    await emitPlatformEvent({
+      type: "admin.user_deleted",
+      userId: data.userId,
+      environment: data.environment,
+      source: "admin",
+      payload: {
+        email: authUser?.user?.email ?? null,
+        deletedBy: context.userId,
+        canceledSubscriptions: canceled,
+      },
+    });
+
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
+    if (error) throw new Error(error.message);
+
+    return { deleted: true as const, canceledSubscriptions: canceled };
   });

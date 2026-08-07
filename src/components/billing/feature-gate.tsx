@@ -1,10 +1,9 @@
 import type { ReactNode } from "react";
-import { Lock, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Lock } from "lucide-react";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
-import { useCheckout } from "@/lib/commerce/use-checkout";
-import { FEATURE_MINIMUM, planForTier, type Feature } from "@/lib/commerce/plans";
+import { type Feature } from "@/lib/commerce/plans";
 import { trackCommerceEvent } from "@/lib/commerce/analytics";
+import { BookACallButton } from "@/lib/marketing/book-a-call";
 import { cn } from "@/lib/utils";
 
 type LockedFeatureProps = {
@@ -17,8 +16,8 @@ type LockedFeatureProps = {
 };
 
 /**
- * UX-level paywall. The underlying data is also gated server-side, so this
- * only controls what is worth rendering.
+ * UX-level gate. The Blueprint is not sold, so the locked state routes to a
+ * consulting conversation instead of a checkout. Data is gated server-side too.
  */
 export function LockedFeature({
   feature,
@@ -27,9 +26,6 @@ export function LockedFeature({
   preview,
   className,
 }: LockedFeatureProps) {
-  const requiredTier = FEATURE_MINIMUM[feature];
-  const plan = planForTier(requiredTier);
-  const { openCheckout, loading, checkoutElement } = useCheckout();
 
   return (
     <section
@@ -49,7 +45,7 @@ export function LockedFeature({
         )}
       >
         <span className="inline-flex items-center gap-2 rounded-full border border-border/60 px-3 py-1 text-eyebrow">
-          <Lock className="size-3" aria-hidden /> {plan.name}
+          <Lock className="size-3" aria-hidden /> Delivered on a call
         </span>
         <div className="max-w-xl space-y-2">
           <h3 id={`locked-${feature}`} className="text-display text-xl">
@@ -58,21 +54,18 @@ export function LockedFeature({
           <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Button
-            disabled={loading || !plan.priceId}
-            onClick={() => {
+          <BookACallButton
+            surface="dashboard_locked"
+            onTrack={() => {
               void trackCommerceEvent("upgrade_prompt_viewed", { feature });
-              if (plan.priceId) void openCheckout({ priceId: plan.priceId });
             }}
-          >
-            Unlock for {plan.priceLabel} <ArrowRight className="size-4" aria-hidden />
-          </Button>
-          <span className="text-xs text-muted-foreground">{plan.cadence}</span>
+          />
+          <span className="text-xs text-muted-foreground">
+            Jeff walks you through the full Blueprint live — no purchase required.
+          </span>
         </div>
       </div>
-      {checkoutElement}
     </section>
-
   );
 }
 
