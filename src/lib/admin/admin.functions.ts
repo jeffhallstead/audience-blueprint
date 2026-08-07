@@ -444,7 +444,10 @@ export const deleteUserAccount = createServerFn({ method: "POST" })
     });
 
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[admin] delete-user failed", error);
+      throw new Error(error.message || "Account deletion failed. Please try again.");
+    }
 
     return { deleted: true as const, canceledSubscriptions: canceled };
   });
