@@ -11,6 +11,7 @@ import { trackCommerceEvent } from "@/lib/commerce/analytics";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/brand/logo";
 import { PersonalizationProof } from "@/components/marketing/personalization-proof";
+import { PersonaSelector } from "@/components/marketing/persona-selector";
 
 
 export const Route = createFileRoute("/pricing")({
