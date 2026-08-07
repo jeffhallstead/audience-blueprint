@@ -11,6 +11,7 @@ import { trackCommerceEvent } from "@/lib/commerce/analytics";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/brand/logo";
 import { PersonalizationProof } from "@/components/marketing/personalization-proof";
+import { PersonaSelector } from "@/components/marketing/persona-selector";
 
 
 export const Route = createFileRoute("/pricing")({
@@ -130,6 +131,8 @@ function PricingPage() {
       />
 
       <PersonalizationProof heading="Every Blueprint is built from your own scores." />
+
+      <PersonaSelector />
 
       <section className="max-w-2xl space-y-3">
 
