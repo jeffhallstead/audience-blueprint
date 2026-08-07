@@ -181,12 +181,6 @@ function Landing() {
           </div>
         </section>
 
-        <PersonaCards />
-
-        <div className="mx-auto max-w-6xl px-6 pb-8">
-          <PersonaSelector />
-        </div>
-
         <PersonalizationProof />
 
         <section className="border-y border-border">
