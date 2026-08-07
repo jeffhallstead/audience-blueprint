@@ -79,7 +79,7 @@ function ResourcesPage() {
         <LockedFeature
           feature="full_dashboard"
           title="Resource matching is part of Publisher Blueprint"
-          description="Upgrade to see the frameworks, templates and playbooks matched to your lowest-scoring capabilities and each phase of your 90-day roadmap."
+          description="The frameworks, templates and playbooks matched to your lowest-scoring capabilities are part of the Blueprint session."
         />
       ) : (
       <ExportableSection id="recommended-resources" eyebrow="Recommended" title="Start here">
