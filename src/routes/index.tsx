@@ -3,8 +3,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, LineChart, Layers } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { PersonalizationProof } from "@/components/marketing/personalization-proof";
-import { PersonaCards } from "@/components/marketing/persona-cards";
-import { PersonaSelector } from "@/components/marketing/persona-selector";
 import { BookACallButton, CONTACT_URL } from "@/lib/marketing/book-a-call";
 
 import { Button } from "@/components/ui/button";
@@ -182,12 +180,6 @@ function Landing() {
             ))}
           </div>
         </section>
-
-        <PersonaCards />
-
-        <div className="mx-auto max-w-6xl px-6 pb-8">
-          <PersonaSelector />
-        </div>
 
         <PersonalizationProof />
 
