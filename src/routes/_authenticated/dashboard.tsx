@@ -187,6 +187,8 @@ function blobToBase64(blob: Blob): Promise<string> {
 
   return (
     <div className="space-y-12">
+      <PersonaBanner blueprint={blueprint} />
+
       {/* Hero */}
       <section
         aria-labelledby="blueprint-hero-heading"
