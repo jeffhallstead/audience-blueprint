@@ -132,6 +132,8 @@ function PricingPage() {
 
       <PersonalizationProof heading="Every Blueprint is built from your own scores." />
 
+      <PersonaSelector />
+
       <section className="max-w-2xl space-y-3">
 
         <h2 className="text-lg font-semibold tracking-tight text-foreground">Working with your team directly</h2>
