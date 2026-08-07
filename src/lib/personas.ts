@@ -1,5 +1,4 @@
 import type { CategoryId } from "@/lib/assessment/config";
-import type { MaturityTier } from "@/lib/blueprint/rules";
 
 export type SalesPersonaId =
   | "paid-media-plateau"
@@ -23,9 +22,9 @@ export interface SalesPersona {
     href: string;
     external?: boolean;
   };
-  /** Which assessment pattern selects this persona. */
+  /** Which maturity level and weakest category select this persona. */
   match: {
-    tiers?: MaturityTier[];
+    levels?: number[];
     weakest?: CategoryId[];
   };
 }
@@ -39,7 +38,7 @@ export const SALES_PERSONAS: SalesPersona[] = [
     body: "Your content works, but every view is rented. I help marketing leaders turn performance spend into owned audience infrastructure.",
     primaryOffer: "3–6 month consulting engagement",
     cta: { label: "Start with the free Publisher Test", href: "/auth?mode=signup&plan=test" },
-    match: { tiers: ["publisher"], weakest: ["distribution"] },
+    match: { levels: [2], weakest: ["distribution"] },
   },
   {
     id: "campaign-factory",
@@ -49,7 +48,7 @@ export const SALES_PERSONAS: SalesPersona[] = [
     body: "Campaigns launch, then vanish. I help teams build an editorial operating cadence so the work keeps working when nobody is forcing it.",
     primaryOffer: "Blueprint → OS → consulting",
     cta: { label: "Start with the free Publisher Test", href: "/auth?mode=signup&plan=test" },
-    match: { tiers: ["observer", "publisher"], weakest: ["operations"] },
+    match: { levels: [1, 2], weakest: ["operations"] },
   },
   {
     id: "orphaned-audience",
@@ -59,7 +58,7 @@ export const SALES_PERSONAS: SalesPersona[] = [
     body: "Followers, lists, and subscribers are scattered across platforms you do not control. I help brands build a direct audience relationship that survives an algorithm change.",
     primaryOffer: "3–6 month consulting engagement",
     cta: { label: "Start with the free Publisher Test", href: "/auth?mode=signup&plan=test" },
-    match: { tiers: ["publisher", "studio"], weakest: ["audience"] },
+    match: { levels: [2, 3], weakest: ["audience"] },
   },
   {
     id: "stalled-studio",
@@ -69,7 +68,7 @@ export const SALES_PERSONAS: SalesPersona[] = [
     body: "You have a funded team, recurring formats, and no measurement story. I help leaders translate content into a board-level narrative with numbers behind it.",
     primaryOffer: "Senior consulting engagement",
     cta: { label: "Start with the free Publisher Test", href: "/auth?mode=signup&plan=test" },
-    match: { tiers: ["studio"], weakest: ["operations", "alignment"] },
+    match: { levels: [3], weakest: ["operations", "alignment"] },
   },
   {
     id: "funded-builder",
@@ -79,7 +78,7 @@ export const SALES_PERSONAS: SalesPersona[] = [
     body: "Eight priorities is the same as zero. I help founders and first marketing leaders decide which two moves matter now and which can wait.",
     primaryOffer: "$49 Blueprint → OS",
     cta: { label: "Start with the free Publisher Test", href: "/auth?mode=signup&plan=test" },
-    match: { tiers: ["observer", "publisher"], weakest: ["strategy"] },
+    match: { levels: [1, 2], weakest: ["strategy"] },
   },
   {
     id: "curious-observer",
@@ -89,7 +88,7 @@ export const SALES_PERSONAS: SalesPersona[] = [
     body: "Start with one owned channel. The free Publisher Test shows you which one, and the 90-day roadmap tells you what to do first.",
     primaryOffer: "Free Publisher Test → $49 Blueprint → OS waitlist",
     cta: { label: "Start with the free Publisher Test", href: "/auth?mode=signup&plan=test" },
-    match: { tiers: ["observer"] },
+    match: { levels: [1] },
   },
   {
     id: "category-leader",
@@ -99,34 +98,36 @@ export const SALES_PERSONAS: SalesPersona[] = [
     body: "Your Blueprint shows few critical gaps. If you are open to it, I would love to compare notes or feature your work as a reference case.",
     primaryOffer: "Partner or referral conversation",
     cta: { label: "Get in touch", href: "https://jeffhallstead.com/contact", external: true },
-    match: { tiers: ["media-brand", "category-leader"] },
+    match: { levels: [4, 5] },
   },
 ];
 
 export function resolveSalesPersona(
-  tier: MaturityTier,
+  level: number,
   weakestCategoryId?: CategoryId,
 ): SalesPersona {
   // Tier-specific overrides first.
-  if (tier === "observer") {
+  if (level === 1) {
     return SALES_PERSONAS.find((p) => p.id === "curious-observer")!;
   }
-  if (tier === "media-brand" || tier === "category-leader") {
+  if (level >= 4) {
     return SALES_PERSONAS.find((p) => p.id === "category-leader")!;
   }
 
-  // Match by weakest category against the tier-appropriate personas.
+  // Match by weakest category against the level-appropriate personas.
   if (weakestCategoryId) {
     const byWeakest = SALES_PERSONAS.find(
       (p) =>
-        p.match.tiers?.includes(tier) && p.match.weakest?.includes(weakestCategoryId),
+        p.match.levels?.includes(level) && p.match.weakest?.includes(weakestCategoryId),
     );
     if (byWeakest) return byWeakest;
   }
 
-  // Fallback by tier alone.
-  const byTier = SALES_PERSONAS.find((p) => p.match.tiers?.includes(tier));
-  if (byTier) return byTier;
+  // Fallback by level alone.
+  const byLevel = SALES_PERSONAS.find(
+    (p) => p.match.levels?.includes(level) && p.match.weakest == null,
+  );
+  if (byLevel) return byLevel;
 
   return SALES_PERSONAS.find((p) => p.id === "funded-builder")!;
 }
