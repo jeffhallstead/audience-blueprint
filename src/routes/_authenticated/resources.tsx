@@ -100,9 +100,9 @@ function ResourcesPage() {
 
       <UpgradeCta
         cta={blueprint.cta}
+        surface="results"
         onClick={() => {
           void trackBlueprintEvent("upgrade_cta_clicked", { tier: blueprint.tier, surface: "resources" });
-          toast.info("Booking opens in the next phase — your blueprint is saved.");
         }}
       />
     </div>
