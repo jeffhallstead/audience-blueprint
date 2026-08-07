@@ -1,9 +1,16 @@
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { BookACallButton, type BookCallSurface } from "@/lib/marketing/book-a-call";
 import type { CtaRule } from "@/lib/blueprint/rules";
 
-/** Context-sensitive next-step CTA, selected by maturity tier. */
-export function UpgradeCta({ cta, onClick }: { cta: CtaRule; onClick: () => void }) {
+/** Context-sensitive next-step CTA. Every path now ends in a consulting call. */
+export function UpgradeCta({
+  cta,
+  surface,
+  onClick,
+}: {
+  cta: CtaRule;
+  surface: BookCallSurface;
+  onClick?: () => void;
+}) {
   return (
     <section
       aria-labelledby="upgrade-cta-heading"
@@ -17,9 +24,12 @@ export function UpgradeCta({ cta, onClick }: { cta: CtaRule; onClick: () => void
         </h2>
         <p className="text-sm leading-relaxed text-muted-foreground">{cta.body}</p>
       </div>
-      <Button size="lg" className="shrink-0" onClick={onClick}>
-        {cta.action} <ArrowRight className="size-4" aria-hidden />
-      </Button>
+      <BookACallButton
+        surface={surface}
+        size="lg"
+        className="shrink-0"
+        {...(onClick ? { onTrack: onClick } : {})}
+      />
     </section>
   );
 }
