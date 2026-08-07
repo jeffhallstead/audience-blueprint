@@ -37,7 +37,7 @@ function PersonaBannerCard({ persona }: { persona: SalesPersona }) {
           </Button>
         ) : (
           <Button asChild size="sm">
-            <Link to={persona.cta.href}>
+            <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
               {persona.cta.label} <ArrowRight className="size-4" aria-hidden />
             </Link>
           </Button>
