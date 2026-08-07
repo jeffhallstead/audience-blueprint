@@ -26,7 +26,7 @@ export function PersonaCards() {
               <p className="text-sm leading-relaxed text-muted-foreground">{persona.body}</p>
             </div>
             <Button asChild variant="outline" size="sm" className="w-full">
-              <Link to={persona.cta.href}>
+              <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
                 {persona.cta.label} <ArrowRight className="size-4" aria-hidden />
               </Link>
             </Button>
