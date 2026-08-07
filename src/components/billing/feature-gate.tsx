@@ -1,10 +1,9 @@
 import type { ReactNode } from "react";
-import { Lock, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Lock } from "lucide-react";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
-import { useCheckout } from "@/lib/commerce/use-checkout";
-import { FEATURE_MINIMUM, planForTier, type Feature } from "@/lib/commerce/plans";
+import { type Feature } from "@/lib/commerce/plans";
 import { trackCommerceEvent } from "@/lib/commerce/analytics";
+import { BookACallButton } from "@/lib/marketing/book-a-call";
 import { cn } from "@/lib/utils";
 
 type LockedFeatureProps = {
@@ -17,8 +16,8 @@ type LockedFeatureProps = {
 };
 
 /**
- * UX-level paywall. The underlying data is also gated server-side, so this
- * only controls what is worth rendering.
+ * UX-level gate. The Blueprint is not sold, so the locked state routes to a
+ * consulting conversation instead of a checkout. Data is gated server-side too.
  */
 export function LockedFeature({
   feature,
@@ -27,9 +26,6 @@ export function LockedFeature({
   preview,
   className,
 }: LockedFeatureProps) {
-  const requiredTier = FEATURE_MINIMUM[feature];
-  const plan = planForTier(requiredTier);
-  const { openCheckout, loading, checkoutElement } = useCheckout();
 
   return (
     <section

@@ -58,6 +58,8 @@ interface BookACallButtonProps extends BookCallContext {
   variant?: "default" | "outline" | "ghost" | "secondary";
   className?: string;
   showArrow?: boolean;
+  /** Extra analytics fired alongside the funnel event. */
+  onTrack?: () => void;
 }
 
 /** Outbound "Book a call" CTA with funnel attribution. */
@@ -67,6 +69,7 @@ export function BookACallButton({
   variant = "default",
   className,
   showArrow = true,
+  onTrack,
   ...ctx
 }: BookACallButtonProps) {
   return (
@@ -76,6 +79,7 @@ export function BookACallButton({
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => {
+          onTrack?.();
           void trackBookCallClick(ctx);
         }}
       >
