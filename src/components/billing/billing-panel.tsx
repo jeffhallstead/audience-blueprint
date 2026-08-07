@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { ExternalLink, ArrowRight } from "lucide-react";
 import { DashboardCard } from "@/components/blueprint/dashboard-card";
 import { Button } from "@/components/ui/button";
+import { BookACallButton } from "@/lib/marketing/book-a-call";
 import { useEntitlement } from "@/lib/commerce/use-entitlement";
 import { createPortalSession, listInvoices } from "@/lib/commerce/payments.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
@@ -92,11 +93,7 @@ export function BillingPanel() {
           ) : null}
 
           <div className="flex flex-wrap gap-3">
-            <Button asChild variant={tier === "os" ? "outline" : "default"}>
-              <Link to="/pricing">
-                {tier === "os" ? "View plans" : "Upgrade"} <ArrowRight className="size-4" aria-hidden />
-              </Link>
-            </Button>
+            <BookACallButton surface="billing_panel" showArrow={false} />
             <Button variant="outline" onClick={() => void openPortal()} disabled={opening}>
               Manage billing <ExternalLink className="size-4" aria-hidden />
             </Button>

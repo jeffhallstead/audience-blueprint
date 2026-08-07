@@ -4,6 +4,8 @@ import { ArrowRight, ShieldCheck, LineChart, Layers } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { PersonalizationProof } from "@/components/marketing/personalization-proof";
 import { PersonaCards } from "@/components/marketing/persona-cards";
+import { PersonaSelector } from "@/components/marketing/persona-selector";
+import { BookACallButton, CONTACT_URL } from "@/lib/marketing/book-a-call";
 
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -100,9 +102,7 @@ function Landing() {
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <Logo />
         <div className="flex items-center gap-2">
-          <Button asChild variant="ghost" size="sm">
-            <Link to="/pricing">Pricing</Link>
-          </Button>
+          <BookACallButton surface="app_shell" variant="ghost" size="sm" showArrow={false} />
           {signedIn ? (
             <Button asChild size="sm">
               <Link to="/dashboard">Go to dashboard</Link>
@@ -144,7 +144,8 @@ function Landing() {
                 Begin the Publisher Test — it&rsquo;s free <ArrowRight className="size-4" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline">
+            <BookACallButton surface="homepage_hero" size="lg" variant="outline" showArrow={false} />
+            <Button asChild size="lg" variant="ghost">
               <Link to="/auth">I already have an account</Link>
             </Button>
           </div>
@@ -184,6 +185,10 @@ function Landing() {
 
         <PersonaCards />
 
+        <div className="mx-auto max-w-6xl px-6 pb-8">
+          <PersonaSelector />
+        </div>
+
         <PersonalizationProof />
 
         <section className="border-y border-border">
@@ -202,15 +207,19 @@ function Landing() {
             <div className="max-w-xl space-y-2">
               <h2 className="text-display text-3xl">Start with the free Publisher Test.</h2>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                Answer seven sections and receive a scored executive dashboard, prioritized recommendations, and a
-                sequenced 90-day roadmap.
+                Answer seven sections and see your score, your maturity level, and where your content
+                operation is leaking audience. When you want the full Blueprint — the executive
+                analysis and sequenced 90-day roadmap — Jeff walks you through it live on a call.
               </p>
             </div>
-            <Button asChild size="lg">
-              <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
-                Begin the Publisher Test — it&rsquo;s free <ArrowRight className="size-4" />
-              </Link>
-            </Button>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button asChild size="lg">
+                <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
+                  Begin the Publisher Test — it&rsquo;s free <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+              <BookACallButton surface="homepage_closing" size="lg" variant="outline" showArrow={false} />
+            </div>
           </div>
         </section>
 
@@ -228,9 +237,14 @@ function Landing() {
             >
               Jeff Hallstead Consulting
             </a>
-            <Link to="/pricing" className="hover:text-foreground">
-              Pricing
-            </Link>
+            <a
+              href={CONTACT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground"
+            >
+              Book a call
+            </a>
             <Link to="/terms" className="hover:text-foreground">
               Terms
             </Link>

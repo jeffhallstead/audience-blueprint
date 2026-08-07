@@ -27,14 +27,34 @@ export type ResolvedEntitlement = {
   purchases: Database["public"]["Tables"]["purchases"]["Row"][];
 };
 
-/** Authoritative tier resolution. Runs with the caller's RLS-scoped client. */
+/** Roles that unlock the full Blueprint. Access is internal-only by design. */
+const INTERNAL_ROLES = ["admin", "analyst"] as const;
+
+async function isInternalUser(supabase: Client, userId: string) {
+  const { data } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId);
+  return (data ?? []).some((row) =>
+    (INTERNAL_ROLES as readonly string[]).includes(row.role as string),
+  );
+}
+
+/**
+ * Authoritative tier resolution. Runs with the caller's RLS-scoped client.
+ *
+ * The Blueprint is no longer sold: it is delivered by Jeff or an analyst on a
+ * booked call. Only internal roles (`admin`, `analyst`) resolve above `free`.
+ * Purchase, subscription and grant rows are still read and returned so the
+ * admin console and historical reporting keep working.
+ */
 export async function resolveEntitlement(
   supabase: Client,
   userId: string,
   env: StripeEnv,
 ): Promise<ResolvedEntitlement> {
   const nowIso = new Date().toISOString();
-  const [{ data: subs }, { data: purchaseRows }, { data: grantRows }] = await Promise.all([
+  const [{ data: subs }, { data: purchaseRows }, { data: grantRows }, internal] = await Promise.all([
     supabase
       .from("subscriptions")
       .select("*")
@@ -54,6 +74,7 @@ export async function resolveEntitlement(
       .eq("environment", env)
       .is("revoked_at", null)
       .or(`expires_at.is.null,expires_at.gt.${nowIso}`),
+    isInternalUser(supabase, userId),
   ]);
 
   const subscriptions = subs ?? [];
@@ -73,9 +94,11 @@ export async function resolveEntitlement(
     grants.sort((a, b) => TIER_RANK[b.tier] - TIER_RANK[a.tier])[0] ?? null;
 
   let tier: Tier = "free";
-  if (purchases.length > 0) tier = "blueprint";
-  if (activeSub || includedOsUntil) tier = "os";
-  if (bestGrant && TIER_RANK[bestGrant.tier] > TIER_RANK[tier]) tier = bestGrant.tier;
+  if (internal) {
+    // Internal users get everything; a grant can still pin them to a lower tier
+    // is not a case we support, so admins/analysts resolve to the top tier.
+    tier = "os";
+  }
 
   return {
     tier,

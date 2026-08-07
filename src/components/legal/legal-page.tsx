@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { Logo } from "@/components/brand/logo";
-import { Button } from "@/components/ui/button";
+import { BookACallButton } from "@/lib/marketing/book-a-call";
 
 /** Shared shell for the public legal pages. */
 export function LegalPage({
@@ -21,9 +21,7 @@ export function LegalPage({
         <Link to="/" aria-label="Publisher Blueprint home">
           <Logo />
         </Link>
-        <Button asChild variant="outline" size="sm">
-          <Link to="/pricing">Pricing</Link>
-        </Button>
+        <BookACallButton surface="legal_header" variant="outline" size="sm" showArrow={false} />
       </div>
 
       <header className="space-y-3">

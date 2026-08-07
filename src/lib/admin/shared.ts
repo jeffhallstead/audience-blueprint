@@ -23,7 +23,9 @@ export type AdminUserRow = {
   maturityLevel: number | null;
   tier: "free" | "blueprint" | "os";
   isAdmin: boolean;
-  /** Manually granted tier (admin comp), when an active grant exists. */
+  /** Internal analyst role: full Blueprint access without a payment. */
+  isAnalyst: boolean;
+  /** Manually granted tier (legacy admin comp), when an active grant exists. */
   grantedTier: "blueprint" | "os" | null;
   grantExpiresAt: string | null;
 };

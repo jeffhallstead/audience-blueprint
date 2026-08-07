@@ -32,7 +32,6 @@ const NAV_ITEMS = [
   { to: "/copilot", label: "Publisher Copilot", icon: Sparkles },
   { to: "/copilot/documents", label: "Strategy Library", icon: FolderOpen },
   { to: "/resources", label: "Resources", icon: BookOpen },
-  { to: "/pricing", label: "Plans & Billing", icon: CreditCard },
   { to: "/settings", label: "Settings", icon: SettingsIcon },
   { to: "/help", label: "Help & Support", icon: LifeBuoy },
 ] as const;
