@@ -138,7 +138,7 @@ function Landing() {
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <Button asChild size="lg">
-              <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
+              <Link to="/test">
                 Begin the Publisher Test — it&rsquo;s free <ArrowRight className="size-4" />
               </Link>
             </Button>
@@ -148,7 +148,7 @@ function Landing() {
             </Button>
           </div>
           <p className="mt-6 text-xs text-muted-foreground">
-            Approximately 12 minutes · Seven sections · Confidential · by Jeff Hallstead
+            Approximately 12 minutes · Seven sections · No account needed to start · by Jeff Hallstead
           </p>
         </section>
 
@@ -206,7 +206,7 @@ function Landing() {
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">
-                <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
+                <Link to="/test">
                   Begin the Publisher Test — it&rsquo;s free <ArrowRight className="size-4" />
                 </Link>
               </Button>
