@@ -21,6 +21,10 @@ export const PLATFORM_EVENTS = {
   "assessment.completed": 1,
   "assessment.abandoned": 1,
   "assessment.revisited": 1,
+  "assessment.anonymous_started": 1,
+  "assessment.email_gate_viewed": 1,
+  "assessment.email_submitted": 1,
+  "assessment.account_created": 1,
 
   // Blueprint / product engagement
   "blueprint.dashboard_viewed": 1,
