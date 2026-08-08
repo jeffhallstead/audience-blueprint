@@ -38,6 +38,16 @@ from reportlab.platypus import (
     TableStyle,
 )
 
+_ReportlabParagraph = Paragraph
+
+
+def Paragraph(text, style, **kw):  # noqa: N802 - shadows platypus Paragraph on purpose
+    """Map <b> to the registered Plus Jakarta bold face (family bold lookup is
+    unreliable for the instanced variable fonts we register)."""
+    text = text.replace("<b>", '<font name="BodyBold">').replace("</b>", "</font>")
+    return _ReportlabParagraph(text, style, **kw)
+
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_PDF = "/mnt/documents/publisher-blueprint-guide.pdf"
 OUT_MD = os.path.join(ROOT, "docs", "Publisher-Blueprint-Guide.md")
@@ -519,8 +529,8 @@ def build_pdf():
     f.append(Paragraph(
         "How to find out whether you own your audience — and the six moves that "
         "change the answer in 90 days.",
-        ParagraphStyle("sub", fontName="DisplayLight", fontSize=13.5, leading=19,
-                       textColor=Color(1, 1, 1, 0.72))))
+        ParagraphStyle("sub", fontName="DisplayLight", fontSize=13.5, leading=20,
+                       textColor=Color(1, 1, 1, 0.58))))
     f.append(Spacer(1, 0.9 * inch))
     f.append(Paragraph("Jeff Hallstead", ParagraphStyle("auth", fontName="DisplayMed",
                                                         fontSize=12.5, leading=16, textColor=WHITE)))
@@ -569,7 +579,7 @@ def build_pdf():
         "and you will finish with a score, a named pattern, and a 90-day sequence.", S["body"]))
     f.append(Paragraph("The four steps", S["h2"]))
     f.extend(bullets([
-        "<b>Score yourself.</b> Six dimensions, rated 1 to 5, on the worksheet on page 8. Answer "
+        "<b>Score yourself.</b> Six dimensions, rated 1 to 5, on the worksheet on page 7. Answer "
         "as your most sceptical colleague would, not as you would like it to be.",
         "<b>Find your level.</b> The total maps to one of five maturity levels, from Observer to "
         "Category Leader. The level tells you what kind of problem you have.",
@@ -683,7 +693,7 @@ def build_pdf():
     f.append(Spacer(1, 10))
     f.append(callout(
         "Circle your weakest dimension",
-        "If two tie, choose the one further left in the list on page 5 — Audience beats "
+        "If two tie, choose the one further left in the list on page 4 — Audience beats "
         "Content, Content beats Distribution, and so on. The heavier weight breaks the tie."))
     f.append(PageBreak())
 
@@ -740,11 +750,10 @@ def build_pdf():
         "across 200,000 randomly generated score profiles and tallying which recommendation "
         "sets it actually produced. They are the shapes the model emits, not archetypes "
         "invented in a workshop."))
+    f.append(NextPageTemplate("dark"))
     f.append(PageBreak())
 
     # ---------- 10. Personas divider ----------
-    f.append(NextPageTemplate("dark"))
-    f.append(PageBreak())
     f.append(Spacer(1, 1.6 * inch))
     f.append(Paragraph("SECTION TWO", S["deyebrow"]))
     f.append(Paragraph("The eight<br/>patterns", S["dh1"]))
