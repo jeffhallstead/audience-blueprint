@@ -624,7 +624,7 @@ def build_pdf():
     rows = [["Dimension", "Weight", "What it measures"]]
     for name, w, desc, _ in DIMENSIONS:
         rows.append([f"<b>{name}</b>", w, desc])
-    f.append(data_table(rows, [1.15 * inch, 0.6 * inch, W - 1.75 * inch]))
+    f.append(data_table(rows, [1.15 * inch, 0.85 * inch, W - 2.0 * inch]))
     f.append(Spacer(1, 12))
     f.append(Paragraph(
         "Audience carries the heaviest weight because it is the only dimension that cannot be "
