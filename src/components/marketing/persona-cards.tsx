@@ -37,7 +37,7 @@ export function PersonaCards() {
               />
             ) : (
               <Button asChild variant="outline" size="sm" className="w-full">
-                <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
+                <Link to="/test">
                   {persona.cta.label} <ArrowRight className="size-4" aria-hidden />
                 </Link>
               </Button>

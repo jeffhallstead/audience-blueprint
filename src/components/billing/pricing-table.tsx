@@ -124,7 +124,7 @@ export function PricingTable({
 
             {hideCta ? null : freeSignup ? (
               <Button asChild variant="outline" size="lg">
-                <Link to="/auth" search={{ mode: "signup", plan: "test" }}>
+                <Link to="/test">
                   Start free — no card required
                 </Link>
               </Button>
