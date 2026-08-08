@@ -6,10 +6,11 @@
  * visitor returns through a sign-in link with progress still stored locally.
  */
 
+import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/events/track.functions";
-import { completeAssessment, getOrCreateAssessment, saveAnswer, saveStep } from "./persistence";
+import { completeAssessment, getOrCreateAssessment, saveStep } from "./persistence";
 import { clearAnonymousTest, readAnonymousTest } from "./local-store";
-import { SECTIONS, questionsForSection } from "./config";
+import { QUESTIONS, SECTIONS, questionsForSection } from "./config";
 import { missingRequired } from "./scoring";
 
 export interface ClaimResult {
@@ -23,21 +24,35 @@ export async function claimAnonymousTest(userId: string): Promise<ClaimResult | 
   if (!stored || Object.keys(stored.answers).length === 0) return null;
 
   const assessment = await getOrCreateAssessment(userId);
-  for (const [questionId, value] of Object.entries(stored.answers)) {
-    await saveAnswer(assessment.id, userId, questionId, value);
-  }
+
+  // One round trip for the whole test — the visitor is staring at a spinner.
+  const rows = Object.entries(stored.answers).map(([questionId, value]) => ({
+    assessment_id: assessment.id,
+    user_id: userId,
+    section: QUESTIONS.find((question) => question.id === questionId)?.section ?? "unknown",
+    question_key: questionId,
+    value: { value } as never,
+    updated_at: new Date().toISOString(),
+  }));
+  const { error } = await supabase
+    .from("assessment_answers")
+    .upsert(rows, { onConflict: "assessment_id,question_key" });
+  if (error) throw error;
   await saveStep(assessment.id, stored.step);
 
   // Replay the pre-signup funnel so the lead's whole path is attributable.
-  for (const event of stored.events) {
-    await trackEvent({
-      data: {
-        type: event.type,
-        context: { ...(event.context ?? {}), visitorId: stored.visitorId, occurredAt: event.occurredAt },
-        payload: event.payload ?? {},
-      },
-    }).catch(() => undefined);
-  }
+  void Promise.allSettled(
+    stored.events.map((event) =>
+      trackEvent({
+        data: {
+          type: event.type,
+          context: { ...(event.context ?? {}), visitorId: stored.visitorId, occurredAt: event.occurredAt },
+          payload: event.payload ?? {},
+        },
+      }),
+    ),
+  );
+
 
   const missing = missingRequired(
     SECTIONS.flatMap((section) => questionsForSection(section.id)),
