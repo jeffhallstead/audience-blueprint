@@ -90,6 +90,15 @@ def ensure_fonts():
                 if not os.path.exists(dst):
                     f = FTFont(vf)
                     instantiateVariableFont(f, {"wght": w}, inplace=True)
+                    # Unique PostScript/family names per instance. Without this
+                    # every instance keeps the variable font's name and ReportLab
+                    # collapses them into one embedded face (all weights render
+                    # identically).
+                    unique = f"{name}{w}"
+                    for rec in f["name"].names:
+                        if rec.nameID in (1, 3, 4, 6, 16, 17):
+                            f["name"].setName(unique, rec.nameID, rec.platformID,
+                                              rec.platEncID, rec.langID)
                     f.save(dst)
     pdfmetrics.registerFont(TTFont("Display", os.path.join(FONT_DIR, "Outfit-700.ttf")))
     pdfmetrics.registerFont(TTFont("DisplayMed", os.path.join(FONT_DIR, "Outfit-600.ttf")))
