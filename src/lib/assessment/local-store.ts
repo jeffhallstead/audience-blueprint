@@ -95,9 +95,14 @@ export function bufferAnonymousEvent(
   payload?: Record<string, unknown>,
 ): void {
   const state = ensureAnonymousTest();
+  const event: BufferedEvent = {
+    type,
+    occurredAt: new Date().toISOString(),
+    ...(context ? { context } : {}),
+    ...(payload ? { payload } : {}),
+  };
   // Cap the buffer so a long session can't grow storage without bound.
-  const events = [...state.events, { type, occurredAt: new Date().toISOString(), context, payload }].slice(-50);
-  write({ ...state, events });
+  write({ ...state, events: [...state.events, event].slice(-50) });
 }
 
 export function clearAnonymousTest(): void {
