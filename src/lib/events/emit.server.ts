@@ -30,6 +30,8 @@ async function syncDerivedFor(input: PlatformEventInput) {
   }
   const { crmEventNameFor, syncCrmFor } = await import("@/lib/integrations/crm-sync.server");
   if (crmEventNameFor(input.type)) await syncCrmFor(input);
+  const { slackNotifiableEvent, notifySlackFor } = await import("@/lib/integrations/slack.server");
+  if (slackNotifiableEvent(input.type)) await notifySlackFor(input);
 }
 
 
