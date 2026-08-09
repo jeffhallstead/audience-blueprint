@@ -30,6 +30,8 @@ async function syncDerivedFor(input: PlatformEventInput) {
   }
   const { crmEventNameFor, syncCrmFor } = await import("@/lib/integrations/crm-sync.server");
   if (crmEventNameFor(input.type)) await syncCrmFor(input);
+  const { slackNotifiableEvent, notifySlackFor } = await import("@/lib/integrations/slack.server");
+  if (slackNotifiableEvent(input.type)) await notifySlackFor(input);
 }
 
 
@@ -120,9 +122,13 @@ export async function emitPlatformEvents(inputs: PlatformEventInput[]): Promise<
     }
     // CRM pushes are per event, not per user: each transition is its own record.
     const { crmEventNameFor, syncCrmFor } = await import("@/lib/integrations/crm-sync.server");
+    const { slackNotifiableEvent, notifySlackFor } = await import("@/lib/integrations/slack.server");
     for (const input of inputs) {
-      if (input.userId && crmEventNameFor(input.type)) await syncCrmFor(input);
+      if (!input.userId) continue;
+      if (crmEventNameFor(input.type)) await syncCrmFor(input);
+      if (slackNotifiableEvent(input.type)) await notifySlackFor(input);
     }
+
 
   } catch (error) {
     console.error(
