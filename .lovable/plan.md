@@ -7,10 +7,10 @@ Post a short message to a new Slack channel `#publisher-leads` every time a user
 A message like:
 
 ```text
-New Publisher Test completed — Publisher Index score 62 (Level 3, Systematizing)
+New Publisher Test completed — Jane Doe (jane@example.com) — Publisher Index score 62 (Level 3, Systematizing)
 ```
 
-No name, email, or company in the message — details stay in the Admin Console.
+Name falls back to the email when no name is on file.
 
 ## Setup step (you)
 
