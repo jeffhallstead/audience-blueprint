@@ -258,7 +258,7 @@ KPIS = [
     ("Engaged reach", "Audience with a meaningful interaction in 30 days.", "35% of list"),
     ("Returning visitors", "Share of visits from known audience.", "40% of sessions"),
     ("Organic traffic", "Non-paid sessions to owned properties.", "Grow 15% per quarter"),
-    ("Publishing frequency", "Flagship assets shipped per month.", "4 per month"),
+    ("Publishing cadence", "Flagship assets the operating system is built to sustain.", "4 per month"),
     ("Paid dependency", "Share of reach bought rather than owned.", "Trending down"),
 ]
 
@@ -269,6 +269,7 @@ DELIVERABLES = [
     ("KPI framework", "The handful of numbers that prove the work landed."),
     ("Executive readout", "A session and a document your leadership can act on."),
     ("Working sessions", "[CADENCE — e.g. biweekly 60-minute sessions — confirm]"),
+    ("Scope boundary", "Strategy, specs, systems, and measurement. Asset production sits with your team or a partner we select and brief together."),
 ]
 
 FIT_YES = [
@@ -279,7 +280,7 @@ FIT_YES = [
 ]
 FIT_NO = [
     "You need a single campaign executed next week",
-    "You want freelance content production",
+    "You need someone to produce the assets — this engagement designs and directs the work, it does not shoot it",
     "There is no executive sponsor for owned audience",
     "You are looking for the cheapest option",
 ]
