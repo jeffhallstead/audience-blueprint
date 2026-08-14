@@ -816,6 +816,7 @@ def main():
         c.showPage()
     c.save()
     print("wrote", OUT_PDF)
+    build_markdown()
 
 
 if __name__ == "__main__":
