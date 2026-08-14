@@ -566,7 +566,7 @@ def build_pdf():
         "as your most sceptical colleague would, not as you would like it to be.",
         "<b>Find your level.</b> The total maps to one of five maturity levels, from Observer to "
         "Category Leader. The level tells you what kind of problem you have.",
-        "<b>Find your pattern.</b> Your level plus your weakest dimension points to one of eight "
+        "<b>Find your pattern.</b> Your level plus your weakest dimension points to one of six "
         "behavioral patterns. The pattern tells you what to do about it.",
         "<b>Run the sequence.</b> Three months: stabilize, build, compound. The same shape "
         "regardless of pattern; the content of each month depends on yours.",
@@ -717,19 +717,17 @@ def build_pdf():
     rows = [
         ["Level", "Weakest dimension", "Your pattern", "Page"],
         ["Publisher", "Distribution", "<b>01 Paid Media Plateau</b>", "11"],
-        ["Publisher", "Operations", "<b>02 Campaign Factory</b>", "12"],
+        ["Observer / Publisher", "Operations or Content", "<b>02 Campaign Factory</b>", "12"],
         ["Publisher / Studio", "Audience", "<b>03 Borrowed Audience</b>", "13"],
-        ["Studio", "Operations or Alignment", "<b>04 Invisible Studio</b>", "14"],
-        ["Publisher", "Strategy", "<b>05 Fragmented Builder</b>", "15"],
-        ["Observer", "Most dimensions", "<b>06 Curious Observer</b>", "16"],
-        ["Any", "Any (no budget authority)", "<b>07 Internal Champion</b>", "17"],
-        ["Media Brand / Cat. Leader", "Few gaps", "<b>08 Category Leader</b>", "18"],
+        ["Studio and above", "Operations or Alignment", "<b>04 Invisible Studio</b>", "14"],
+        ["Observer / Publisher", "Strategy, or an even spread", "<b>05 Fragmented Builder</b>", "15"],
+        ["Media Brand / Cat. Leader", "Few gaps", "<b>06 Category Leader</b>", "16"],
     ]
     f.append(data_table(rows, [1.55 * inch, 1.75 * inch, W - 3.9 * inch, 0.6 * inch]))
     f.append(Spacer(1, 14))
     f.append(callout(
         "These are output clusters, not personality types",
-        "The eight patterns were derived by sampling the Blueprint recommendation engine "
+        "The six patterns were derived by sampling the Blueprint recommendation engine "
         "across 200,000 randomly generated score profiles and tallying which recommendation "
         "sets it actually produced. They are the shapes the model emits, not archetypes "
         "invented in a workshop."))
@@ -739,7 +737,7 @@ def build_pdf():
     # ---------- 10. Patterns divider ----------
     f.append(Spacer(1, 1.6 * inch))
     f.append(Paragraph("SECTION TWO", S["deyebrow"]))
-    f.append(Paragraph("The eight<br/>patterns", S["dh1"]))
+    f.append(Paragraph("The six<br/>patterns", S["dh1"]))
     f.append(Spacer(1, 8))
     f.append(Paragraph(
         "One page each. Read your own first. Then read the one directly above you — that is "
@@ -747,7 +745,7 @@ def build_pdf():
     f.append(NextPageTemplate("light"))
     f.append(PageBreak())
 
-    # ---------- 11-18. Patterns ----------
+    # ---------- 11-16. Patterns ----------
     for p in PATTERNS:
         f.append(Paragraph(f"PATTERN {p['n']}", S["eyebrow"]))
         f.append(Paragraph(p["name"], S["h1"]))
