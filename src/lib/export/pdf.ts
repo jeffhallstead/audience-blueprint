@@ -154,7 +154,14 @@ function coverPage(doc: Doc, layout: Layout, blueprint: Blueprint, locked: boole
   layout.y += 26;
 
   doc.setFont("helvetica", "bold").setFontSize(13).setTextColor(...INK);
-  doc.text(`Level ${blueprint.maturity.level} · ${blueprint.maturity.title}`, MARGIN.left, layout.y);
+  doc.text(
+    `Publisher Maturity: Level ${blueprint.maturity.level} — ${blueprint.maturity.title}`,
+    MARGIN.left,
+    layout.y,
+  );
+  layout.y += 16;
+  doc.setFont("helvetica", "normal").setFontSize(11).setTextColor(...INK);
+  doc.text(`Publisher Pattern: ${blueprint.pattern.name}`, MARGIN.left, layout.y);
   layout.y += 20;
 
   doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(...MUTED);
@@ -220,6 +227,31 @@ export async function buildBlueprintPdf(
     layout.gap(8);
   }
 
+  // ---- Publisher Pattern (all tiers) ----
+  layout.gap(20);
+  layout.heading("Your Publisher Pattern");
+  layout.paragraph(`${blueprint.pattern.name} — ${blueprint.pattern.diagnosisLine}`, {
+    size: 11,
+    style: "bold",
+  });
+  for (const paragraph of blueprint.pattern.diagnosis) {
+    layout.paragraph(paragraph, { color: MUTED });
+  }
+  layout.gap(8);
+  layout.subheading("Typical signals");
+  for (const signal of blueprint.pattern.typicalSignals) {
+    layout.bullet(signal);
+  }
+  layout.gap(8);
+  layout.subheading("Underlying constraint");
+  layout.paragraph(blueprint.pattern.underlyingConstraint);
+  layout.gap(8);
+  layout.subheading("Strategic opportunity");
+  layout.paragraph(blueprint.pattern.strategicOpportunity);
+  layout.gap(8);
+  layout.subheading("Publisher Blueprint priority");
+  layout.paragraph(blueprint.pattern.blueprintPriority);
+
   if (locked) {
     layout.gap(20);
     layout.heading("Unlock the full report");
@@ -259,6 +291,9 @@ export async function buildBlueprintPdf(
   layout.gap(12);
   layout.subheading("Recommended focus");
   layout.paragraph(blueprint.summary.recommendedFocus);
+  layout.gap(12);
+  layout.subheading("Strategic emphasis");
+  layout.paragraph(blueprint.summary.strategicEmphasis);
 
   // ---- Strengths and gaps ----
   if (blueprint.strengths.length > 0 || blueprint.gaps.length > 0) {
