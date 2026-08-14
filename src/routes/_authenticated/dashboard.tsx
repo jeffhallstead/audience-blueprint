@@ -198,7 +198,7 @@ function blobToBase64(blob: Blob): Promise<string> {
         <div className="flex flex-col items-center gap-3">
           <ScoreRing score={blueprint.overall} />
           <span className="inline-flex rounded-full border border-brass/50 bg-brass/10 px-3 py-1 text-xs font-medium text-brass">
-            Level {maturity.level} · {maturity.title}
+            Publisher Maturity: Level {maturity.level} — {maturity.title}
           </span>
         </div>
         <div className="space-y-5">
