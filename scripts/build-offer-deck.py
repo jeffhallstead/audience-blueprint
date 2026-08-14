@@ -629,7 +629,171 @@ def slide_close(c):
     c.drawString(M, 0.72 * inch, OFFER_NAME)
 
 
+OUT_MD = "/mnt/documents/publisher-blueprint-signature-offer.md"
+OUT_MD_REPO = os.path.join(ROOT, "docs", "Signature-Offer.md")
+
+
+def build_markdown():
+    L = []
+    w = L.append
+    w(f"# {OFFER_NAME}")
+    w("")
+    w("**Signature engagement — Jeff Hallstead**  ")
+    w("What the first 90 days deliver — and how we know it worked.")
+    w("")
+    w("blueprint.jeffhallstead.com")
+    w("")
+    w("---")
+    w("")
+    w("## The problem: most brands rent their audience")
+    w("")
+    w("You spend to reach people who already know you. Reach resets to zero the moment "
+      "the budget stops. Campaigns launch, perform, and disappear — and next quarter "
+      "starts from the same place.")
+    w("")
+    w("The alternative is not more content. It is an owned audience, a repeatable "
+      "publishing system, and a measurement story leadership believes. That is what "
+      "compounds.")
+    w("")
+    w("- **Rented reach** — every impression is paid for again")
+    w("- **Effort without memory** — campaigns reset each quarter")
+    w("- **No measurement story** — content reads as cost, not asset")
+    w("")
+    w("## The diagnostic: six dimensions decide whether content compounds")
+    w("")
+    w("Every engagement starts with the Publisher Test — a 0–100 index scored across "
+      "these six dimensions. It tells us where the constraint actually is before anyone "
+      "proposes work.")
+    w("")
+    for name, desc in DIMENSIONS:
+        w(f"- **{name}** — {desc}")
+    w("")
+    w("## The ladder: five levels of publisher maturity")
+    w("")
+    w("Your score places you on this ladder. The engagement is calibrated to the rung "
+      "you are on — the plan for a Publisher is not the plan for a Studio.")
+    w("")
+    w("| Level | Name | Score |")
+    w("| --- | --- | --- |")
+    for num, name, rng in LEVELS:
+        w(f"| {num} | {name} | {rng} |")
+    w("")
+    w("## The patterns: which one sounds like you?")
+    w("")
+    w("Thousands of score combinations resolve into a small number of recognizable "
+      "patterns. Naming yours is the first thing we do together.")
+    w("")
+    for name, desc in PERSONAS:
+        w(f"- **{name}** — {desc}")
+    w("")
+    w("## How it works: diagnose, blueprint, run")
+    w("")
+    w("1. **Diagnose** — You take the Publisher Test. Fifteen minutes, no cost, no "
+      "obligation. It scores six dimensions and places you on the maturity ladder.")
+    w("2. **Blueprint** — I build and present your Blueprint: the pattern you fit, your "
+      "ranked opportunities, and a 90-day plan calibrated to your level.")
+    w("3. **Run** — We execute it together over three phases, with working sessions and "
+      "a metric attached to every phase.")
+    w("")
+    w("## The 90-day plan")
+    w("")
+    for i, ph in enumerate(PHASES):
+        w(f"### {ph['days']} · Phase {i + 1} of 3 — {ph['phase']}")
+        w("")
+        w(f"_{ph['objective']}_")
+        w("")
+        w("**What we do**")
+        w("")
+        for a in ph["activities"]:
+            w(f"- {a}")
+        w("")
+        w("**How we measure it**")
+        w("")
+        for m in ph["metrics"]:
+            w(f"- {m}")
+        w("")
+        w(f"**You walk away with:** {ph['deliverable']}")
+        w("")
+    w("## Calibration: the same three phases, tuned to your level")
+    w("")
+    w("The phase structure never changes. What changes is what goes inside it — the "
+      "plan is generated from your scores, not selected from a shelf.")
+    w("")
+    w("- **Observer / Publisher (Level 1–2)** — Stand up one owned channel, prove a "
+      "cadence, and earn the next round of investment.")
+    w("- **Studio (Level 3)** — Concentrate behind the highest-yield franchise, scale "
+      "throughput, and tie audience growth to pipeline.")
+    w("- **Media Brand / Category Leader (Level 4–5)** — Govern the audience as a "
+      "business asset, extend the franchise, and defend the moat.")
+    w("")
+    w("## Deliverables: what you walk away with")
+    w("")
+    for t, d in DELIVERABLES:
+        w(f"- **{t}** — {d}")
+    w("")
+    w("## Proof: how we know it worked")
+    w("")
+    w("Targets shown are the standard framing for a mid-maturity engagement; yours are "
+      "set against your own baseline in phase one.")
+    w("")
+    w("| Metric | What it measures | Target framing |")
+    w("| --- | --- | --- |")
+    for label, desc, target in KPIS:
+        w(f"| {label} | {desc} | {target} |")
+    w("")
+    w("## Fit: who this is for — and who it is not")
+    w("")
+    w("**A good fit**")
+    w("")
+    for i in FIT_YES:
+        w(f"- {i}")
+    w("")
+    w("**Not a fit**")
+    w("")
+    for i in FIT_NO:
+        w(f"- {i}")
+    w("")
+    w("## Why me: I advised cable and TV networks before I advised brands")
+    w("")
+    w("Most content consultants come from agencies. I come from media — which is why "
+      "the plan you get is a publishing operation, not a campaign calendar. The "
+      "Blueprint you will see on our call is the same system I use with every client.")
+    w("")
+    w("- **15+** — Years in media and audience analytics leadership")
+    w("- **Multi-stage** — Built audience systems for publishers, networks, and brand "
+      "teams across multiple revenue stages")
+    w("- **Networks** — Advised cable and TV networks before advising brands")
+    w("")
+    w("## Getting started: two steps, and the first one is free")
+    w("")
+    w("1. **Take the Publisher Test** — Fifteen minutes at blueprint.jeffhallstead.com. "
+      "You get your Publisher Index score immediately.")
+    w("2. **We walk your Blueprint together** — A working session where I present your "
+      "pattern, your gaps, and the 90-day plan. You leave with the plan whether or not "
+      "we work together.")
+    w("")
+    w("**Engagement investment:** $5,000/month · 90 days, 60-minute sessions once a week")
+    w("")
+    w("---")
+    w("")
+    w("## Next step")
+    w("")
+    w("**Let's find out where your audience actually stands.**")
+    w("")
+    w("blueprint.jeffhallstead.com · jeffhallstead.com/contact")
+    w("")
+    w("Jeff Hallstead — " + OFFER_NAME)
+    w("")
+    md = "\n".join(L)
+    for path in (OUT_MD, OUT_MD_REPO):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as f:
+            f.write(md)
+        print("wrote", path)
+
+
 def main():
+
     global S
     ensure_fonts()
     S.update(styles())
@@ -652,6 +816,7 @@ def main():
         c.showPage()
     c.save()
     print("wrote", OUT_PDF)
+    build_markdown()
 
 
 if __name__ == "__main__":
