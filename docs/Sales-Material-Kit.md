@@ -2,7 +2,7 @@
 
 Version 1.0 · August 2026 · For warm leads and post-assessment prospects
 
-This kit maps the six Publisher Patterns from `docs/Publisher-Patterns.md` to website copy, short-form video scripts, and Instagram ad targeting. The voice is conversational Jeff — first-person, story-led, and direct. The core ICP sweet spot is Patterns 1–5. the two sales signals are routed to product, nurture, or partnership, not direct sales.
+This kit maps the six Publisher Patterns from `docs/Publisher-Patterns.md` to website copy, short-form video scripts, and Instagram ad targeting. The voice is conversational Jeff — first-person, story-led, and direct. The core ICP sweet spot is Patterns 1–5. Pattern 6 is routed to partnership rather than direct sales.
 
 ---
 
@@ -15,9 +15,9 @@ This kit maps the six Publisher Patterns from `docs/Publisher-Patterns.md` to we
 | 3 Borrowed Audience | Publisher/Studio | Audience | 3–6 month consulting | Website, ads, dashboard CTA |
 | 4 Invisible Studio | Studio | Operations / alignment | Senior consulting | Website, ads, dashboard CTA |
 | 5 Fragmented Builder | Publisher | Strategy | $49 Blueprint → OS | Website, ads, product nurture |
-| Signal: Curious Observer | Observer | All | Product only | Nurture, not sales |
-| Signal: Internal Champion | Any | Any | Free + exports | Dashboard export prompt |
 | 6 Category Leader | Media Brand+ | Few | Partner / referral | Manual, not paid ads |
+
+Internal signal (never shown to customers): a high-engagement user still at the `lead` qualification tier is an internal-champion buying signal, not a pattern. Route them to the dashboard export prompt described in section 4.
 
 ---
 
@@ -65,14 +65,14 @@ After a user completes the assessment, show a banner that mirrors their weakest 
 - If weakest category is `operations`: show **Campaign Factory** or **Invisible Studio** depending on tier (Observer/Publisher → Campaign Factory; Studio → Invisible Studio).
 - If weakest category is `audience`: show **Borrowed Audience**.
 - If weakest category is `strategy` and tier is Publisher or lower: show **Fragmented Builder**.
-- If tier is Observer (all categories weak): show **Curious Observer** language with a product-only CTA.
+- If tier is Observer (all categories weak or gaps broadly even): show **Fragmented Builder** language with a product-first CTA.
 - If tier is Media Brand or Category Leader: show **Category Leader** partner language.
 
 Banner structure:
 - Eyebrow: “Your Publisher Index pattern: {Pattern name}”
 - Headline: the pattern headline from the homepage card
 - Body: one sentence of diagnosis + one sentence of the offer
-- CTA: “Book a 20-minute call” → `https://jeffhallstead.com/contact` for P1–P4; “See your roadmap” → `/roadmap` for P5; “Join the OS waitlist” for P6; no CTA for P8.
+- CTA: “Book a 20-minute call” → `https://jeffhallstead.com/contact` for Patterns 1–4; “See your roadmap” → `/roadmap` for Pattern 5; “Get in touch” for Pattern 6.
 
 ### 1.3 Pricing page “Not sure where you fit?” selector
 
@@ -267,9 +267,9 @@ The Publisher Test scores seven dimensions of your publishing operation and give
 
 ---
 
-## 4. Internal Champion and Category Leader routing (website only)
+## 4. Internal buying signal and Category Leader routing (website only)
 
-### Internal Champion (P7)
+### Internal champion signal (internal label only — never shown to the user)
 
 Use the dashboard export prompt as the sales moment.
 
@@ -277,7 +277,7 @@ Use the dashboard export prompt as the sales moment.
 - Copy in the export menu: “Need help presenting this upward? I’ll walk your leadership through the results in 20 minutes.”
 - CTA: `https://jeffhallstead.com/contact`
 
-### Category Leader (P8)
+### Category Leader (Pattern 6)
 
 Do not target with paid ads. On the dashboard, show:
 

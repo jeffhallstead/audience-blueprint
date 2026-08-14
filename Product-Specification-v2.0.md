@@ -358,7 +358,7 @@ All model calls route through `src/lib/ai-gateway.server.ts`, which is server-on
 
 Every AI request rebuilds an organizational briefing server-side from the user's scores, blueprint, roadmap, raw answers, saved recommendations, and prior documents. Two consequences follow: the user never re-explains their business, and the client cannot spoof its own context.
 
-Prompt construction lives in `src/lib/copilot/prompts.server.ts` and encodes the "Chief Content Officer" persona, per-objective instructions, and explicit honesty rules — state assumptions, never guarantee outcomes, never invent figures.
+Prompt construction lives in `src/lib/copilot/prompts.server.ts` and encodes the "Chief Content Officer" system voice, per-objective instructions, and explicit honesty rules — state assumptions, never guarantee outcomes, never invent figures.
 
 ### 7.3 Copilot objectives
 

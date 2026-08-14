@@ -10,7 +10,7 @@ Publisher Copilot™ needs to generate personalized strategic recommendations, d
 
 ## Decision
 
-We will use **Google Gemini** as the model behind Publisher Copilot™, accessed through the **Lovable AI Gateway**. The gateway provides a unified interface for chat completions, image generation, embeddings, and text-to-speech without requiring user-managed API keys. The server-side integration is encapsulated in `src/lib/ai-gateway.server.ts`, and structured prompts for the "Chief Content Officer" persona live in `src/lib/copilot/prompts.server.ts`.
+We will use **Google Gemini** as the model behind Publisher Copilot™, accessed through the **Lovable AI Gateway**. The gateway provides a unified interface for chat completions, image generation, embeddings, and text-to-speech without requiring user-managed API keys. The server-side integration is encapsulated in `src/lib/ai-gateway.server.ts`, and structured prompts for the "Chief Content Officer" system voice live in `src/lib/copilot/prompts.server.ts`.
 
 ## Consequences
 
