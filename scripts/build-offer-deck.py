@@ -137,11 +137,11 @@ def bg(c, dark=False):
     c.rect(0, 0, PAGE_W, PAGE_H, stroke=0, fill=1)
 
 
-def footer(c, page, dark=False):
+def footer(c, page=None, dark=False):
     c.setFont("Body", 9)
     c.setFillColor(FAINTW if dark else MUTED)
     c.drawString(M, 0.45 * inch, "Publisher Blueprint  ·  Jeff Hallstead")
-    c.drawRightString(PAGE_W - M, 0.45 * inch, str(page))
+    c.drawRightString(PAGE_W - M, 0.45 * inch, str(c.getPageNumber()))
 
 
 def slide_header(c, kicker, title, dark=False, y=None):
@@ -329,7 +329,7 @@ def slide_problem(c):
     cy = 3.0 * inch
     for i, (t, lines) in enumerate(cards):
         card(c, M + i * (cw + 0.35 * inch), cy, cw, 1.5 * inch, t, lines)
-    footer(c, 2)
+    footer(c)
 
 
 def slide_dimensions(c):
@@ -344,7 +344,7 @@ def slide_dimensions(c):
         col, row = i % 3, i // 3
         card(c, M + col * (cw + 0.32 * inch), top - row * 1.45 * inch, cw,
              1.25 * inch, name, [desc])
-    footer(c, 3)
+    footer(c)
 
 
 def slide_levels(c):
@@ -368,7 +368,7 @@ def slide_levels(c):
         c.drawString(x + 18, yy, num)
         yy = para(c, name, S["cardh_d"], x + 18, yy - 12, cw - 36) - 8
         para(c, f"Score {rng}", S["cardb_d"], x + 18, yy, cw - 36)
-    footer(c, 4, dark=True)
+    footer(c, dark=True)
 
 
 def slide_personas(c):
@@ -383,7 +383,7 @@ def slide_personas(c):
         col, row = i % 3, i // 3
         card(c, M + col * (cw + 0.32 * inch), top - row * 1.45 * inch, cw,
              1.25 * inch, name, [desc])
-    footer(c, 5)
+    footer(c)
 
 
 def slide_how(c):
@@ -413,10 +413,10 @@ def slide_how(c):
         c.drawString(x + 22, yy, num)
         yy = para(c, title, S["cardh"], x + 22, yy - 14, cw - 44) - 10
         para(c, desc, S["cardb"], x + 22, yy, cw - 44)
-    footer(c, 6)
+    footer(c)
 
 
-def slide_phase(c, ph, page, index):
+def slide_phase(c, ph, index):
     bg(c)
     y = slide_header(c, f"{ph['days']}  ·  Phase {index} of 3", ph["phase"])
     para(c, ph["objective"], S["sub"], M, y + 8, 9.8 * inch)
@@ -471,7 +471,7 @@ def slide_calibration(c):
     for i, (t, d) in enumerate(rows):
         card(c, M + i * (cw + 0.32 * inch), top, cw, 2.0 * inch, t, [d], dark=True,
              badge="Level " + ["1–2", "3", "4–5"][i])
-    footer(c, 11, dark=True)
+    footer(c, dark=True)
 
 
 def slide_deliverables(c):
@@ -487,7 +487,7 @@ def slide_deliverables(c):
         c.circle(x + 7, yy - 9, 5, stroke=0, fill=1)
         y2 = para(c, t, S["cardh"], x + 24, yy, cw - 24) - 6
         para(c, d, S["cardb"], x + 24, y2, cw - 24)
-    footer(c, 12)
+    footer(c)
 
 
 def slide_kpis(c):
@@ -525,7 +525,7 @@ def slide_kpis(c):
         c.setFont("BodyBold", 11.5)
         c.drawString(x0 + c1 + c2 + 14, yy - 0.3 * inch, target)
         yy -= rh
-    footer(c, 13)
+    footer(c)
 
 
 def slide_fit(c):
@@ -546,7 +546,7 @@ def slide_fit(c):
               x2, top - 0.35 * inch, cw - 48) - 14
     bullets(c, FIT_NO, ParagraphStyle("b2", parent=S["body"], textColor=MUTED),
             x2, yy, cw - 48, gap=6)
-    footer(c, 14)
+    footer(c)
 
 
 def slide_why(c):
@@ -570,7 +570,7 @@ def slide_why(c):
         c.setFont("Display", 30)
         c.drawString(x + 20, top - 0.75 * inch, big)
         para(c, lbl, S["cardb_d"], x + 20, top - 0.95 * inch, cw - 40)
-    footer(c, 15, dark=True)
+    footer(c, dark=True)
 
 
 def slide_start(c):
@@ -603,7 +603,7 @@ def slide_start(c):
     c.setFillColor(INDIGO)
     c.setFont("BodyBold", 14)
     c.drawString(M + 20, 1.2 * inch, "[PRICE — confirm]  ·  [DURATION / SESSION CADENCE — confirm]")
-    footer(c, 16)
+    footer(c)
 
 
 def slide_close(c):
@@ -639,7 +639,7 @@ def main():
         fn(c)
         c.showPage()
     for i, ph in enumerate(PHASES):
-        slide_phase(c, ph, 7 + i * 2, i + 1)
+        slide_phase(c, ph, i + 1)
         c.showPage()
     for fn in [slide_calibration, slide_deliverables, slide_kpis, slide_fit,
                slide_why, slide_start, slide_close]:
