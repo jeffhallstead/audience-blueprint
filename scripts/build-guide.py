@@ -3,8 +3,8 @@
 Builds "The Publisher Blueprint Guide" — a short, designed PDF ebook derived
 from the live Publisher Blueprint engine (maturity levels in
 src/lib/assessment/config.ts, categories, roadmap templates and KPIs in
-src/lib/blueprint/rules.ts) and the behavioral personas in
-docs/Customer-Personas.md.
+src/lib/blueprint/rules.ts) and the behavioral Publisher Patterns in
+docs/Customer-Patterns.md.
 
 Content lives in the CONTENT structures below so copy can be edited in one
 place. The script emits:
@@ -329,7 +329,7 @@ LEVELS = [
      "Protect the moat and monetize the audience beyond demand generation."),
 ]
 
-PERSONAS = [
+PATTERNS = [
     {
         "n": "01", "name": "Paid Media Plateau",
         "sig": "Publisher level · Distribution weakest",
@@ -357,7 +357,7 @@ PERSONAS = [
         "know": "You have hit this level when someone can go on leave and the slot still ships.",
     },
     {
-        "n": "03", "name": "Orphaned Audience",
+        "n": "03", "name": "Borrowed Audience",
         "sig": "Publisher or Studio level · Audience weakest, content strong",
         "who": "Brand Director or Head of Content at a $50M–$500M consumer brand with a real content library and no direct relationship with the people consuming it.",
         "trap": "Good work with no home. Followers sit on platforms you do not control, the email list is split across three tools, and first-party data is thin. An algorithm change is an existential risk and everyone knows it.",
@@ -370,7 +370,7 @@ PERSONAS = [
         "know": "You have hit this level when you can reach the right segment of your audience on a Tuesday without buying media.",
     },
     {
-        "n": "04", "name": "Stalled Studio",
+        "n": "04", "name": "Invisible Studio",
         "sig": "Studio level · Operations or alignment weakest",
         "who": "CMO or VP Brand at a $100M–$500M company with a funded content team already in market. Recurring formats exist. Board support does not.",
         "trap": "The function is real but unprotected. Leadership cannot see the return, so the budget gets re-litigated every planning cycle. The gap is not production — it is a measurement narrative.",
@@ -383,7 +383,7 @@ PERSONAS = [
         "know": "You have hit this level when the content line survives a planning cycle without being re-argued.",
     },
     {
-        "n": "05", "name": "Funded Builder",
+        "n": "05", "name": "Fragmented Builder",
         "sig": "Publisher level · Strategy weakest, broad gaps",
         "who": "Founder-adjacent CMO or first marketing leader at a venture- or PE-backed company. Money is available; a plan is not.",
         "trap": "Ambition well ahead of infrastructure. Everything is a candidate priority, so nothing gets sequenced, and the next board meeting arrives without a story.",
@@ -396,33 +396,7 @@ PERSONAS = [
         "know": "You have hit this level when you can say no to a good idea and give the reason in one sentence.",
     },
     {
-        "n": "06", "name": "Curious Observer",
-        "sig": "Observer level · Most dimensions critical",
-        "who": "Marketing manager, solo operator, or a leader at a company under $10M. Genuinely early — and that is fine.",
-        "trap": "Trying to be everywhere at once. Campaign-driven and episodic, reach entirely dependent on platforms and paid media, first-party data close to nonexistent.",
-        "moves": [
-            "Choose exactly one owned channel and commit to it for two quarters. One.",
-            "Add a single signup path and record your starting subscriber number today so you have a baseline.",
-            "Publish on the same day every week. Frequency matters far less than predictability.",
-        ],
-        "ignore": "Every platform you are not committing to this quarter.",
-        "know": "You have hit this level when the cadence holds for eight weeks without a rescue.",
-    },
-    {
-        "n": "07", "name": "Internal Champion",
-        "sig": "Any level · High engagement, no budget authority",
-        "who": "A content lead, senior manager, or strategist who already believes and does not hold the budget.",
-        "trap": "Building the case alone. You keep gathering more evidence when what is missing is a sponsor, not another slide.",
-        "moves": [
-            "Turn the diagnostic into one page in your leadership's language: risk, cost, and the first 90 days.",
-            "Name the single executive whose problem this solves and lead with their problem, not the framework.",
-            "Ask for a small, specific, reversible first commitment rather than a program.",
-        ],
-        "ignore": "A full strategy deck. Nobody approves a program they have not first agreed has a problem.",
-        "know": "You have hit this level when someone above you starts asking about the numbers unprompted.",
-    },
-    {
-        "n": "08", "name": "Category Leader",
+        "n": "06", "name": "Category Leader",
         "sig": "Media Brand or Category Leader level · Few gaps",
         "who": "A brand that has already built the function. Owned distribution rivals or exceeds paid reach, and content shapes the category narrative.",
         "trap": "Complacency dressed as maturity. The moat is real, but audience assets decay quietly — retention slips a point a quarter and nobody notices for a year.",
@@ -744,9 +718,9 @@ def build_pdf():
         ["Level", "Weakest dimension", "Your pattern", "Page"],
         ["Publisher", "Distribution", "<b>01 Paid Media Plateau</b>", "11"],
         ["Publisher", "Operations", "<b>02 Campaign Factory</b>", "12"],
-        ["Publisher / Studio", "Audience", "<b>03 Orphaned Audience</b>", "13"],
-        ["Studio", "Operations or Alignment", "<b>04 Stalled Studio</b>", "14"],
-        ["Publisher", "Strategy", "<b>05 Funded Builder</b>", "15"],
+        ["Publisher / Studio", "Audience", "<b>03 Borrowed Audience</b>", "13"],
+        ["Studio", "Operations or Alignment", "<b>04 Invisible Studio</b>", "14"],
+        ["Publisher", "Strategy", "<b>05 Fragmented Builder</b>", "15"],
         ["Observer", "Most dimensions", "<b>06 Curious Observer</b>", "16"],
         ["Any", "Any (no budget authority)", "<b>07 Internal Champion</b>", "17"],
         ["Media Brand / Cat. Leader", "Few gaps", "<b>08 Category Leader</b>", "18"],
@@ -762,7 +736,7 @@ def build_pdf():
     f.append(NextPageTemplate("dark"))
     f.append(PageBreak())
 
-    # ---------- 10. Personas divider ----------
+    # ---------- 10. Patterns divider ----------
     f.append(Spacer(1, 1.6 * inch))
     f.append(Paragraph("SECTION TWO", S["deyebrow"]))
     f.append(Paragraph("The eight<br/>patterns", S["dh1"]))
@@ -773,8 +747,8 @@ def build_pdf():
     f.append(NextPageTemplate("light"))
     f.append(PageBreak())
 
-    # ---------- 11-18. Personas ----------
-    for p in PERSONAS:
+    # ---------- 11-18. Patterns ----------
+    for p in PATTERNS:
         f.append(Paragraph(f"PATTERN {p['n']}", S["eyebrow"]))
         f.append(Paragraph(p["name"], S["h1"]))
         f.append(Paragraph(p["sig"], ParagraphStyle("sig", fontName="BodyMed", fontSize=9.2,
@@ -954,7 +928,7 @@ def build_markdown():
         a("")
     a("## The eight patterns")
     a("")
-    for p in PERSONAS:
+    for p in PATTERNS:
         a(f"### {p['n']} — {p['name']}")
         a("")
         a(f"*{p['sig']}*")

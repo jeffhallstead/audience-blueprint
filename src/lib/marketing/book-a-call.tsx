@@ -11,9 +11,9 @@ export const CONTACT_URL = "https://jeffhallstead.com/contact";
 export type BookCallSurface =
   | "homepage_hero"
   | "homepage_closing"
-  | "homepage_persona_card"
-  | "persona_selector"
-  | "persona_banner"
+  | "homepage_pattern_card"
+  | "pattern_selector"
+  | "pattern_summary"
   | "dashboard_locked"
   | "results"
   | "pricing_redirect"
@@ -23,7 +23,8 @@ export type BookCallSurface =
 
 export interface BookCallContext {
   surface: BookCallSurface;
-  personaId?: string;
+  /** Publisher Pattern id, e.g. "borrowed_audience". */
+  patternId?: string;
   maturityLevel?: number;
   weakestCategory?: string;
 }
@@ -41,7 +42,7 @@ export async function trackBookCallClick(ctx: BookCallContext) {
         type: "consulting.book_call_clicked",
         context: { surface: ctx.surface, url: CONTACT_URL },
         payload: {
-          ...(ctx.personaId ? { personaId: ctx.personaId } : {}),
+          ...(ctx.patternId ? { patternId: ctx.patternId } : {}),
           ...(ctx.maturityLevel != null ? { maturityLevel: ctx.maturityLevel } : {}),
           ...(ctx.weakestCategory ? { weakestCategory: ctx.weakestCategory } : {}),
         },

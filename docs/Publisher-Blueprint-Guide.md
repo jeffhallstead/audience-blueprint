@@ -103,7 +103,7 @@ Content has become a strategic business asset and competitive advantage.
 
 **How you will know it worked.** You have hit this level when someone can go on leave and the slot still ships.
 
-### 03 — Orphaned Audience
+### 03 — Borrowed Audience
 
 *Publisher or Studio level · Audience weakest, content strong*
 
@@ -120,7 +120,7 @@ Content has become a strategic business asset and competitive advantage.
 
 **How you will know it worked.** You have hit this level when you can reach the right segment of your audience on a Tuesday without buying media.
 
-### 04 — Stalled Studio
+### 04 — Invisible Studio
 
 *Studio level · Operations or alignment weakest*
 
@@ -137,7 +137,7 @@ Content has become a strategic business asset and competitive advantage.
 
 **How you will know it worked.** You have hit this level when the content line survives a planning cycle without being re-argued.
 
-### 05 — Funded Builder
+### 05 — Fragmented Builder
 
 *Publisher level · Strategy weakest, broad gaps*
 
@@ -154,41 +154,7 @@ Content has become a strategic business asset and competitive advantage.
 
 **How you will know it worked.** You have hit this level when you can say no to a good idea and give the reason in one sentence.
 
-### 06 — Curious Observer
-
-*Observer level · Most dimensions critical*
-
-**Who this is.** Marketing manager, solo operator, or a leader at a company under $10M. Genuinely early — and that is fine.
-
-**The trap.** Trying to be everywhere at once. Campaign-driven and episodic, reach entirely dependent on platforms and paid media, first-party data close to nonexistent.
-
-**The three moves.**
-- Choose exactly one owned channel and commit to it for two quarters. One.
-- Add a single signup path and record your starting subscriber number today so you have a baseline.
-- Publish on the same day every week. Frequency matters far less than predictability.
-
-**What to ignore.** Every platform you are not committing to this quarter.
-
-**How you will know it worked.** You have hit this level when the cadence holds for eight weeks without a rescue.
-
-### 07 — Internal Champion
-
-*Any level · High engagement, no budget authority*
-
-**Who this is.** A content lead, senior manager, or strategist who already believes and does not hold the budget.
-
-**The trap.** Building the case alone. You keep gathering more evidence when what is missing is a sponsor, not another slide.
-
-**The three moves.**
-- Turn the diagnostic into one page in your leadership's language: risk, cost, and the first 90 days.
-- Name the single executive whose problem this solves and lead with their problem, not the framework.
-- Ask for a small, specific, reversible first commitment rather than a program.
-
-**What to ignore.** A full strategy deck. Nobody approves a program they have not first agreed has a problem.
-
-**How you will know it worked.** You have hit this level when someone above you starts asking about the numbers unprompted.
-
-### 08 — Category Leader
+### 06 — Category Leader
 
 *Media Brand or Category Leader level · Few gaps*
 

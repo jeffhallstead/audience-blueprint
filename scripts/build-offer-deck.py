@@ -3,9 +3,9 @@
 Builds the Signature Offer Deck — a 16:9 PDF used live on sales calls to show
 what a 90-day engagement delivers over 30, 60 and 90 days.
 
-Phase content, KPI targets, dimensions and personas mirror the live product:
+Phase content, KPI targets, dimensions and Publisher Patterns mirror the live product:
   - src/lib/blueprint/rules.ts   (ROADMAP_TEMPLATES, KPI_RULES, categories)
-  - src/lib/personas.ts          (behavioral personas)
+  - src/lib/Publisher Patterns.ts          (behavioral Publisher Patterns)
   - src/lib/assessment/config.ts (maturity levels)
 
 Font handling (variable-font instancing with unique per-weight name records)
@@ -197,12 +197,12 @@ LEVELS = [
     ("5", "Category Leader", "86+"),
 ]
 
-PERSONAS = [
+PATTERNS = [
     ("Paid Media Plateau", "The brand was built on paid. The CAC curve is bending the wrong way."),
     ("Campaign Factory", "The team ships constantly, but nothing compounds."),
-    ("Orphaned Audience", "You have the content. You do not own the audience."),
-    ("Stalled Studio", "The content operation is real. The board cannot see it."),
-    ("Funded Builder", "Money and ambition are there. The sequence is not."),
+    ("Borrowed Audience", "You have the content. You do not own the audience."),
+    ("Invisible Studio", "The content operation is real. The board cannot see it."),
+    ("Fragmented Builder", "Money and ambition are there. The sequence is not."),
     ("Category Leader", "Few critical gaps — the question is defensibility."),
 ]
 
@@ -374,7 +374,7 @@ def slide_levels(c):
     footer(c, dark=True)
 
 
-def slide_personas(c):
+def slide_patterns(c):
     bg(c)
     y = slide_header(c, "The patterns", "Which one sounds like you?")
     y = para(c, "Thousands of score combinations resolve into a small number of recognizable "
@@ -382,7 +382,7 @@ def slide_personas(c):
          9.5 * inch)
     cw = (PAGE_W - 2 * M - 2 * 0.32 * inch) / 3
     top = y - 0.35 * inch
-    for i, (name, desc) in enumerate(PERSONAS):
+    for i, (name, desc) in enumerate(PATTERNS):
         col, row = i % 3, i // 3
         card(c, M + col * (cw + 0.32 * inch), top - row * 1.32 * inch, cw,
              1.18 * inch, name, [desc])
@@ -683,7 +683,7 @@ def build_markdown():
     w("Thousands of score combinations resolve into a small number of recognizable "
       "patterns. Naming yours is the first thing we do together.")
     w("")
-    for name, desc in PERSONAS:
+    for name, desc in PATTERNS:
         w(f"- **{name}** — {desc}")
     w("")
     w("## How it works: diagnose, blueprint, run")
@@ -803,7 +803,7 @@ def main():
     c.setAuthor("Jeff Hallstead")
 
     slides = [slide_cover, slide_problem, slide_dimensions, slide_levels,
-              slide_personas, slide_how]
+              slide_patterns, slide_how]
     for fn in slides:
         fn(c)
         c.showPage()

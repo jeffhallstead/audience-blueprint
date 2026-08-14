@@ -13,7 +13,7 @@ import { ActionList } from "@/components/blueprint/action-list";
 import { KpiGrid } from "@/components/blueprint/kpi-grid";
 import { UpgradeCta } from "@/components/blueprint/upgrade-cta";
 import { BlueprintEmptyState } from "@/components/blueprint/blueprint-empty-state";
-import { PersonaBanner } from "@/components/blueprint/persona-banner";
+import { PatternSummary } from "@/components/blueprint/pattern-summary";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -187,7 +187,7 @@ function blobToBase64(blob: Blob): Promise<string> {
 
   return (
     <div className="space-y-12">
-      <PersonaBanner blueprint={blueprint} />
+      <PatternSummary blueprint={blueprint} />
 
       {/* Hero */}
       <section
@@ -198,7 +198,7 @@ function blobToBase64(blob: Blob): Promise<string> {
         <div className="flex flex-col items-center gap-3">
           <ScoreRing score={blueprint.overall} />
           <span className="inline-flex rounded-full border border-brass/50 bg-brass/10 px-3 py-1 text-xs font-medium text-brass">
-            Level {maturity.level} · {maturity.title}
+            Publisher Maturity: Level {maturity.level} — {maturity.title}
           </span>
         </div>
         <div className="space-y-5">

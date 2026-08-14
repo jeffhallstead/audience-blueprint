@@ -30,6 +30,7 @@ import {
   type ResourceRule,
   type RoadmapPhaseTemplate,
 } from "./rules";
+import { resolvePublisherPattern, type PublisherPattern } from "@/lib/publisher-patterns";
 
 export interface BlueprintInput {
   overall: number;
@@ -122,11 +123,19 @@ export interface Blueprint {
   overall: number;
   completedAt: string | null;
   organizationName: string | null;
+  /**
+   * Diagnostic interpretation layer. Derived from maturity level plus the six
+   * dimension scores; it frames and prioritizes the recommendations below, it
+   * does not replace them.
+   */
+  pattern: PublisherPattern;
   summary: {
     position: string;
     biggestOpportunity: string;
     biggestRisk: string;
     recommendedFocus: string;
+    /** The pattern's strategic emphasis for this Blueprint. */
+    strategicEmphasis: string;
   };
   categories: CategoryReading[];
   opportunities: OpportunityReading[];
@@ -255,6 +264,11 @@ export function generateBlueprint(input: BlueprintInput): Blueprint {
   const weakest = weakestOrder[0]!;
   const strongest = byScoreDesc[0]!;
 
+  const pattern = resolvePublisherPattern(
+    maturity.level,
+    Object.fromEntries(categories.map((item) => [item.id, item.score])),
+  );
+
   const quickWins = pickActions(QUICK_WIN_RULES, categories, 3);
   const longTerm = pickActions(LONG_TERM_RULES, categories, 3);
 
@@ -302,6 +316,7 @@ export function generateBlueprint(input: BlueprintInput): Blueprint {
     overall: Math.round(input.overall),
     completedAt: input.completedAt,
     organizationName: input.organizationName,
+    pattern,
     summary: {
       position: SUMMARY_TEMPLATES.position[tier],
       biggestOpportunity:
@@ -309,6 +324,7 @@ export function generateBlueprint(input: BlueprintInput): Blueprint {
         `Extend your strongest capability — ${strongest.category.label.toLowerCase()} — into the rest of the program.`,
       biggestRisk: weakest.rule.band[weakest.band.band].explanation,
       recommendedFocus: SUMMARY_TEMPLATES.focus[tier],
+      strategicEmphasis: pattern.strategicEmphasis,
     },
     categories,
     opportunities,

@@ -9,6 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { IndexRadar } from "@/components/assessment/index-radar";
 import { CATEGORIES, MATURITY_LEVELS } from "@/lib/assessment/config";
 import { fetchLatestScores } from "@/lib/assessment/persistence";
+import { PatternDetail } from "@/components/blueprint/pattern-summary";
+import { PATTERN_EXPLAINER, resolvePublisherPattern } from "@/lib/publisher-patterns";
 
 export const Route = createFileRoute("/_authenticated/results")({
   head: () => ({
@@ -65,6 +67,7 @@ function Results() {
   const ranked = [...categories].sort((a, b) => b.score - a.score);
   const strengths = ranked.slice(0, 2);
   const opportunities = ranked.slice(-2).reverse();
+  const pattern = resolvePublisherPattern(data.maturityLevel, data.categories);
   const assessedOn = data.completedAt
     ? new Date(data.completedAt).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })
     : "—";
@@ -94,9 +97,10 @@ function Results() {
           <ProgressBar value={data.overall} tone="brass" />
           <div className="space-y-3">
             <p className="inline-flex rounded-full border border-primary/50 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-              Level {maturity.level} · {maturity.title}
+              Publisher Maturity: Level {maturity.level} — {maturity.title}
             </p>
             <p className="text-sm leading-relaxed text-foreground">{maturity.summary}</p>
+            <p className="text-xs text-muted-foreground">{PATTERN_EXPLAINER.indexLine}</p>
           </div>
           <ol className="grid grid-cols-5 gap-1 text-center">
             {MATURITY_LEVELS.map((level) => (
@@ -122,6 +126,8 @@ function Results() {
           <IndexRadar data={categories.map((category) => ({ label: category.label, score: category.score }))} />
         </div>
       </section>
+
+      <PatternDetail pattern={pattern} />
 
       <div className="grid gap-5 lg:grid-cols-2">
         <DashboardCard eyebrow="Category scores" title="Where you stand">
@@ -168,9 +174,9 @@ function Results() {
       </div>
 
       <DashboardCard
-        eyebrow={`Level ${maturity.level} · ${maturity.title}`}
+        eyebrow={`Publisher Maturity: Level ${maturity.level} — ${maturity.title}`}
         title="What this level means"
-        footer="Personalized recommendations and your 90-day roadmap arrive in the next phase."
+        footer={PATTERN_EXPLAINER.blueprintLine}
       >
         <ul className="space-y-2">
           {maturity.characteristics.map((item) => (

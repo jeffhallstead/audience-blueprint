@@ -232,6 +232,16 @@ export function buildExportRows(
         Key: "score:overall",
       }),
     );
+    rows.push(
+      row({
+        Type: "Pattern",
+        Category: "Publisher Pattern",
+        Title: blueprint.pattern.name,
+        Detail: `${blueprint.pattern.diagnosisLine} ${blueprint.pattern.blueprintPriority}`,
+        Status: blueprint.pattern.strategicShift,
+        Key: `pattern:${blueprint.pattern.id}`,
+      }),
+    );
     for (const category of blueprint.categories) {
       rows.push(
         row({
