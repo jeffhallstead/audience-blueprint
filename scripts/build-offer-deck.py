@@ -542,12 +542,12 @@ def slide_fit(c):
     c.roundRect(M + cw + 0.5 * inch, top - 3.0 * inch, cw, 3.0 * inch, 10, stroke=0, fill=1)
 
     yy = para(c, "A GOOD FIT", S["label"], M + 24, top - 0.35 * inch, cw - 48) - 14
-    bullets(c, FIT_YES, S["body"], M + 24, yy, cw - 48, gap=6)
+    bullets(c, FIT_YES, S["bullet_sm"], M + 24, yy, cw - 48, gap=6)
 
     x2 = M + cw + 0.5 * inch + 24
     yy = para(c, "NOT A FIT", ParagraphStyle("l2", parent=S["label"], textColor=MUTED),
               x2, top - 0.35 * inch, cw - 48) - 14
-    bullets(c, FIT_NO, ParagraphStyle("b2", parent=S["body"], textColor=MUTED),
+    bullets(c, FIT_NO, ParagraphStyle("b2", parent=S["bullet_sm"], textColor=MUTED),
             x2, yy, cw - 48, gap=6)
     footer(c)
 
