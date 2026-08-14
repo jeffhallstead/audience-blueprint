@@ -90,8 +90,8 @@ def styles():
     return {
         "kicker": st("kicker", "BodyBold", 11, 14, INDIGO),
         "kicker_d": st("kicker_d", "BodyBold", 11, 14, INDIGO),
-        "title": st("title", "Display", 40, 45, INK),
-        "title_d": st("title_d", "Display", 44, 50, WHITE),
+        "title": st("title", "Display", 34, 39, INK),
+        "title_d": st("title_d", "Display", 38, 43, WHITE),
         "sub": st("sub", "DisplayLight", 22, 30, BODY),
         "sub_d": st("sub_d", "DisplayLight", 22, 30, DIMW),
         "body": st("body", "Body", 15, 23, BODY),
@@ -344,8 +344,8 @@ def slide_dimensions(c):
     top = y - 0.35 * inch
     for i, (name, desc) in enumerate(DIMENSIONS):
         col, row = i % 3, i // 3
-        card(c, M + col * (cw + 0.32 * inch), top - row * 1.45 * inch, cw,
-             1.25 * inch, name, [desc])
+        card(c, M + col * (cw + 0.32 * inch), top - row * 1.32 * inch, cw,
+             1.18 * inch, name, [desc])
     footer(c)
 
 
@@ -383,8 +383,8 @@ def slide_personas(c):
     top = y - 0.35 * inch
     for i, (name, desc) in enumerate(PERSONAS):
         col, row = i % 3, i // 3
-        card(c, M + col * (cw + 0.32 * inch), top - row * 1.45 * inch, cw,
-             1.25 * inch, name, [desc])
+        card(c, M + col * (cw + 0.32 * inch), top - row * 1.32 * inch, cw,
+             1.18 * inch, name, [desc])
     footer(c)
 
 
