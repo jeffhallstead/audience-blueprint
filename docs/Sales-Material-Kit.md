@@ -2,19 +2,19 @@
 
 Version 1.0 · August 2026 · For warm leads and post-assessment prospects
 
-This kit maps the eight behavioral personas from `docs/Customer-Personas.md` to website copy, short-form video scripts, and Instagram ad targeting. The voice is conversational Jeff — first-person, story-led, and direct. The core ICP sweet spot is Personas 1–5. Personas 6–8 are routed to product, nurture, or partnership, not direct sales.
+This kit maps the six Publisher Patterns from `docs/Publisher-Patterns.md` to website copy, short-form video scripts, and Instagram ad targeting. The voice is conversational Jeff — first-person, story-led, and direct. The core ICP sweet spot is Patterns 1–5. the two sales signals are routed to product, nurture, or partnership, not direct sales.
 
 ---
 
-## Quick reference: persona to offer routing
+## Quick reference: pattern to offer routing
 
-| Persona | Index tier | Weakest category | Primary offer | Where they appear |
+| Pattern | Index tier | Weakest category | Primary offer | Where they appear |
 | --- | --- | --- | --- | --- |
 | 1 Paid Media Plateau | Publisher | Distribution | 3–6 month consulting | Website, ads, dashboard CTA |
 | 2 Campaign Factory | Publisher | Operations | Blueprint → OS → consulting | Website, ads, dashboard CTA |
-| 3 Orphaned Audience | Publisher/Studio | Audience | 3–6 month consulting | Website, ads, dashboard CTA |
-| 4 Stalled Studio | Studio | Operations / alignment | Senior consulting | Website, ads, dashboard CTA |
-| 5 Funded Builder | Publisher | Strategy | $49 Blueprint → OS | Website, ads, product nurture |
+| 3 Borrowed Audience | Publisher/Studio | Audience | 3–6 month consulting | Website, ads, dashboard CTA |
+| 4 Invisible Studio | Studio | Operations / alignment | Senior consulting | Website, ads, dashboard CTA |
+| 5 Fragmented Builder | Publisher | Strategy | $49 Blueprint → OS | Website, ads, product nurture |
 | 6 Curious Observer | Observer | All | Product only | Nurture, not sales |
 | 7 Internal Champion | Any | Any | Free + exports | Dashboard export prompt |
 | 8 Category Leader | Media Brand+ | Few | Partner / referral | Manual, not paid ads |
@@ -30,7 +30,7 @@ Place this section after the three-pillar section and before `PersonalizationPro
 Heading: **“Which of these sounds like you?”**
 Subhead: *“Your Publisher Index score and weakest category point to one of five common patterns. Each one has a different next step.”*
 
-#### Persona cards (P1–P5)
+#### Pattern cards (P1–P5)
 
 **Card 1 — Paid Media Plateau**
 - Headline: “You built the brand on paid media. Now the CAC curve is bending the wrong way.”
@@ -42,35 +42,35 @@ Subhead: *“Your Publisher Index score and weakest category point to one of fiv
 - Body: “Campaigns launch, then vanish. I help teams build an editorial operating cadence so the work keeps working when nobody is forcing it.”
 - CTA: “Start with the free Publisher Test” → `/auth?mode=signup&plan=test`
 
-**Card 3 — Orphaned Audience**
+**Card 3 — Borrowed Audience**
 - Headline: “You have the content. You do not own the audience.”
 - Body: “Followers, lists, and subscribers are scattered across platforms you do not control. I help brands build a direct audience relationship that survives an algorithm change.”
 - CTA: “Start with the free Publisher Test” → `/auth?mode=signup&plan=test`
 
-**Card 4 — Stalled Studio**
+**Card 4 — Invisible Studio**
 - Headline: “The content operation is real. The board cannot see it.”
 - Body: “You have a funded team, recurring formats, and no measurement story. I help leaders translate content into a board-level narrative with numbers behind it.”
 - CTA: “Start with the free Publisher Test” → `/auth?mode=signup&plan=test`
 
-**Card 5 — Funded Builder**
+**Card 5 — Fragmented Builder**
 - Headline: “You have money and ambition. You need a sequence.”
 - Body: “Eight priorities is the same as zero. I help founders and first marketing leaders decide which two moves matter now and which can wait.”
 - CTA: “Start with the free Publisher Test” → `/auth?mode=signup&plan=test`
 
-### 1.2 Dashboard persona banner
+### 1.2 Dashboard pattern banner
 
 After a user completes the assessment, show a banner that mirrors their weakest category back to them using the language above.
 
 - If weakest category is `distribution` and tier is Publisher: show **Paid Media Plateau** language.
-- If weakest category is `operations`: show **Campaign Factory** or **Stalled Studio** depending on tier (Observer/Publisher → Campaign Factory; Studio → Stalled Studio).
-- If weakest category is `audience`: show **Orphaned Audience**.
-- If weakest category is `strategy` and tier is Publisher or lower: show **Funded Builder**.
+- If weakest category is `operations`: show **Campaign Factory** or **Invisible Studio** depending on tier (Observer/Publisher → Campaign Factory; Studio → Invisible Studio).
+- If weakest category is `audience`: show **Borrowed Audience**.
+- If weakest category is `strategy` and tier is Publisher or lower: show **Fragmented Builder**.
 - If tier is Observer (all categories weak): show **Curious Observer** language with a product-only CTA.
 - If tier is Media Brand or Category Leader: show **Category Leader** partner language.
 
 Banner structure:
-- Eyebrow: “Your Publisher Index pattern: {Persona name}”
-- Headline: the persona headline from the homepage card
+- Eyebrow: “Your Publisher Index pattern: {Pattern name}”
+- Headline: the pattern headline from the homepage card
 - Body: one sentence of diagnosis + one sentence of the offer
 - CTA: “Book a 20-minute call” → `https://jeffhallstead.com/contact` for P1–P4; “See your roadmap” → `/roadmap` for P5; “Join the OS waitlist” for P6; no CTA for P8.
 
@@ -92,7 +92,7 @@ Subhead: *“Pick the pattern that matches your situation and I’ll tell you th
 
 ## 2. Short sales video scripts
 
-Format: 15–30 seconds, conversational Jeff, single-camera direct-to-camera or screen recording. No music required. Record one per core ICP persona. The first script can be reused as a template for pacing and tone.
+Format: 15–30 seconds, conversational Jeff, single-camera direct-to-camera or screen recording. No music required. Record one per core ICP pattern. The first script can be reused as a template for pacing and tone.
 
 ### P1 — Paid Media Plateau (0:25)
 
@@ -118,7 +118,7 @@ Take the free test. The roadmap is the pitch.”
 
 CTA on screen: **Take the free Publisher Test →**
 
-### P3 — Orphaned Audience (0:22)
+### P3 — Borrowed Audience (0:22)
 
 “You have built the content. You do not own the audience.
 
@@ -130,7 +130,7 @@ This is the fastest path I see from assessment to real consulting work. Start wi
 
 CTA on screen: **Start the free Publisher Test →**
 
-### P4 — Stalled Studio (0:26)
+### P4 — Invisible Studio (0:26)
 
 “You have a real content operation. Recurring formats. A funded team. And every planning cycle, the budget gets re-litigated.
 
@@ -142,7 +142,7 @@ Start with the free Publisher Test. The Blueprint becomes the credibility artifa
 
 CTA on screen: **Start the free Publisher Test →**
 
-### P5 — Funded Builder (0:21)
+### P5 — Fragmented Builder (0:21)
 
 “Eight priorities is the same as zero.
 
@@ -202,7 +202,7 @@ The Publisher Test identifies where your operating cadence breaks and gives you 
 - **Destination**: same
 - **Creative suggestion**: Screen recording of the dashboard roadmap section, with Jeff VO.
 
-### P3 — Orphaned Audience
+### P3 — Borrowed Audience
 
 - **Target audience**
   - Job titles: Brand Director, Head of Content, VP Brand, Content Strategist
@@ -223,7 +223,7 @@ The Publisher Test scores your audience ownership and shows you the first three 
 - **Destination**: same
 - **Creative suggestion**: Jeff VO over a simple visual of social icons draining into a single owned newsletter list.
 
-### P4 — Stalled Studio
+### P4 — Invisible Studio
 
 - **Target audience**
   - Job titles: CMO, VP Brand, Chief Content Officer, VP Communications
@@ -244,7 +244,7 @@ The Publisher Test gives you a measurement-backed narrative and a 90-day plan to
 - **Destination**: same
 - **Creative suggestion**: Jeff direct-to-camera in a clean, neutral setting; authoritative, not salesy.
 
-### P5 — Funded Builder
+### P5 — Fragmented Builder
 
 - **Target audience**
   - Job titles: Founder, Cofounder, CMO, VP Marketing, Head of Growth, Marketing Lead
@@ -290,13 +290,13 @@ Do not target with paid ads. On the dashboard, show:
 
 ## 5. How to apply this material
 
-1. **Website**: Add the homepage persona section, dashboard banner, and pricing selector in one pass. Use the same persona labels in all three places so a user sees consistent language.
+1. **Website**: Add the homepage pattern section, dashboard banner, and pricing selector in one pass. Use the same pattern labels in all three places so a user sees consistent language.
 2. **Video**: Record the five scripts on a phone or screen recorder. The first 3 seconds of each should state the hook directly. End with the on-screen CTA and URL.
-3. **Ads**: Create one campaign per persona in Meta Ads Manager. Start with a small daily budget and the assessment completion event as the optimization event. Use the destination URL with UTM parameters for tracking.
+3. **Ads**: Create one campaign per pattern in Meta Ads Manager. Start with a small daily budget and the assessment completion event as the optimization event. Use the destination URL with UTM parameters for tracking.
 4. **Dashboard**: The banner should be driven by the user’s weakest category and tier, which the blueprint already computes. No new data model is required.
 
 ## 6. Measurement
 
 - Track events already in the app: `assessment.completed`, `dashboard_viewed`, `pricing_viewed`, `commerce.purchase_completed`.
-- Add UTM tracking to ad destination URLs: `utm_source=instagram`, `utm_medium=paid_social`, `utm_campaign={persona}`.
+- Add UTM tracking to ad destination URLs: `utm_source=instagram`, `utm_medium=paid_social`, `utm_campaign={pattern}`.
 - Use the admin lead workbench to flag high-engagement leads who match P1–P4 for outreach.
