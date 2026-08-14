@@ -268,7 +268,7 @@ DELIVERABLES = [
     ("The 90-day plan", "Three phases with objectives, activities, owners, and success metrics."),
     ("KPI framework", "The handful of numbers that prove the work landed."),
     ("Executive readout", "A session and a document your leadership can act on."),
-    ("Working sessions", "[CADENCE — e.g. biweekly 60-minute sessions — confirm]"),
+    ("Working sessions", "90 days, 60-minute sessions once a week"),
     ("Scope boundary", "Strategy, specs, systems, and measurement. Asset production sits with your team or a partner we select and brief together."),
 ]
 
@@ -556,14 +556,14 @@ def slide_fit(c):
 
 def slide_why(c):
     bg(c, dark=True)
-    y = slide_header(c, "Why me", "I ran newsrooms before I advised brands.", dark=True)
+    y = slide_header(c, "Why me", "I advised cable and TV networks before I advised brands.", dark=True)
     y = para(c, "Most content consultants come from agencies. I come from media — which is "
             "why the plan you get is a publishing operation, not a campaign calendar. "
             "The Blueprint you will see on our call is the same system I use with every "
             "client.", S["body_d"], M, y, 9.4 * inch)
-    stats = [("[YEARS]", "Years in media and publishing leadership"),
-             ("[N]", "Brand and publisher engagements led"),
-             ("[PROOF]", "Representative client outcome — to confirm")]
+    stats = [("15+", "Years in media and audience analytics leadership"),
+             ("Multi-stage", "Built audience systems for publishers, networks, and brand teams across multiple revenue stages"),
+             ("Networks", "Advised cable and TV networks before advising brands")]
     cw = (PAGE_W - 2 * M - 2 * 0.32 * inch) / 3
     top = y - 0.5 * inch
     for i, (big, lbl) in enumerate(stats):
@@ -607,7 +607,7 @@ def slide_start(c):
     c.drawString(M + 20, 1.5 * inch, "Engagement investment")
     c.setFillColor(INDIGO)
     c.setFont("BodyBold", 14)
-    c.drawString(M + 20, 1.2 * inch, "[PRICE — confirm]  ·  [DURATION / SESSION CADENCE — confirm]")
+    c.drawString(M + 20, 1.2 * inch, "$5,000/month  ·  90 days, 60-minute sessions once a week")
     footer(c)
 
 
