@@ -16,7 +16,7 @@ Add an AI-powered strategic advisor that generates personalized recommendations,
 - Lovable AI Gateway integration via `src/lib/ai-gateway.server.ts`.
 - Default model: `google/gemini-3.6-flash`.
 - Context assembly (`src/lib/copilot/context.server.ts`) building a briefing from scores, blueprint, roadmap, answers, saved recommendations, and prior documents.
-- Persona and prompt instructions in `src/lib/copilot/prompts.server.ts`.
+- System voice and prompt instructions in `src/lib/copilot/prompts.server.ts`.
 - Structured document generation with strict `json_schema` outputs.
 - Streaming chat endpoint at `src/routes/api/chat.ts`.
 - Versioned, regenerable documents.

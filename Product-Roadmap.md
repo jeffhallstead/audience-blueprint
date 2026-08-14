@@ -30,7 +30,7 @@ Config-driven scoring, six categories, five maturity levels, radar chart, autosa
 Executive dashboard, opportunity matrix, KPI grid, editable roadmap, and the blueprint rule engine.
 
 ### Phase 4 — Publisher Copilot™ AI strategy engine
-Streaming chat, generated documents, scenario simulator, prompt packs, and the "Chief Content Officer" persona.
+Streaming chat, generated documents, scenario simulator, prompt packs, and the "Chief Content Officer" system voice.
 
 ### Phase 5 — Commercialization and customer portal
 Paddle payments, entitlements, customer billing panel, invoices, refund policy, and legal pages.

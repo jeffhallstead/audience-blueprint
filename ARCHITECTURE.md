@@ -72,7 +72,7 @@ never re-explains their business and the client cannot spoof context.
   strict `json_schema` the model omits required fields.
 - `src/lib/copilot/context.server.ts` — assembles scores, blueprint, roadmap, answers,
   saved recommendations, and prior documents into the briefing.
-- `src/lib/copilot/prompts.server.ts` — persona, per-objective instructions, and the
+- `src/lib/copilot/prompts.server.ts` — system voice, per-objective instructions, and the
   honesty rules (state assumptions, never guarantee outcomes, no invented figures).
 - `src/lib/copilot/copilot.functions.ts` — structured generation: documents (versioned,
   regenerable), scenario simulations, and tailored prompt packs.
