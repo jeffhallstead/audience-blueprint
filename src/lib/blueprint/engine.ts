@@ -122,11 +122,19 @@ export interface Blueprint {
   overall: number;
   completedAt: string | null;
   organizationName: string | null;
+  /**
+   * Diagnostic interpretation layer. Derived from maturity level plus the six
+   * dimension scores; it frames and prioritizes the recommendations below, it
+   * does not replace them.
+   */
+  pattern: PublisherPattern;
   summary: {
     position: string;
     biggestOpportunity: string;
     biggestRisk: string;
     recommendedFocus: string;
+    /** The pattern's strategic emphasis for this Blueprint. */
+    strategicEmphasis: string;
   };
   categories: CategoryReading[];
   opportunities: OpportunityReading[];
