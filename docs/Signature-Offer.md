@@ -46,9 +46,9 @@ Thousands of score combinations resolve into a small number of recognizable patt
 
 - **Paid Media Plateau** — The brand was built on paid. The CAC curve is bending the wrong way.
 - **Campaign Factory** — The team ships constantly, but nothing compounds.
-- **Orphaned Audience** — You have the content. You do not own the audience.
-- **Stalled Studio** — The content operation is real. The board cannot see it.
-- **Funded Builder** — Money and ambition are there. The sequence is not.
+- **Borrowed Audience** — You have the content. You do not own the audience.
+- **Invisible Studio** — The content operation is real. The board cannot see it.
+- **Fragmented Builder** — Money and ambition are there. The sequence is not.
 - **Category Leader** — Few critical gaps — the question is defensibility.
 
 ## How it works: diagnose, blueprint, run

@@ -15,9 +15,9 @@ This kit maps the six Publisher Patterns from `docs/Publisher-Patterns.md` to we
 | 3 Borrowed Audience | Publisher/Studio | Audience | 3–6 month consulting | Website, ads, dashboard CTA |
 | 4 Invisible Studio | Studio | Operations / alignment | Senior consulting | Website, ads, dashboard CTA |
 | 5 Fragmented Builder | Publisher | Strategy | $49 Blueprint → OS | Website, ads, product nurture |
-| 6 Curious Observer | Observer | All | Product only | Nurture, not sales |
-| 7 Internal Champion | Any | Any | Free + exports | Dashboard export prompt |
-| 8 Category Leader | Media Brand+ | Few | Partner / referral | Manual, not paid ads |
+| Signal: Curious Observer | Observer | All | Product only | Nurture, not sales |
+| Signal: Internal Champion | Any | Any | Free + exports | Dashboard export prompt |
+| 6 Category Leader | Media Brand+ | Few | Partner / referral | Manual, not paid ads |
 
 ---
 
