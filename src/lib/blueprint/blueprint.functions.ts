@@ -54,6 +54,7 @@ export const getBlueprintPayload = createServerFn({ method: "GET" })
         biggestOpportunity: "",
         biggestRisk: "",
         recommendedFocus: "",
+        strategicEmphasis: full.summary.strategicEmphasis,
       },
       opportunities: [],
       strengths: [],
