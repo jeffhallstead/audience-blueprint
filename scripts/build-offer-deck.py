@@ -438,11 +438,11 @@ def slide_phase(c, ph, index):
         _, h = p.wrapOn(c, rw - 34, PAGE_H)
         c.setFillColor(HexColor("#fafafc"))
         c.setStrokeColor(RULE)
-        c.roundRect(rx, yy - h - 18, rw, h + 18, 6, stroke=1, fill=1)
+        c.roundRect(rx, yy - h - 16, rw, h + 16, 6, stroke=1, fill=1)
         c.setFillColor(INDIGO)
-        c.circle(rx + 13, yy - h / 2 - 9, 3.2, stroke=0, fill=1)
-        p.drawOn(c, rx + 26, yy - h - 9)
-        yy -= h + 26
+        c.circle(rx + 13, yy - h / 2 - 8, 3.2, stroke=0, fill=1)
+        p.drawOn(c, rx + 26, yy - h - 8)
+        yy -= h + 22
 
     c.setFillColor(OBSIDIAN)
     c.roundRect(M, 0.95 * inch, PAGE_W - 2 * M, 0.95 * inch, 8, stroke=0, fill=1)
