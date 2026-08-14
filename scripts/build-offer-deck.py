@@ -458,8 +458,9 @@ def slide_calibration(c):
     bg(c, dark=True)
     y = slide_header(c, "Calibration", "The same three phases, tuned to your level.", dark=True)
     y = para(c, "The phase structure never changes. What changes is what goes inside it — "
-            "the plan is generated from your scores, not selected from a shelf.",
-    y = para(c, "", S["body_d"], M, y, 1)
+             "the plan is generated from your scores, not selected from a shelf.",
+             S["body_d"], M, y, 9.6 * inch)
+
     rows = [
         ("Observer / Publisher", "Stand up one owned channel, prove a cadence, "
                                  "and earn the next round of investment."),
