@@ -214,28 +214,28 @@ PHASES = [
         "phase": "Foundation",
         "objective": "Concentrate investment behind the highest-yield franchise.",
         "activities": [
-            "Rank every active format by subscriber yield and retire the bottom third",
-            "Name a host and lock a season structure for the flagship format",
-            "Define the repurposing template: one asset, five derivatives",
-            "Set a single north-star audience metric reviewed monthly",
+            "Rank every active format by subscriber yield and recommend what to retire",
+            "Define the flagship format: audience, promise, host profile, and season structure",
+            "Write the repurposing spec: one asset, five derivatives",
+            "Set a single north-star audience metric and its reporting line",
         ],
-        "metrics": ["Portfolio ranked and pruned", "Season one greenlit",
-                    "Repurposing template in use"],
+        "metrics": ["Portfolio ranked and pruned", "Flagship format spec approved",
+                    "North-star metric agreed"],
         "deliverable": "Publisher Index score, full Blueprint, and a ranked portfolio decision",
     },
     {
         "days": "Days 31–60",
         "phase": "Execution",
-        "objective": "Scale production throughput and open new distribution paths.",
+        "objective": "Build the operating system and open new distribution paths.",
         "activities": [
-            "Ship the first four episodes of the flagship season",
-            "Sign three co-marketing partners with adjacent audiences",
-            "Automate the derivative production pipeline",
-            "Stand up the audience dashboard for weekly review",
+            "Stand up the editorial cadence: slate review, owners, and calendar",
+            "Define the production model and brief/shortlist production partners when needed",
+            "Build the partnership target list and outreach sequence for adjacent audiences",
+            "Specify and stand up the audience dashboard for weekly review",
         ],
-        "metrics": ["4 episodes shipped on schedule", "3 partnerships signed",
-                    "Reach per asset up 30%"],
-        "deliverable": "A running editorial system and a live audience dashboard",
+        "metrics": ["Editorial cadence running", "Production path resourced",
+                    "Dashboard live", "Partner pipeline opened"],
+        "deliverable": "An editorial operating system and a live audience dashboard",
     },
     {
         "days": "Days 61–90",
@@ -243,11 +243,11 @@ PHASES = [
         "objective": "Tie audience growth to commercial outcomes.",
         "activities": [
             "Attribute pipeline influence to owned audience segments",
-            "Run a retention program against the most engaged cohort",
-            "Rebalance spend from paid reach to owned production",
-            "Publish a quarterly audience report to the executive team",
+            "Design the retention program against the most engaged cohort",
+            "Recommend the shift from paid reach to owned investment",
+            "Deliver the quarterly audience report format and first executive readout",
         ],
-        "metrics": ["Pipeline influence reported", "Retention cohort improved",
+        "metrics": ["Pipeline influence reported", "Retention program designed",
                     "Paid dependency reduced"],
         "deliverable": "An executive readout and a funded 12-month plan",
     },
@@ -258,7 +258,7 @@ KPIS = [
     ("Engaged reach", "Audience with a meaningful interaction in 30 days.", "35% of list"),
     ("Returning visitors", "Share of visits from known audience.", "40% of sessions"),
     ("Organic traffic", "Non-paid sessions to owned properties.", "Grow 15% per quarter"),
-    ("Publishing frequency", "Flagship assets shipped per month.", "4 per month"),
+    ("Publishing cadence", "Flagship assets the operating system is built to sustain.", "4 per month"),
     ("Paid dependency", "Share of reach bought rather than owned.", "Trending down"),
 ]
 
@@ -269,6 +269,7 @@ DELIVERABLES = [
     ("KPI framework", "The handful of numbers that prove the work landed."),
     ("Executive readout", "A session and a document your leadership can act on."),
     ("Working sessions", "[CADENCE — e.g. biweekly 60-minute sessions — confirm]"),
+    ("Scope boundary", "Strategy, specs, systems, and measurement. Asset production sits with your team or a partner we select and brief together."),
 ]
 
 FIT_YES = [
@@ -279,7 +280,7 @@ FIT_YES = [
 ]
 FIT_NO = [
     "You need a single campaign executed next week",
-    "You want freelance content production",
+    "You need someone to produce the assets — this engagement designs and directs the work, it does not shoot it",
     "There is no executive sponsor for owned audience",
     "You are looking for the cheapest option",
 ]
@@ -437,11 +438,11 @@ def slide_phase(c, ph, index):
         _, h = p.wrapOn(c, rw - 34, PAGE_H)
         c.setFillColor(HexColor("#fafafc"))
         c.setStrokeColor(RULE)
-        c.roundRect(rx, yy - h - 18, rw, h + 18, 6, stroke=1, fill=1)
+        c.roundRect(rx, yy - h - 16, rw, h + 16, 6, stroke=1, fill=1)
         c.setFillColor(INDIGO)
-        c.circle(rx + 13, yy - h / 2 - 9, 3.2, stroke=0, fill=1)
-        p.drawOn(c, rx + 26, yy - h - 9)
-        yy -= h + 26
+        c.circle(rx + 13, yy - h / 2 - 8, 3.2, stroke=0, fill=1)
+        p.drawOn(c, rx + 26, yy - h - 8)
+        yy -= h + 22
 
     c.setFillColor(OBSIDIAN)
     c.roundRect(M, 0.95 * inch, PAGE_W - 2 * M, 0.95 * inch, 8, stroke=0, fill=1)
@@ -482,10 +483,11 @@ def slide_deliverables(c):
     y = slide_header(c, "Deliverables", "What you walk away with.")
     cw = (PAGE_W - 2 * M - 0.45 * inch) / 2
     top = y + 0.1 * inch
+    row_h = 1.12 * inch
     for i, (t, d) in enumerate(DELIVERABLES):
         col, row = i % 2, i // 2
         x = M + col * (cw + 0.45 * inch)
-        yy = top - row * 1.28 * inch
+        yy = top - row * row_h
         c.setFillColor(INDIGO)
         c.circle(x + 7, yy - 9, 5, stroke=0, fill=1)
         y2 = para(c, t, S["cardh"], x + 24, yy, cw - 24) - 6
