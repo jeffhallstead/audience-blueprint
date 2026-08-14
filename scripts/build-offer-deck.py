@@ -483,10 +483,11 @@ def slide_deliverables(c):
     y = slide_header(c, "Deliverables", "What you walk away with.")
     cw = (PAGE_W - 2 * M - 0.45 * inch) / 2
     top = y + 0.1 * inch
+    row_h = 1.12 * inch
     for i, (t, d) in enumerate(DELIVERABLES):
         col, row = i % 2, i // 2
         x = M + col * (cw + 0.45 * inch)
-        yy = top - row * 1.28 * inch
+        yy = top - row * row_h
         c.setFillColor(INDIGO)
         c.circle(x + 7, yy - 9, 5, stroke=0, fill=1)
         y2 = para(c, t, S["cardh"], x + 24, yy, cw - 24) - 6
