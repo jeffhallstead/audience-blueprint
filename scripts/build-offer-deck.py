@@ -449,7 +449,7 @@ def slide_phase(c, ph, index):
     c.setFillColor(WHITE)
     c.setFont("Body", 14)
     c.drawString(M + 20, 1.28 * inch, ph["deliverable"])
-    footer(c, page)
+    footer(c)
 
 
 def slide_calibration(c):
