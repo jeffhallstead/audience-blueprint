@@ -96,6 +96,8 @@ def styles():
         "sub_d": st("sub_d", "DisplayLight", 22, 30, DIMW),
         "body": st("body", "Body", 15, 23, BODY),
         "body_d": st("body_d", "Body", 15, 23, DIMW),
+        "bullet_sm": st("bullet_sm", "Body", 13.5, 20, BODY, leftIndent=18,
+                        bulletIndent=2, spaceAfter=6),
         "bullet": st("bullet", "Body", 15, 23, BODY, leftIndent=18, bulletIndent=2,
                      spaceAfter=8),
         "bullet_d": st("bullet_d", "Body", 15, 23, DIMW, leftIndent=18, bulletIndent=2,
@@ -335,11 +337,11 @@ def slide_problem(c):
 def slide_dimensions(c):
     bg(c)
     y = slide_header(c, "The diagnostic", "Six dimensions decide whether content compounds.")
-    para(c, "Every engagement starts with the Publisher Test — a 0–100 index scored "
+    y = para(c, "Every engagement starts with the Publisher Test — a 0–100 index scored "
             "across these six dimensions. It tells us where the constraint actually is "
             "before anyone proposes work.", S["body"], M, y, 9.5 * inch)
     cw = (PAGE_W - 2 * M - 2 * 0.32 * inch) / 3
-    top = 3.85 * inch
+    top = y - 0.35 * inch
     for i, (name, desc) in enumerate(DIMENSIONS):
         col, row = i % 3, i // 3
         card(c, M + col * (cw + 0.32 * inch), top - row * 1.45 * inch, cw,
@@ -350,11 +352,11 @@ def slide_dimensions(c):
 def slide_levels(c):
     bg(c, dark=True)
     y = slide_header(c, "The ladder", "Five levels of publisher maturity.", dark=True)
-    para(c, "Your score places you on this ladder. The engagement is calibrated to the "
+    y = para(c, "Your score places you on this ladder. The engagement is calibrated to the "
             "rung you are on — the plan for a Publisher is not the plan for a Studio.",
          S["body_d"], M, y, 9.5 * inch)
     cw = (PAGE_W - 2 * M - 4 * 0.25 * inch) / 5
-    top = 3.7 * inch
+    top = y - 0.4 * inch
     for i, (num, name, rng) in enumerate(LEVELS):
         x = M + i * (cw + 0.25 * inch)
         c.setFillColor(HexColor("#141419"))
@@ -374,11 +376,11 @@ def slide_levels(c):
 def slide_personas(c):
     bg(c)
     y = slide_header(c, "The patterns", "Which one sounds like you?")
-    para(c, "Thousands of score combinations resolve into a small number of recognizable "
+    y = para(c, "Thousands of score combinations resolve into a small number of recognizable "
             "patterns. Naming yours is the first thing we do together.", S["body"], M, y,
          9.5 * inch)
     cw = (PAGE_W - 2 * M - 2 * 0.32 * inch) / 3
-    top = 3.85 * inch
+    top = y - 0.35 * inch
     for i, (name, desc) in enumerate(PERSONAS):
         col, row = i % 3, i // 3
         card(c, M + col * (cw + 0.32 * inch), top - row * 1.45 * inch, cw,
@@ -419,15 +421,15 @@ def slide_how(c):
 def slide_phase(c, ph, index):
     bg(c)
     y = slide_header(c, f"{ph['days']}  ·  Phase {index} of 3", ph["phase"])
-    para(c, ph["objective"], S["sub"], M, y + 8, 9.8 * inch)
+    y = para(c, ph["objective"], S["sub"], M, y + 14, 9.8 * inch)
 
-    top = 3.95 * inch
+    top = y - 0.4 * inch
     lw = 6.1 * inch
     rw = PAGE_W - 2 * M - lw - 0.45 * inch
     rx = M + lw + 0.45 * inch
 
     yy = para(c, "WHAT WE DO", S["label"], M, top, lw) - 12
-    bullets(c, ph["activities"], S["body"], M, yy, lw, gap=4)
+    bullets(c, ph["activities"], S["bullet_sm"], M, yy, lw, gap=3)
 
     yy = para(c, "HOW WE MEASURE IT", S["label"], rx, top, rw) - 12
     for m in ph["metrics"]:
@@ -455,9 +457,9 @@ def slide_phase(c, ph, index):
 def slide_calibration(c):
     bg(c, dark=True)
     y = slide_header(c, "Calibration", "The same three phases, tuned to your level.", dark=True)
-    para(c, "The phase structure never changes. What changes is what goes inside it — "
+    y = para(c, "The phase structure never changes. What changes is what goes inside it — "
             "the plan is generated from your scores, not selected from a shelf.",
-         S["body_d"], M, y, 9.6 * inch)
+    y = para(c, "", S["body_d"], M, y, 1)
     rows = [
         ("Observer / Publisher", "Stand up one owned channel, prove a cadence, "
                                  "and earn the next round of investment."),
@@ -466,7 +468,7 @@ def slide_calibration(c):
         ("Media Brand / Category Leader", "Govern the audience as a business asset, "
                                           "extend the franchise, and defend the moat."),
     ]
-    top = 3.9 * inch
+    top = y - 0.4 * inch
     cw = (PAGE_W - 2 * M - 2 * 0.32 * inch) / 3
     for i, (t, d) in enumerate(rows):
         card(c, M + i * (cw + 0.32 * inch), top, cw, 2.0 * inch, t, [d], dark=True,
@@ -493,10 +495,10 @@ def slide_deliverables(c):
 def slide_kpis(c):
     bg(c)
     y = slide_header(c, "Proof", "How we know it worked.")
-    para(c, "Targets shown are the standard framing for a mid-maturity engagement; "
+    y = para(c, "Targets shown are the standard framing for a mid-maturity engagement; "
             "yours are set against your own baseline in phase one.", S["body"], M, y,
          9.6 * inch)
-    top = 3.75 * inch
+    top = y - 0.45 * inch
     x0, w = M, PAGE_W - 2 * M
     c1, c2, c3 = 3.1 * inch, w - 3.1 * inch - 2.5 * inch, 2.5 * inch
     c.setFillColor(INK)
@@ -552,7 +554,7 @@ def slide_fit(c):
 def slide_why(c):
     bg(c, dark=True)
     y = slide_header(c, "Why me", "I ran newsrooms before I advised brands.", dark=True)
-    para(c, "Most content consultants come from agencies. I come from media — which is "
+    y = para(c, "Most content consultants come from agencies. I come from media — which is "
             "why the plan you get is a publishing operation, not a campaign calendar. "
             "The Blueprint you will see on our call is the same system I use with every "
             "client.", S["body_d"], M, y, 9.4 * inch)
@@ -560,7 +562,7 @@ def slide_why(c):
              ("[N]", "Brand and publisher engagements led"),
              ("[PROOF]", "Representative client outcome — to confirm")]
     cw = (PAGE_W - 2 * M - 2 * 0.32 * inch) / 3
-    top = 3.5 * inch
+    top = y - 0.5 * inch
     for i, (big, lbl) in enumerate(stats):
         x = M + i * (cw + 0.32 * inch)
         c.setFillColor(HexColor("#141419"))
