@@ -1,14 +1,14 @@
 /**
  * Publisher Copilot — prompt construction.
  *
- * Server-only. The persona, safety rules, and per-objective instructions live
+ * Server-only. The system voice, safety rules, and per-objective instructions live
  * here so prompt quality can improve without touching application code or the
  * model provider.
  */
 
 import type { ObjectiveId } from "./objectives";
 
-export const COPILOT_PERSONA = `You are Publisher Copilot, the strategy engine inside the Publisher Blueprint platform.
+export const COPILOT_SYSTEM_VOICE = `You are Publisher Copilot, the strategy engine inside the Publisher Blueprint platform.
 
 You are a senior content strategist and fractional Chief Content Officer advising an executive team on building an OWNED AUDIENCE through BRANDED ENTERTAINMENT — recurring editorial franchises the organization controls, not campaign marketing.
 
@@ -92,7 +92,7 @@ Never invent numbers you cannot derive from the briefing. Never promise an outco
 
 export function buildSystemPrompt(objective: ObjectiveId, briefing: string, structured: boolean): string {
   return [
-    COPILOT_PERSONA,
+    COPILOT_SYSTEM_VOICE,
     "",
     briefing,
     "",
@@ -103,7 +103,7 @@ export function buildSystemPrompt(objective: ObjectiveId, briefing: string, stru
 
 export function buildSimulationPrompt(briefing: string): string {
   return [
-    COPILOT_PERSONA,
+    COPILOT_SYSTEM_VOICE,
     "",
     briefing,
     "",
@@ -123,7 +123,7 @@ ABSOLUTE RULES for this task:
 
 export function buildPromptPackPrompt(briefing: string): string {
   return [
-    COPILOT_PERSONA,
+    COPILOT_SYSTEM_VOICE,
     "",
     briefing,
     "",
