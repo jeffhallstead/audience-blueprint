@@ -13,7 +13,7 @@ import { ActionList } from "@/components/blueprint/action-list";
 import { KpiGrid } from "@/components/blueprint/kpi-grid";
 import { UpgradeCta } from "@/components/blueprint/upgrade-cta";
 import { BlueprintEmptyState } from "@/components/blueprint/blueprint-empty-state";
-import { PersonaBanner } from "@/components/blueprint/persona-banner";
+import { PatternSummary } from "@/components/blueprint/pattern-summary";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -187,7 +187,7 @@ function blobToBase64(blob: Blob): Promise<string> {
 
   return (
     <div className="space-y-12">
-      <PersonaBanner blueprint={blueprint} />
+      <PatternSummary blueprint={blueprint} />
 
       {/* Hero */}
       <section
