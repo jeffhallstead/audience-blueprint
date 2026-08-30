@@ -1,27 +1,30 @@
-# Get the ad showing in beehiiv
+# LinkedIn Featured thumbnail — Publisher Test (502×262)
 
-The image URL itself is fine — it returns a real PNG over https on your domain. What's happening is that beehiiv's Custom HTML block sanitizes the markup: it strips the `<img>` tag and leaves the `src` behind as plain text, which is exactly the "raw URL as text" you're seeing. No amount of rewriting the `<img>` tag will get past that sanitizer.
+A minimal Executive Obsidian thumbnail for LinkedIn's Featured section. The user picked "Logo + CTA only," so the card carries only the brand wordmark/eyebrow and one CTA button — no headline — for maximum legibility at small size.
 
-So the fix is to stop asking the HTML block to render the image.
+## Visual spec (matches existing ad)
 
-## Recommended approach: native beehiiv blocks
+- **Canvas:** 502 × 262 px (LinkedIn Featured thumbnail ratio).
+- **Surface:** near-black Executive Obsidian (#0a0a0a / #09090b) with thin dark border and rounded corners.
+- **Brand mark:** "PUBLISHER BLUEPRINT" eyebrow, small caps, wide tracking, indigo-violet (#a5a6f6).
+- **CTA button:** indigo-violet fill (#6366f1), white text "Begin the Publisher's Test", rounded.
+- **Byline:** "by Jeff Hallstead" small grey, bottom corner (optional, only if it reads clean at this size).
+- **No headline copy** (per the user's choice).
 
-Build the ad from beehiiv's own blocks instead of one HTML paste:
+## Approach
 
-1. **Image block** — upload `ad-publisher-blueprint-720x400.png` directly (or paste the hosted URL if beehiiv accepts a URL upload), and set its link to `https://blueprint.jeffhallstead.com/test`.
-2. **Caption / text block** — "Free 12-minute assessment · No account required".
-3. **Button block** — "Take the free Publisher Test" pointing to the same link.
+Build it as a deterministic Python/PIL canvas (not AI image-gen) so the short CTA text renders pixel-perfect and brand-consistent:
 
-This renders reliably in both the web version and the emailed version, and the graphic already carries the headline and body copy.
+1. Render at 2x (1004×524) using brand fonts — Outfit (sans, available in the canvas-design font bundle) for eyebrow/button, plus a serif for any wordmark accent if it helps balance.
+2. Downscale to exactly 502×262 with LANCZOS for crisp retina-on-LinkedIn edges.
+3. Visually QA the rendered PNG (check for clipping, button padding, contrast, nothing touching edges) and refine before delivering.
 
-## What I'll produce
+## Deliverables
 
-1. A short step-by-step beehiiv setup note (`beehiiv-ad-setup.md`) with the exact image file, link, caption, and button label to use.
-2. A **text-only HTML snippet** (`publisher-blueprint-newsletter-ad-text-only.html`) — same card, headline, copy, and CTA button, with the image row removed — for the case where you'd rather keep a single HTML paste. Buttons built from table cells and background colors usually survive beehiiv's sanitizer even when images don't.
-3. Confirmation of whether beehiiv keeps the styled card at all: if the sanitizer also strips inline styles or nested tables, the native-blocks route is the only reliable path, and the setup note will say so plainly.
+- `/mnt/documents/publisher-test-linkedin-thumbnail-502x262.png` — the final thumbnail, posted in chat for download.
+- No app changes; this is a marketing asset only.
 
 ## Notes
 
-- No app code changes; these are newsletter assets only.
-- Uploading the PNG into beehiiv's own media library is the most robust option, since it serves the image from beehiiv's CDN.
-- The CTA stays `https://blueprint.jeffhallstead.com/test`, with the UTM variant noted for attribution.
+- LinkedIn Featured links to a URL, not the image — the recommended link is `https://blueprint.jeffhallstead.com/test`.
+- LinkedIn will display the thumbnail in its Featured card frame; keeping a safe interior margin so nothing is clipped.
