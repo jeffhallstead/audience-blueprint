@@ -3,10 +3,10 @@ import { cn } from "@/lib/utils";
 /** Product-first wordmark for Publisher Blueprint. */
 export function Logo({ className, inverted = false }: { className?: string; inverted?: boolean }) {
   return (
-    <span className={cn("inline-flex items-center gap-2 leading-none", className)}>
+    <span className={cn("inline-flex items-center gap-2.5 leading-none", className)}>
       <span
         className={cn(
-          "inline-flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground",
+          "inline-flex size-7 items-center justify-center rounded-sm bg-primary text-primary-foreground",
         )}
         aria-hidden
       >
@@ -16,12 +16,13 @@ export function Logo({ className, inverted = false }: { className?: string; inve
       </span>
       <span
         className={cn(
-          "font-[family-name:var(--font-wordmark)] text-[18px] font-semibold tracking-tight",
+          "font-[family-name:var(--font-wordmark)] text-[19px] font-bold tracking-[-0.01em]",
           inverted ? "text-sidebar-accent-foreground" : "text-foreground",
         )}
       >
         Publisher Blueprint
       </span>
     </span>
+
   );
 }
