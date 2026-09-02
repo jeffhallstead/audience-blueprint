@@ -7,16 +7,17 @@
 /*
  * Publisher Blueprint — design system
  *
- * Executive, minimal, high-contrast. Obsidian surfaces with an indigo-violet
- * product accent. Product-first sub-brand identity.
+ * Editorial white paper: white surfaces, near-black ink, serif headlines,
+ * quiet sans body. Almost no decorative color.
  * Components must never hardcode color utilities.
  */
 
 @theme inline {
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "DM Mono", ui-monospace, monospace;
-  --font-wordmark: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: Helvetica, "Helvetica Neue", Arial, sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-mono: Helvetica, "Helvetica Neue", Arial, sans-serif;
+  --font-wordmark: Georgia, "Times New Roman", serif;
+
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
