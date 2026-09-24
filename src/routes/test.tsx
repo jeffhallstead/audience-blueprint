@@ -34,26 +34,40 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/test")({
   head: () => ({
     meta: [
-      { title: "The free Publisher Test — Publisher Blueprint" },
+      { title: "The Publisher Test | Publisher Blueprint by Jeff Hallstead" },
       {
         name: "description",
         content:
-          "Score your content operation across seven dimensions in about 12 minutes. No account needed to start.",
-      },
-      { property: "og:title", content: "The free Publisher Test" },
-      {
-        property: "og:description",
-        content: "Seven sections, one Publisher Index score, and the category readings behind it. Free.",
+          "Score your brand's content operation across seven dimensions and get a prioritized 90-day plan. Free, about 12 minutes.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:site_name", content: "Publisher Blueprint" },
       { property: "og:url", content: "https://blueprint.jeffhallstead.com/test" },
+      {
+        property: "og:title",
+        content: "The Publisher Test: Is your brand renting its audience or owning it?",
+      },
+      {
+        property: "og:description",
+        content:
+          "Score your brand's content operation across seven dimensions and get a prioritized 90-day plan. Free, about 12 minutes.",
+      },
       { property: "og:image", content: "https://blueprint.jeffhallstead.com/og-image.png" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "627" },
       {
         property: "og:image:alt",
         content: "Publisher Blueprint: the Publisher Test by Jeff Hallstead",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content: "The Publisher Test: Is your brand renting its audience or owning it?",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Score your brand's content operation across seven dimensions and get a prioritized 90-day plan. Free, about 12 minutes.",
       },
       { name: "twitter:image", content: "https://blueprint.jeffhallstead.com/og-image.png" },
     ],
