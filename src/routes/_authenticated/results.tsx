@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_authenticated/results")({
   component: Results,
   errorComponent: ({ error }) => (
     <div role="alert" className="surface-panel p-6 text-sm text-destructive">
-      {error.message}
+      {error instanceof Error ? error.message : String(error)}
     </div>
   ),
   notFoundComponent: () => <p className="text-sm text-muted-foreground">No assessment results found.</p>,
