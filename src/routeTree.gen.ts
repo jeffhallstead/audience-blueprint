@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as MicrodramaBrandAssessmentRouteImport } from './routes/microdrama-brand-assessment'
+import { Route as MicrodramaFitRouteImport } from './routes/microdrama-fit'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
@@ -54,6 +56,17 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MicrodramaBrandAssessmentRoute =
+  MicrodramaBrandAssessmentRouteImport.update({
+    id: '/microdrama-brand-assessment',
+    path: '/microdrama-brand-assessment',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const MicrodramaFitRoute = MicrodramaFitRouteImport.update({
+  id: '/microdrama-fit',
+  path: '/microdrama-fit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -215,6 +228,8 @@ const LovableEmailTransactionalPreviewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/microdrama-brand-assessment': typeof MicrodramaBrandAssessmentRoute
+  '/microdrama-fit': typeof MicrodramaFitRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -248,6 +263,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/microdrama-brand-assessment': typeof MicrodramaBrandAssessmentRoute
+  '/microdrama-fit': typeof MicrodramaFitRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -283,6 +300,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/microdrama-brand-assessment': typeof MicrodramaBrandAssessmentRoute
+  '/microdrama-fit': typeof MicrodramaFitRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -318,6 +337,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/microdrama-brand-assessment'
+    | '/microdrama-fit'
     | '/pricing'
     | '/privacy'
     | '/refund-policy'
@@ -351,6 +372,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/microdrama-brand-assessment'
+    | '/microdrama-fit'
     | '/pricing'
     | '/privacy'
     | '/refund-policy'
@@ -385,6 +408,8 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/microdrama-brand-assessment'
+    | '/microdrama-fit'
     | '/pricing'
     | '/privacy'
     | '/refund-policy'
@@ -420,6 +445,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  MicrodramaBrandAssessmentRoute: typeof MicrodramaBrandAssessmentRoute
+  MicrodramaFitRoute: typeof MicrodramaFitRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
@@ -454,6 +481,20 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/microdrama-brand-assessment': {
+      id: '/microdrama-brand-assessment'
+      path: '/microdrama-brand-assessment'
+      fullPath: '/microdrama-brand-assessment'
+      preLoaderRoute: typeof MicrodramaBrandAssessmentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/microdrama-fit': {
+      id: '/microdrama-fit'
+      path: '/microdrama-fit'
+      fullPath: '/microdrama-fit'
+      preLoaderRoute: typeof MicrodramaFitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -714,6 +755,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  MicrodramaBrandAssessmentRoute: MicrodramaBrandAssessmentRoute,
+  MicrodramaFitRoute: MicrodramaFitRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   RefundPolicyRoute: RefundPolicyRoute,
