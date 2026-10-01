@@ -744,6 +744,51 @@ export type Database = {
         }
         Relationships: []
       }
+      microdrama_greenlight_checks: {
+        Row: {
+          answers: Json
+          blockers: Json
+          company: string
+          condition_met: boolean
+          created_at: string
+          email: string
+          enterprise_referral: boolean
+          id: string
+          pattern_id: string
+          score: number
+          user_id: string | null
+          verdict: string
+        }
+        Insert: {
+          answers?: Json
+          blockers?: Json
+          company: string
+          condition_met: boolean
+          created_at?: string
+          email: string
+          enterprise_referral?: boolean
+          id?: string
+          pattern_id: string
+          score: number
+          user_id?: string | null
+          verdict: string
+        }
+        Update: {
+          answers?: Json
+          blockers?: Json
+          company?: string
+          condition_met?: boolean
+          created_at?: string
+          email?: string
+          enterprise_referral?: boolean
+          id?: string
+          pattern_id?: string
+          score?: number
+          user_id?: string | null
+          verdict?: string
+        }
+        Relationships: []
+      }
       organization_audience_profile: {
         Row: {
           audience_segments: string[]
