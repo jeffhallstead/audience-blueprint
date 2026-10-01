@@ -61,6 +61,24 @@ export function slackNotifiableEvent(type: PlatformEventInput["type"]): boolean 
   return type === "assessment.completed";
 }
 
+export async function notifyGreenlightLead(input: {
+  email: string;
+  company: string;
+  result: import("@/lib/microdrama/greenlight").GreenlightResult;
+}): Promise<void> {
+  try {
+    const { VERDICT_LABELS, PATTERN_LABELS, MAX_SCORE } = await import("@/lib/microdrama/greenlight");
+    const r = input.result;
+    const text =
+      `🎬 Microdrama Greenlight: ${VERDICT_LABELS[r.verdict].toUpperCase()} · ${input.company} · ` +
+      `Score ${r.score}/${MAX_SCORE} · ${PATTERN_LABELS[r.patternId]} · ` +
+      `Condition ${r.conditionMet ? "met" : "not met"}${r.enterpriseReferral ? " · Enterprise referral" : ""} · ${input.email}`;
+    await postSlackMessage(LEADS_CHANNEL, text);
+  } catch (error) {
+    console.error(`[slack] greenlight notification threw: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
 export async function notifySlackFor(input: PlatformEventInput): Promise<void> {
   try {
     if (!slackNotifiableEvent(input.type) || !input.userId) return;
