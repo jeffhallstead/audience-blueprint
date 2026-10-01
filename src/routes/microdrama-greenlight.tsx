@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, ArrowRight, Check, Clapperboard, Loader2, Lock, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Clapperboard, HelpCircle, Loader2, Lock, X } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,10 @@ import {
   PATTERN_CONDITIONS,
   PATTERN_LABELS,
   VERDICT_LABELS,
+  LAUNCH_WINDOW_LABELS,
   type GreenlightAnswers,
+  type GreenlightCampaign,
+  type LaunchWindow,
   type GreenlightResult,
 } from "@/lib/microdrama/greenlight";
 import { submitGreenlight } from "@/lib/microdrama/greenlight.functions";
@@ -44,13 +47,15 @@ export const Route = createFileRoute("/microdrama-greenlight")({
   component: GreenlightPage,
 });
 
-type Stage = "intro" | "questions" | "gate" | "result";
+type Stage = "intro" | "questions" | "campaign" | "gate" | "result";
+const TOTAL_STEPS = GREENLIGHT_QUESTIONS.length + 1;
 
 function GreenlightPage() {
   const [stage, setStage] = useState<Stage>("intro");
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<GreenlightResult | null>(null);
+  const [campaign, setCampaign] = useState<GreenlightCampaign | null>(null);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -70,13 +75,22 @@ function GreenlightPage() {
             answers={answers}
             onAnswer={(key, value) => setAnswers((a) => ({ ...a, [key]: value }))}
             onBack={() => (step === 0 ? setStage("intro") : setStep(step - 1))}
-            onNext={() => (step === GREENLIGHT_QUESTIONS.length - 1 ? setStage("gate") : setStep(step + 1))}
+            onNext={() => (step === GREENLIGHT_QUESTIONS.length - 1 ? setStage("campaign") : setStep(step + 1))}
+          />
+        )}
+        {stage === "campaign" && (
+          <CampaignStep
+            value={campaign}
+            onChange={setCampaign}
+            onBack={() => setStage("questions")}
+            onNext={() => setStage("gate")}
           />
         )}
         {stage === "gate" && (
           <Gate
             answers={answers}
-            onBack={() => setStage("questions")}
+            campaign={campaign}
+            onBack={() => setStage("campaign")}
             onDone={(r) => {
               setResult(r);
               setStage("result");
@@ -84,7 +98,7 @@ function GreenlightPage() {
             }}
           />
         )}
-        {stage === "result" && result && <Result result={result} />}
+        {stage === "result" && result && <Result result={result} campaign={campaign} />}
       </main>
     </div>
   );
@@ -100,11 +114,11 @@ function Intro({ onStart }: { onStart: () => void }) {
         Does your brand get a Green Light for a microdrama?
       </h1>
       <p className="max-w-2xl text-lg text-muted-foreground">
-        Answer 10 questions to find out whether a vertical scripted series fits your product, budget, and audience
+        Answer 11 questions to find out whether a vertical scripted series fits your product, budget, and audience
         model, and the single condition that decides it.
       </p>
       <ul className="grid gap-3 text-sm sm:grid-cols-3">
-        {["10 questions, about 3 minutes", "No account needed to start", "A clear verdict and your top blockers"].map(
+        {["11 questions, about 3 minutes", "No account needed to start", "A clear verdict and your top blockers"].map(
           (t) => (
             <li key={t} className="flex items-start gap-2 rounded-md border border-border p-4">
               <Check className="mt-0.5 h-4 w-4 shrink-0" /> {t}
@@ -128,7 +142,7 @@ function Questions(props: {
 }) {
   const q = GREENLIGHT_QUESTIONS[props.step]!;
   const selected = props.answers[q.key];
-  const total = GREENLIGHT_QUESTIONS.length;
+  const total = TOTAL_STEPS;
   return (
     <section className="space-y-8">
       <div className="space-y-2">
@@ -166,14 +180,14 @@ function Questions(props: {
           <ArrowLeft className="mr-2 h-4 w-4" /> Back
         </Button>
         <Button disabled={!selected} onClick={props.onNext}>
-          {props.step === total - 1 ? "See my verdict" : "Next"} <ArrowRight className="ml-2 h-4 w-4" />
+          Next <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
     </section>
   );
 }
 
-function Gate(props: { answers: Record<string, string>; onBack: () => void; onDone: (r: GreenlightResult) => void }) {
+function Gate(props: { answers: Record<string, string>; campaign: GreenlightCampaign | null; onBack: () => void; onDone: (r: GreenlightResult) => void }) {
   const submit = useServerFn(submitGreenlight);
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
@@ -186,9 +200,9 @@ function Gate(props: { answers: Record<string, string>; onBack: () => void; onDo
       const parsed: Record<string, unknown> = {};
       for (const q of GREENLIGHT_QUESTIONS) {
         const v = props.answers[q.key]!;
-        parsed[q.key] = q.key === "operating_context" ? v : Number(v);
+        parsed[q.key] = q.key === "operating_context" || v === "unsure" ? v : Number(v);
       }
-      const r = await submit({ data: { email, company, answers: parsed as Required<GreenlightAnswers> } });
+      const r = await submit({ data: { email, company, answers: parsed as Required<GreenlightAnswers>, campaign: props.campaign ?? undefined } });
       props.onDone(r);
     } catch (err) {
       toast.error(err instanceof Error && err.message.includes("email") ? "Enter a valid work email." : "Something went wrong. Please try again.");
@@ -199,7 +213,7 @@ function Gate(props: { answers: Record<string, string>; onBack: () => void; onDo
 
   return (
     <section className="space-y-8">
-      <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Assessment complete · 10 of 10 answered</p>
+      <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Assessment complete · 11 of 11 answered</p>
       <div className="rounded-md border border-border p-6">
         <div className="flex items-center gap-6">
           <div>
@@ -250,26 +264,35 @@ const BADGE = {
   no: "bg-muted text-muted-foreground",
 } as const;
 
-function Result({ result }: { result: GreenlightResult }) {
+function Result({ result, campaign }: { result: GreenlightResult; campaign: GreenlightCampaign | null }) {
   const v = result.verdict;
+  const headline = result.reason === "needs_conversation" ? "We need a few answers before we can call it." : HEADLINES[v];
+  const soon = campaign?.hasCampaign && campaign.launchWindow === "within_3_months";
+  const status = result.conditionStatus;
   return (
     <section className="space-y-10">
       <div className="space-y-4">
         <span className={cn("inline-block rounded px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]", BADGE[v])}>
           {VERDICT_LABELS[v]}
         </span>
-        <h1 className="font-serif text-3xl leading-tight md:text-4xl">{HEADLINES[v]}</h1>
+        <h1 className="font-serif text-3xl leading-tight md:text-4xl">{headline}</h1>
         <p className="text-muted-foreground">
-          Fit score {result.score} / {MAX_SCORE} · Growth model: {PATTERN_LABELS[result.patternId]}
+          Fit score {result.score} / {MAX_SCORE} · Growth model: {result.patternUnknown ? "To be determined" : PATTERN_LABELS[result.patternId]}
         </p>
+        {campaign?.hasCampaign && (
+          <p className="text-sm">
+            Planned for: {campaign.name || "an upcoming campaign"}
+            {campaign.launchWindow ? ` · launching ${LAUNCH_WINDOW_LABELS[campaign.launchWindow]}` : ""}
+          </p>
+        )}
       </div>
 
       <div className="rounded-md border border-border p-6">
         <div className="mb-2 flex items-center justify-between">
           <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">The deciding condition</p>
-          <span className={cn("flex items-center gap-1 text-sm font-medium", result.conditionMet ? "text-success" : "text-warning")}>
-            {result.conditionMet ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-            {result.conditionMet ? "Met" : "Not met"}
+          <span className={cn("flex items-center gap-1 text-sm font-medium", status === "met" ? "text-success" : status === "unconfirmed" ? "text-muted-foreground" : "text-warning")}>
+            {status === "met" ? <Check className="h-4 w-4" /> : status === "unconfirmed" ? <HelpCircle className="h-4 w-4" /> : <X className="h-4 w-4" />}
+            {status === "met" ? "Met" : status === "unconfirmed" ? "To confirm" : "Not met"}
           </span>
         </div>
         <p className="font-serif text-xl">{PATTERN_CONDITIONS[result.patternId]}</p>
@@ -287,18 +310,35 @@ function Result({ result }: { result: GreenlightResult }) {
         </div>
       )}
 
+      {result.openQuestions.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="font-serif text-2xl">Open questions</h2>
+          <p className="text-sm text-muted-foreground">You weren't sure about these. They're worth answering before you commit.</p>
+          {result.openQuestions.map((q) => (
+            <div key={q} className="flex gap-3 rounded-md border border-dashed border-border p-4">
+              <HelpCircle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+              <p>{q}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="space-y-4 rounded-md bg-secondary p-6">
         <Clapperboard className="h-6 w-6" />
         {v === "green_light" && (
           <>
             <p className="text-lg">The Microdrama Sprint turns this green light into a production-ready brief in three weeks.</p>
-            <CallButton label="Book a strategy call" />
+            <CallButton label={soon ? "Book a call before your launch window closes" : "Book a strategy call"} />
           </>
         )}
         {v === "not_yet" && (
           <>
-            <p className="text-lg">Most of these blockers can be cleared in a quarter. Let's map which ones come first.</p>
-            <CallButton label="Book a 30-minute fit review" />
+            <p className="text-lg">
+              {result.reason === "needs_conversation"
+                ? "A 30-minute conversation is usually enough to answer these and give you a clear call."
+                : "Most of these blockers can be cleared in a quarter. Let's map which ones come first."}
+            </p>
+            <CallButton label={soon ? "Book a call before your launch window closes" : "Book a 30-minute fit review"} />
           </>
         )}
         {v === "no" && (
@@ -335,5 +375,74 @@ function CallButton({ label }: { label: string }) {
         {label} <ArrowRight className="ml-2 h-4 w-4" />
       </a>
     </Button>
+  );
+}
+
+const WINDOWS: LaunchWindow[] = ["within_3_months", "3_6_months", "6_12_months", "not_set"];
+
+function CampaignStep(props: {
+  value: GreenlightCampaign | null;
+  onChange: (c: GreenlightCampaign) => void;
+  onBack: () => void;
+  onNext: () => void;
+}) {
+  const c = props.value;
+  const option = (active: boolean) =>
+    cn(
+      "w-full rounded-md border p-4 text-left transition-colors",
+      active ? "border-primary bg-secondary" : "border-border hover:border-foreground/40",
+    );
+  const ready = c !== null && (!c.hasCampaign || !!c.launchWindow);
+  return (
+    <section className="space-y-8">
+      <div className="space-y-2">
+        <div className="flex justify-between text-xs uppercase tracking-[0.18em] text-muted-foreground">
+          <span>Question {TOTAL_STEPS} of {TOTAL_STEPS}</span>
+          <span>Upcoming campaign</span>
+        </div>
+        <div className="h-1 w-full bg-primary" />
+      </div>
+      <h2 className="font-serif text-2xl leading-snug md:text-3xl">
+        Is there a specific campaign or launch you're considering a microdrama for?
+      </h2>
+      <div className="space-y-3" role="radiogroup">
+        <button type="button" role="radio" aria-checked={c?.hasCampaign === true} className={option(c?.hasCampaign === true)}
+          onClick={() => props.onChange({ hasCampaign: true, name: c?.name, launchWindow: c?.launchWindow })}>
+          <span className="block font-medium">Yes, there's a specific campaign</span>
+        </button>
+        <button type="button" role="radio" aria-checked={c?.hasCampaign === false} className={option(c?.hasCampaign === false)}
+          onClick={() => props.onChange({ hasCampaign: false })}>
+          <span className="block font-medium">Not yet, we're exploring</span>
+        </button>
+      </div>
+      {c?.hasCampaign && (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="gl-campaign">What is it?</Label>
+            <Input id="gl-campaign" maxLength={200} placeholder="e.g. Holiday launch, new product drop"
+              value={c.name ?? ""} onChange={(e) => props.onChange({ ...c, name: e.target.value })} />
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm font-medium">When does it launch?</p>
+            <div className="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label="When does it launch?">
+              {WINDOWS.map((w) => (
+                <button key={w} type="button" role="radio" aria-checked={c.launchWindow === w}
+                  className={option(c.launchWindow === w)} onClick={() => props.onChange({ ...c, launchWindow: w })}>
+                  {w === "not_set" ? "Not set yet" : LAUNCH_WINDOW_LABELS[w].replace(/^in /, "").replace(/^w/, "W")}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="flex justify-between">
+        <Button variant="ghost" onClick={props.onBack}>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        </Button>
+        <Button disabled={!ready} onClick={props.onNext}>
+          See my verdict <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+    </section>
   );
 }

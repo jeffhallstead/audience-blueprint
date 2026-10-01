@@ -40,8 +40,12 @@ export interface GreenlightQuestion {
   prompt: string;
   /** Short plain-language blocker shown when this answer holds the brand back. */
   blocker?: string;
+  /** Plain-language follow-up shown when the answer is "I'm not sure". */
+  confirm?: string;
   options: GreenlightOption[];
 }
+
+const UNSURE: GreenlightOption = { value: "unsure", label: "I'm not sure", detail: "We'll flag it as something to confirm together." };
 
 export const GREENLIGHT_QUESTIONS: GreenlightQuestion[] = [
   {
@@ -49,10 +53,12 @@ export const GREENLIGHT_QUESTIONS: GreenlightQuestion[] = [
     title: "Product role",
     prompt: "How would your product or service fit into a scripted vertical story?",
     blocker: "The product's benefit doesn't yet drive the story's tension.",
+    confirm: "Which product benefit could carry the story's central conflict?",
     options: [
       { value: "2", score: 2, label: "It can drive the plot", detail: "Its benefit, feature, or absence sparks a conflict, a turning point, or resolves a crisis. Physical or intangible both count." },
       { value: "1", score: 1, label: "It sits naturally in the characters' world", detail: "It appears in their routine, but the drama exists without it." },
       { value: "0", score: 0, label: "No dramatic stakes", detail: "It's purely procedural, abstract, or regulated in a way that can't tie to human conflict." },
+      UNSURE,
     ],
   },
   {
@@ -60,10 +66,12 @@ export const GREENLIGHT_QUESTIONS: GreenlightQuestion[] = [
     title: "Purchase path",
     prompt: "Can a viewer buy or sign up directly from a vertical video today?",
     blocker: "There's no direct path from an episode to a purchase or sign-up.",
+    confirm: "Can a viewer buy or sign up from a mobile video today, and who owns that path?",
     options: [
       { value: "2", score: 2, label: "Yes", detail: "Shoppable links, TikTok Shop, or a tracked mobile landing page." },
       { value: "1", score: 1, label: "Not yet, but we could set it up", detail: "A promo code or short link." },
       { value: "0", score: 0, label: "No direct or trackable path" },
+      UNSURE,
     ],
   },
   {
@@ -71,10 +79,12 @@ export const GREENLIGHT_QUESTIONS: GreenlightQuestion[] = [
     title: "Audience capture",
     prompt: "Do you have a way to keep in touch with viewers after they finish watching?",
     blocker: "Viewers have nowhere to land that you can reach again.",
+    confirm: "Who owns your email or SMS program, and how often does it send?",
     options: [
       { value: "2", score: 2, label: "An active email or SMS program on a regular schedule" },
       { value: "1", score: 1, label: "A list exists, but we rarely use it" },
       { value: "0", score: 0, label: "No first-party channel; we rely on social platforms" },
+      UNSURE,
     ],
   },
   {
@@ -82,10 +92,12 @@ export const GREENLIGHT_QUESTIONS: GreenlightQuestion[] = [
     title: "Media budget",
     prompt: "Is there paid media budget to promote the series once it's released?",
     blocker: "There's no media budget to launch the opening episodes.",
+    confirm: "Who controls paid media budget, and could some be set aside to launch a series?",
     options: [
       { value: "2", score: 2, label: "Yes, already allocated alongside production" },
       { value: "1", score: 1, label: "Possibly, if the case is compelling" },
       { value: "0", score: 0, label: "No, it would rely entirely on organic reach" },
+      UNSURE,
     ],
   },
   {
@@ -104,10 +116,12 @@ export const GREENLIGHT_QUESTIONS: GreenlightQuestion[] = [
     title: "Genre comfort",
     prompt: "Microdramas run on melodrama, cliffhangers, and familiar tropes. How comfortable is your brand with that tone?",
     blocker: "The brand is wary of the format's dramatic tone.",
+    confirm: "Would your brand guidelines allow a heightened, dramatic tone?",
     options: [
       { value: "2", score: 2, label: "Very comfortable; it fits our voice" },
       { value: "1", score: 1, label: "Comfortable with a lighter or comedic version" },
       { value: "0", score: 0, label: "Not comfortable; our guidelines require restraint" },
+      UNSURE,
     ],
   },
   {
@@ -115,10 +129,12 @@ export const GREENLIGHT_QUESTIONS: GreenlightQuestion[] = [
     title: "Series commitment",
     prompt: "How is leadership thinking about the commitment?",
     blocker: "The commitment is a one-off test, not a season.",
+    confirm: "Is leadership open to a full season, or only a single test?",
     options: [
       { value: "2", score: 2, label: "A full season, designed with room for a sequel" },
       { value: "1", score: 1, label: "One season, then decide on results" },
       { value: "0", score: 0, label: "A single test piece to see what happens" },
+      UNSURE,
     ],
   },
   {
@@ -126,10 +142,12 @@ export const GREENLIGHT_QUESTIONS: GreenlightQuestion[] = [
     title: "Measurement",
     prompt: "Could you connect viewing to sales or sign-ups today?",
     blocker: "Viewing can't yet be tied to sales or sign-ups.",
+    confirm: "Can your analytics team tie a content view to a sale or sign-up?",
     options: [
       { value: "2", score: 2, label: "Yes, through first-party or sales data" },
       { value: "1", score: 1, label: "Partly, through platform metrics and promo codes" },
       { value: "0", score: 0, label: "Not today; only views and likes" },
+      UNSURE,
     ],
   },
   {
@@ -137,10 +155,12 @@ export const GREENLIGHT_QUESTIONS: GreenlightQuestion[] = [
     title: "Production budget",
     prompt: "Where does production budget stand right now?",
     blocker: "Production budget hasn't been raised yet.",
+    confirm: "Is there a production budget for this year, and who approves it?",
     options: [
       { value: "2", score: 2, label: "Approved or earmarked" },
       { value: "1", score: 1, label: "Being discussed for this or next quarter" },
       { value: "0", score: 0, label: "Not yet budgeted or proposed" },
+      UNSURE,
     ],
   },
   {
@@ -154,6 +174,7 @@ export const GREENLIGHT_QUESTIONS: GreenlightQuestion[] = [
       { value: "invisible_studio", label: "We make high-quality content, but distribution is weak and leadership questions the return." },
       { value: "fragmented_builder", label: "Different teams make disconnected content without one flagship property." },
       { value: "category_leader", label: "We have an established audience and scale across many channels." },
+      { value: "none", label: "None of these quite fit", detail: "We'll work out your growth model together." },
     ],
   },
 ];
@@ -177,19 +198,60 @@ export const PATTERN_CONDITIONS: Record<PatternId, string> = {
   category_leader: "At your scale, the series needs dedicated media budget from day one to break through.",
 };
 
-export type GreenlightAnswers = Partial<Record<ScoredKey, number>> & { operating_context?: PatternId };
+export type ScoredAnswer = 0 | 1 | 2 | "unsure";
+export type ContextAnswer = PatternId | "none";
+export type GreenlightAnswers = Partial<Record<ScoredKey, ScoredAnswer>> & { operating_context?: ContextAnswer };
+
+export type LaunchWindow = "within_3_months" | "3_6_months" | "6_12_months" | "not_set";
+export interface GreenlightCampaign {
+  hasCampaign: boolean;
+  name?: string | undefined;
+  launchWindow?: LaunchWindow | undefined;
+}
+export const LAUNCH_WINDOW_LABELS: Record<LaunchWindow, string> = {
+  within_3_months: "within 3 months",
+  "3_6_months": "in 3–6 months",
+  "6_12_months": "in 6–12 months",
+  not_set: "date not set yet",
+};
+
+export type ConditionStatus = "met" | "not_met" | "unconfirmed";
+export const UNSURE_LIMIT = 3;
 
 export interface GreenlightResult {
   verdict: Verdict;
   score: number;
   patternId: PatternId;
+  /** True when the visitor picked "None of these quite fit". */
+  patternUnknown: boolean;
   conditionMet: boolean;
+  conditionStatus: ConditionStatus;
   enterpriseReferral: boolean;
   blockers: string[];
-  reason: "no_dramatic_stakes" | "tone_mismatch" | "budget_gate" | "below_floor" | "condition_not_met" | "near_threshold" | "green_light";
+  unsureKeys: string[];
+  openQuestions: string[];
+  reason:
+    | "no_dramatic_stakes"
+    | "tone_mismatch"
+    | "budget_gate"
+    | "needs_conversation"
+    | "below_floor"
+    | "condition_not_met"
+    | "condition_unconfirmed"
+    | "near_threshold"
+    | "green_light";
 }
 
 const SCORED = GREENLIGHT_QUESTIONS.filter((q) => q.key !== "operating_context");
+
+const CONDITION_INPUTS: Record<PatternId, ScoredKey[]> = {
+  paid_media_plateau: ["capture"],
+  borrowed_audience: ["capture", "purchase_path"],
+  campaign_factory: ["season_commitment"],
+  invisible_studio: ["measurement"],
+  fragmented_builder: ["season_commitment"],
+  category_leader: ["distribution_budget"],
+};
 
 function conditionMet(p: PatternId, a: Record<ScoredKey, number>, score: number): boolean {
   switch (p) {
@@ -203,23 +265,52 @@ function conditionMet(p: PatternId, a: Record<ScoredKey, number>, score: number)
 }
 
 export function resolveGreenlight(input: GreenlightAnswers): GreenlightResult {
-  const a = Object.fromEntries(SCORED.map((q) => [q.key, input[q.key as ScoredKey] ?? 0])) as Record<ScoredKey, number>;
-  const patternId = input.operating_context ?? "fragmented_builder";
+  const raw = Object.fromEntries(SCORED.map((q) => [q.key, input[q.key as ScoredKey] ?? 0])) as Record<ScoredKey, ScoredAnswer>;
+  const isUnsure = (k: ScoredKey) => raw[k] === "unsure";
+  // "Not sure" counts as the middle answer: never helps, never hurts.
+  const a = Object.fromEntries(Object.entries(raw).map(([k, v]) => [k, v === "unsure" ? 1 : v])) as Record<ScoredKey, number>;
+  const ctx = input.operating_context ?? "none";
+  const patternUnknown = ctx === "none";
+  const patternId: PatternId = patternUnknown ? "fragmented_builder" : ctx;
   const score = Object.values(a).reduce((s, v) => s + v, 0);
   const met = conditionMet(patternId, a, score);
-  // Lowest answers first, ties broken by question order; max three.
-  const blockers = SCORED.map((q, i) => ({ q, i, v: a[q.key as ScoredKey] }))
-    .filter((x) => x.v < 2)
+  const conditionStatus: ConditionStatus = met
+    ? "met"
+    : CONDITION_INPUTS[patternId].some(isUnsure) || patternUnknown
+      ? "unconfirmed"
+      : "not_met";
+  const unsureQs = SCORED.filter((q) => isUnsure(q.key as ScoredKey));
+  const unsureKeys = [...unsureQs.map((q) => q.key), ...(patternUnknown ? ["operating_context"] : [])];
+  const openQuestions = [
+    ...unsureQs.map((q) => q.confirm!),
+    ...(patternUnknown ? ["Which growth model best describes how your brand finds and keeps customers?"] : []),
+  ];
+  // Blockers come from definite low answers only; unsure answers are open questions instead.
+  const blockers = SCORED.map((q, i) => ({ q, i, v: raw[q.key as ScoredKey] }))
+    .filter((x): x is { q: GreenlightQuestion; i: number; v: 0 | 1 } => x.v !== "unsure" && x.v < 2)
     .sort((x, y) => x.v - y.v || x.i - y.i)
     .slice(0, 3)
     .sort((x, y) => x.i - y.i)
     .map((x) => x.q.blocker!);
-  const base = { score, patternId, conditionMet: met, enterpriseReferral: patternId === "category_leader", blockers };
+  const base = {
+    score,
+    patternId,
+    patternUnknown,
+    conditionMet: met,
+    conditionStatus,
+    enterpriseReferral: patternId === "category_leader" && !patternUnknown,
+    blockers,
+    unsureKeys,
+    openQuestions,
+  };
 
-  if (a.product_role === 0) return { ...base, verdict: "no", reason: "no_dramatic_stakes" };
-  if (a.genre_comfort === 0) return { ...base, verdict: "no", reason: "tone_mismatch" };
-  if (a.distribution_budget === 0 || a.budget_status === 0) return { ...base, verdict: "not_yet", reason: "budget_gate" };
+  // Gates fire only on a definite 0, never on "not sure".
+  if (raw.product_role === 0) return { ...base, verdict: "no", reason: "no_dramatic_stakes" };
+  if (raw.genre_comfort === 0) return { ...base, verdict: "no", reason: "tone_mismatch" };
+  if (raw.distribution_budget === 0 || raw.budget_status === 0) return { ...base, verdict: "not_yet", reason: "budget_gate" };
+  if (unsureKeys.length >= UNSURE_LIMIT) return { ...base, verdict: "not_yet", reason: "needs_conversation" };
   if (score < GREENLIGHT_FLOOR) return { ...base, verdict: "not_yet", reason: "below_floor" };
+  if (conditionStatus === "unconfirmed") return { ...base, verdict: "not_yet", reason: "condition_unconfirmed" };
   if (!met) return { ...base, verdict: "not_yet", reason: "condition_not_met" };
   if (score >= GREENLIGHT_THRESHOLD) return { ...base, verdict: "green_light", reason: "green_light" };
   return { ...base, verdict: "not_yet", reason: "near_threshold" };

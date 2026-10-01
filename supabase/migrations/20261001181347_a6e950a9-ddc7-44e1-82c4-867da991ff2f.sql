@@ -1,0 +1,1 @@
+DELETE FROM public.microdrama_greenlight_checks WHERE email = 'qa-test@example.com';
