@@ -65,7 +65,7 @@ export async function notifyGreenlightLead(input: {
   email: string;
   company: string;
   result: import("@/lib/microdrama/greenlight").GreenlightResult;
-  campaign?: import("@/lib/microdrama/greenlight").GreenlightCampaign;
+  campaign?: import("@/lib/microdrama/greenlight").GreenlightCampaign | undefined;
 }): Promise<void> {
   try {
     const { VERDICT_LABELS, PATTERN_LABELS, MAX_SCORE, LAUNCH_WINDOW_LABELS } = await import("@/lib/microdrama/greenlight");

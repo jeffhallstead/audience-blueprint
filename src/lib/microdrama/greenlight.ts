@@ -205,8 +205,8 @@ export type GreenlightAnswers = Partial<Record<ScoredKey, ScoredAnswer>> & { ope
 export type LaunchWindow = "within_3_months" | "3_6_months" | "6_12_months" | "not_set";
 export interface GreenlightCampaign {
   hasCampaign: boolean;
-  name?: string;
-  launchWindow?: LaunchWindow;
+  name?: string | undefined;
+  launchWindow?: LaunchWindow | undefined;
 }
 export const LAUNCH_WINDOW_LABELS: Record<LaunchWindow, string> = {
   within_3_months: "within 3 months",
