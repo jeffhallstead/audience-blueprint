@@ -53,7 +53,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
   errorComponent: ({ error }) => (
     <div role="alert" className="surface-panel p-6 text-sm text-destructive">
-      {error.message}
+      {error instanceof Error ? error.message : String(error)}
     </div>
   ),
 });
