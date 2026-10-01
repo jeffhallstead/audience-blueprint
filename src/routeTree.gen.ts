@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MicrodramaBrandAssessmentRouteImport } from './routes/microdrama-brand-assessment'
 import { Route as MicrodramaFitRouteImport } from './routes/microdrama-fit'
+import { Route as MicrodramaGreenlightRouteImport } from './routes/microdrama-greenlight'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
@@ -67,6 +68,11 @@ const MicrodramaBrandAssessmentRoute =
 const MicrodramaFitRoute = MicrodramaFitRouteImport.update({
   id: '/microdrama-fit',
   path: '/microdrama-fit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MicrodramaGreenlightRoute = MicrodramaGreenlightRouteImport.update({
+  id: '/microdrama-greenlight',
+  path: '/microdrama-greenlight',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -230,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/microdrama-brand-assessment': typeof MicrodramaBrandAssessmentRoute
   '/microdrama-fit': typeof MicrodramaFitRoute
+  '/microdrama-greenlight': typeof MicrodramaGreenlightRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -265,6 +272,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/microdrama-brand-assessment': typeof MicrodramaBrandAssessmentRoute
   '/microdrama-fit': typeof MicrodramaFitRoute
+  '/microdrama-greenlight': typeof MicrodramaGreenlightRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -302,6 +310,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/microdrama-brand-assessment': typeof MicrodramaBrandAssessmentRoute
   '/microdrama-fit': typeof MicrodramaFitRoute
+  '/microdrama-greenlight': typeof MicrodramaGreenlightRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -339,6 +348,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/microdrama-brand-assessment'
     | '/microdrama-fit'
+    | '/microdrama-greenlight'
     | '/pricing'
     | '/privacy'
     | '/refund-policy'
@@ -374,6 +384,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/microdrama-brand-assessment'
     | '/microdrama-fit'
+    | '/microdrama-greenlight'
     | '/pricing'
     | '/privacy'
     | '/refund-policy'
@@ -410,6 +421,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/microdrama-brand-assessment'
     | '/microdrama-fit'
+    | '/microdrama-greenlight'
     | '/pricing'
     | '/privacy'
     | '/refund-policy'
@@ -447,6 +459,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   MicrodramaBrandAssessmentRoute: typeof MicrodramaBrandAssessmentRoute
   MicrodramaFitRoute: typeof MicrodramaFitRoute
+  MicrodramaGreenlightRoute: typeof MicrodramaGreenlightRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
@@ -495,6 +508,13 @@ declare module '@tanstack/react-router' {
       path: '/microdrama-fit'
       fullPath: '/microdrama-fit'
       preLoaderRoute: typeof MicrodramaFitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/microdrama-greenlight': {
+      id: '/microdrama-greenlight'
+      path: '/microdrama-greenlight'
+      fullPath: '/microdrama-greenlight'
+      preLoaderRoute: typeof MicrodramaGreenlightRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -757,6 +777,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   MicrodramaBrandAssessmentRoute: MicrodramaBrandAssessmentRoute,
   MicrodramaFitRoute: MicrodramaFitRoute,
+  MicrodramaGreenlightRoute: MicrodramaGreenlightRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   RefundPolicyRoute: RefundPolicyRoute,
