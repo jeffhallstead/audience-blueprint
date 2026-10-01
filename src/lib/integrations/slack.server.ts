@@ -65,14 +65,21 @@ export async function notifyGreenlightLead(input: {
   email: string;
   company: string;
   result: import("@/lib/microdrama/greenlight").GreenlightResult;
+  campaign?: import("@/lib/microdrama/greenlight").GreenlightCampaign;
 }): Promise<void> {
   try {
-    const { VERDICT_LABELS, PATTERN_LABELS, MAX_SCORE } = await import("@/lib/microdrama/greenlight");
+    const { VERDICT_LABELS, PATTERN_LABELS, MAX_SCORE, LAUNCH_WINDOW_LABELS } = await import("@/lib/microdrama/greenlight");
     const r = input.result;
+    const c = input.campaign;
+    const condition = r.conditionStatus === "met" ? "met" : r.conditionStatus === "unconfirmed" ? "to confirm" : "not met";
+    const campaign = c?.hasCampaign
+      ? ` · Campaign: ${c.name || "unnamed"} (${c.launchWindow ? LAUNCH_WINDOW_LABELS[c.launchWindow] : "timing unknown"})`
+      : "";
+    const unsure = r.unsureKeys.length ? ` · Not sure on ${r.unsureKeys.length}: ${r.unsureKeys.join(", ")}` : "";
     const text =
       `🎬 Microdrama Greenlight: ${VERDICT_LABELS[r.verdict].toUpperCase()} · ${input.company} · ` +
-      `Score ${r.score}/${MAX_SCORE} · ${PATTERN_LABELS[r.patternId]} · ` +
-      `Condition ${r.conditionMet ? "met" : "not met"}${r.enterpriseReferral ? " · Enterprise referral" : ""} · ${input.email}`;
+      `Score ${r.score}/${MAX_SCORE} · ${r.patternUnknown ? "Growth model TBD" : PATTERN_LABELS[r.patternId]} · ` +
+      `Condition ${condition}${r.enterpriseReferral ? " · Enterprise referral" : ""}${campaign}${unsure} · ${input.email}`;
     await postSlackMessage(LEADS_CHANNEL, text);
   } catch (error) {
     console.error(`[slack] greenlight notification threw: ${error instanceof Error ? error.message : String(error)}`);

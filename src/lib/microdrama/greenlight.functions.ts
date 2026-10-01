@@ -8,7 +8,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { resolveGreenlight, type GreenlightAnswers } from "./greenlight";
 
-const score = z.number().int().min(0).max(2);
+const score = z.union([z.literal(0), z.literal(1), z.literal(2), z.literal("unsure")]);
 const inputSchema = z.object({
   email: z.string().trim().toLowerCase().email("Enter a valid work email").max(255),
   company: z.string().trim().min(1, "Enter your brand or company").max(160),
@@ -17,7 +17,7 @@ const inputSchema = z.object({
     purchase_path: score,
     capture: score,
     distribution_budget: score,
-    approval_speed: score,
+    approval_speed: z.union([z.literal(0), z.literal(1), z.literal(2)]),
     genre_comfort: score,
     season_commitment: score,
     measurement: score,
@@ -29,8 +29,16 @@ const inputSchema = z.object({
       "invisible_studio",
       "fragmented_builder",
       "category_leader",
+      "none",
     ]),
   }),
+  campaign: z
+    .object({
+      hasCampaign: z.boolean(),
+      name: z.string().trim().max(200).optional(),
+      launchWindow: z.enum(["within_3_months", "3_6_months", "6_12_months", "not_set"]).optional(),
+    })
+    .optional(),
 });
 
 export const submitGreenlight = createServerFn({ method: "POST" })
@@ -41,7 +49,7 @@ export const submitGreenlight = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin.from("microdrama_greenlight_checks").insert({
       email: data.email,
       company: data.company,
-      answers: data.answers as never,
+      answers: { ...data.answers, campaign: data.campaign ?? null, condition_status: result.conditionStatus, unsure_keys: result.unsureKeys } as never,
       score: result.score,
       pattern_id: result.patternId,
       verdict: result.verdict,
@@ -52,6 +60,6 @@ export const submitGreenlight = createServerFn({ method: "POST" })
     if (error) console.error(`greenlight insert failed: ${error.message}`);
 
     const { notifyGreenlightLead } = await import("@/lib/integrations/slack.server");
-    await notifyGreenlightLead({ email: data.email, company: data.company, result });
+    await notifyGreenlightLead({ email: data.email, company: data.company, result, campaign: data.campaign });
     return result;
   });
