@@ -8,3 +8,4 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+- Microdrama Greenlight: lives at /microdrama-greenlight; public verdict recomputed server-side, stored via service role in microdrama_greenlight_checks (admin/analyst read only).
