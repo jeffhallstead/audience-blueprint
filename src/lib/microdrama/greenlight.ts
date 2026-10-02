@@ -3,6 +3,8 @@
  * Browser-safe: no I/O. The server recomputes the verdict from raw answers.
  */
 
+import { CATEGORY_CONFIRM, type Category } from "./categories";
+
 export const GREENLIGHT_THRESHOLD = 12;
 export const GREENLIGHT_FLOOR = 10;
 export const MAX_SCORE = 18;
@@ -264,7 +266,7 @@ function conditionMet(p: PatternId, a: Record<ScoredKey, number>, score: number)
   }
 }
 
-export function resolveGreenlight(input: GreenlightAnswers): GreenlightResult {
+export function resolveGreenlight(input: GreenlightAnswers, category?: Category): GreenlightResult {
   const raw = Object.fromEntries(SCORED.map((q) => [q.key, input[q.key as ScoredKey] ?? 0])) as Record<ScoredKey, ScoredAnswer>;
   const isUnsure = (k: ScoredKey) => raw[k] === "unsure";
   // "Not sure" counts as the middle answer: never helps, never hurts.
@@ -282,7 +284,7 @@ export function resolveGreenlight(input: GreenlightAnswers): GreenlightResult {
   const unsureQs = SCORED.filter((q) => isUnsure(q.key as ScoredKey));
   const unsureKeys = [...unsureQs.map((q) => q.key), ...(patternUnknown ? ["operating_context"] : [])];
   const openQuestions = [
-    ...unsureQs.map((q) => q.confirm!),
+    ...unsureQs.map((q) => (category && CATEGORY_CONFIRM[category]?.[q.key as ScoredKey]) || q.confirm!),
     ...(patternUnknown ? ["Which growth model best describes how your brand finds and keeps customers?"] : []),
   ];
   // Blockers come from definite low answers only; unsure answers are open questions instead.
@@ -319,5 +321,5 @@ export function resolveGreenlight(input: GreenlightAnswers): GreenlightResult {
 export const VERDICT_LABELS: Record<Verdict, string> = {
   green_light: "Green Light",
   not_yet: "Not Yet",
-  no: "No",
+  no: "Not a Fit",
 };

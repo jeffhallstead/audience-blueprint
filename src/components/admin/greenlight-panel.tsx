@@ -30,7 +30,7 @@ export function GreenlightPanel() {
     ["all", "All"],
     ["green_light", "Green Light"],
     ["not_yet", "Not Yet"],
-    ["no", "No"],
+    ["no", "Not a Fit"],
     ["referral", "Enterprise referral"],
     ["soon", "Launching soon"],
   ];
