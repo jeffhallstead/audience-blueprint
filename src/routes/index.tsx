@@ -121,6 +121,13 @@ function Landing() {
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <Logo />
         <div className="flex items-center gap-2">
+          <Link
+            to="/microdrama-greenlight"
+            className="mr-1 hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline-flex sm:items-center sm:gap-1.5"
+          >
+            Microdrama Greenlight
+            <ArrowRight className="size-3.5" />
+          </Link>
           <BookACallButton surface="app_shell" variant="ghost" size="sm" showArrow={false} />
           {signedIn ? (
             <Button asChild size="sm">
@@ -242,6 +249,9 @@ function Landing() {
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-xs text-muted-foreground sm:flex-row sm:justify-between">
           <span>© {new Date().getFullYear()} Publisher Blueprint · by Jeff Hallstead</span>
           <nav className="flex flex-wrap gap-4">
+            <Link to="/microdrama-greenlight" className="hover:text-foreground">
+              Microdrama Greenlight
+            </Link>
             <a
               href="https://jeffhallstead.com/"
               target="_blank"
