@@ -11,6 +11,7 @@ import { resolveGreenlight, type GreenlightAnswers } from "./greenlight";
 const score = z.union([z.literal(0), z.literal(1), z.literal(2), z.literal("unsure")]);
 const inputSchema = z.object({
   email: z.string().trim().toLowerCase().email("Enter a valid work email").max(255),
+  category: z.enum(["beauty_fashion", "food_beverage", "health_wellness", "other"]),
   company: z.string().trim().min(1, "Enter your brand or company").max(160),
   answers: z.object({
     product_role: score,
@@ -44,12 +45,12 @@ const inputSchema = z.object({
 export const submitGreenlight = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }) => {
-    const result = resolveGreenlight(data.answers as GreenlightAnswers);
+    const result = resolveGreenlight(data.answers as GreenlightAnswers, data.category);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("microdrama_greenlight_checks").insert({
       email: data.email,
       company: data.company,
-      answers: { ...data.answers, campaign: data.campaign ?? null, condition_status: result.conditionStatus, unsure_keys: result.unsureKeys } as never,
+      answers: { ...data.answers, campaign: data.campaign ?? null, category: data.category, condition_status: result.conditionStatus, unsure_keys: result.unsureKeys } as never,
       score: result.score,
       pattern_id: result.patternId,
       verdict: result.verdict,
@@ -60,6 +61,6 @@ export const submitGreenlight = createServerFn({ method: "POST" })
     if (error) console.error(`greenlight insert failed: ${error.message}`);
 
     const { notifyGreenlightLead } = await import("@/lib/integrations/slack.server");
-    await notifyGreenlightLead({ email: data.email, company: data.company, result, campaign: data.campaign });
+    await notifyGreenlightLead({ email: data.email, company: data.company, result, campaign: data.campaign, category: data.category });
     return result;
   });

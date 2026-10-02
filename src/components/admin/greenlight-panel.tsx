@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { CATEGORY_LABELS, type Category } from "@/lib/microdrama/categories";
 import { MAX_SCORE, PATTERN_LABELS, VERDICT_LABELS, type PatternId, type Verdict, type LaunchWindow, LAUNCH_WINDOW_LABELS } from "@/lib/microdrama/greenlight";
 
 type Filter = "all" | Verdict | "referral" | "soon";
-type Extra = { campaign?: { hasCampaign?: boolean; name?: string; launchWindow?: LaunchWindow } | null; condition_status?: string; unsure_keys?: string[] };
+type Extra = { category?: Category; campaign?: { hasCampaign?: boolean; name?: string; launchWindow?: LaunchWindow } | null; condition_status?: string; unsure_keys?: string[] };
 
 export function GreenlightPanel() {
   const [filter, setFilter] = useState<Filter>("all");
@@ -30,7 +31,7 @@ export function GreenlightPanel() {
     ["all", "All"],
     ["green_light", "Green Light"],
     ["not_yet", "Not Yet"],
-    ["no", "No"],
+    ["no", "Not a Fit"],
     ["referral", "Enterprise referral"],
     ["soon", "Launching soon"],
   ];
@@ -62,6 +63,7 @@ export function GreenlightPanel() {
                 <th className="py-2 pr-4">Growth model</th>
                 <th className="py-2 pr-4">Condition</th>
                 <th className="py-2 pr-4">Not sure</th>
+                <th className="py-2 pr-4">Category</th>
                 <th className="py-2 pr-4">Campaign</th>
                 <th className="py-2 pr-4">Launch</th>
               </tr>
@@ -84,6 +86,7 @@ export function GreenlightPanel() {
                   <td className="py-2 pr-4">{(r.answers as { operating_context?: string })?.operating_context === "none" ? "TBD" : PATTERN_LABELS[r.pattern_id as PatternId] ?? r.pattern_id}</td>
                   <td className="py-2 pr-4">{x(r).condition_status === "unconfirmed" ? "To confirm" : r.condition_met ? "Met" : "Not met"}</td>
                   <td className="py-2 pr-4" title={(x(r).unsure_keys ?? []).join(", ")}>{(x(r).unsure_keys ?? []).length || "—"}</td>
+                  <td className="py-2 pr-4 whitespace-nowrap">{x(r).category ? CATEGORY_LABELS[x(r).category!] : "—"}</td>
                   <td className="py-2 pr-4">{x(r).campaign?.hasCampaign ? x(r).campaign?.name || "Unnamed" : "—"}</td>
                   <td className="py-2 pr-4 whitespace-nowrap">{x(r).campaign?.launchWindow ? LAUNCH_WINDOW_LABELS[x(r).campaign!.launchWindow!] : "—"}</td>
                 </tr>
