@@ -20,6 +20,7 @@ import {
   type LaunchWindow,
   type GreenlightResult,
 } from "@/lib/microdrama/greenlight";
+import { CATEGORIES, CATEGORY_DIAGNOSIS, CATEGORY_LABELS, VERDICT_SUMMARY, type Category } from "@/lib/microdrama/categories";
 import { submitGreenlight } from "@/lib/microdrama/greenlight.functions";
 import { cn } from "@/lib/utils";
 
@@ -47,8 +48,8 @@ export const Route = createFileRoute("/microdrama-greenlight")({
   component: GreenlightPage,
 });
 
-type Stage = "intro" | "questions" | "campaign" | "gate" | "result";
-const TOTAL_STEPS = GREENLIGHT_QUESTIONS.length + 1;
+type Stage = "intro" | "category" | "questions" | "campaign" | "gate" | "result";
+const TOTAL_STEPS = GREENLIGHT_QUESTIONS.length + 2;
 
 function GreenlightPage() {
   const [stage, setStage] = useState<Stage>("intro");
@@ -56,6 +57,7 @@ function GreenlightPage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<GreenlightResult | null>(null);
   const [campaign, setCampaign] = useState<GreenlightCampaign | null>(null);
+  const [category, setCategory] = useState<Category | null>(null);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -68,13 +70,16 @@ function GreenlightPage() {
         </div>
       </header>
       <main className="mx-auto max-w-3xl px-6 py-12">
-        {stage === "intro" && <Intro onStart={() => setStage("questions")} />}
+        {stage === "intro" && <Intro onStart={() => setStage("category")} />}
+        {stage === "category" && (
+          <CategoryStep value={category} onChange={setCategory} onBack={() => setStage("intro")} onNext={() => setStage("questions")} />
+        )}
         {stage === "questions" && (
           <Questions
             step={step}
             answers={answers}
             onAnswer={(key, value) => setAnswers((a) => ({ ...a, [key]: value }))}
-            onBack={() => (step === 0 ? setStage("intro") : setStep(step - 1))}
+            onBack={() => (step === 0 ? setStage("category") : setStep(step - 1))}
             onNext={() => (step === GREENLIGHT_QUESTIONS.length - 1 ? setStage("campaign") : setStep(step + 1))}
           />
         )}
@@ -89,6 +94,7 @@ function GreenlightPage() {
         {stage === "gate" && (
           <Gate
             answers={answers}
+            category={category!}
             campaign={campaign}
             onBack={() => setStage("campaign")}
             onDone={(r) => {
@@ -98,7 +104,7 @@ function GreenlightPage() {
             }}
           />
         )}
-        {stage === "result" && result && <Result result={result} campaign={campaign} />}
+        {stage === "result" && result && <Result result={result} campaign={campaign} category={category ?? "other"} />}
       </main>
     </div>
   );
@@ -108,17 +114,17 @@ function Intro({ onStart }: { onStart: () => void }) {
   return (
     <section className="space-y-8">
       <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-        A 3-minute diagnostic for brands considering vertical video fiction
+        A decision tool for beauty, fashion, food, and wellness brands considering serialized short-form entertainment
       </p>
       <h1 className="font-serif text-4xl leading-tight md:text-5xl">
         Does your brand get a Green Light for a microdrama?
       </h1>
       <p className="max-w-2xl text-lg text-muted-foreground">
-        Answer 11 questions to find out whether a vertical scripted series fits your product, budget, and audience
+        Answer 12 questions to find out whether a vertical scripted series fits your product, budget, and audience
         model, and the single condition that decides it.
       </p>
       <ul className="grid gap-3 text-sm sm:grid-cols-3">
-        {["11 questions, about 3 minutes", "No account needed to start", "A clear verdict and your top blockers"].map(
+        {["12 questions, about 3 minutes", "No account needed to start", "A clear verdict and your top blockers"].map(
           (t) => (
             <li key={t} className="flex items-start gap-2 rounded-md border border-border p-4">
               <Check className="mt-0.5 h-4 w-4 shrink-0" /> {t}
@@ -148,12 +154,12 @@ function Questions(props: {
       <div className="space-y-2">
         <div className="flex justify-between text-xs uppercase tracking-[0.18em] text-muted-foreground">
           <span>
-            Question {props.step + 1} of {total}
+            Question {props.step + 2} of {total}
           </span>
           <span>{q.title}</span>
         </div>
         <div className="h-1 w-full bg-muted">
-          <div className="h-1 bg-primary transition-all" style={{ width: `${((props.step + 1) / total) * 100}%` }} />
+          <div className="h-1 bg-primary transition-all" style={{ width: `${((props.step + 2) / total) * 100}%` }} />
         </div>
       </div>
       <h2 className="font-serif text-2xl leading-snug md:text-3xl">{q.prompt}</h2>
@@ -187,7 +193,7 @@ function Questions(props: {
   );
 }
 
-function Gate(props: { answers: Record<string, string>; campaign: GreenlightCampaign | null; onBack: () => void; onDone: (r: GreenlightResult) => void }) {
+function Gate(props: { answers: Record<string, string>; category: Category; campaign: GreenlightCampaign | null; onBack: () => void; onDone: (r: GreenlightResult) => void }) {
   const submit = useServerFn(submitGreenlight);
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
@@ -202,7 +208,7 @@ function Gate(props: { answers: Record<string, string>; campaign: GreenlightCamp
         const v = props.answers[q.key]!;
         parsed[q.key] = q.key === "operating_context" || v === "unsure" ? v : Number(v);
       }
-      const r = await submit({ data: { email, company, answers: parsed as Required<GreenlightAnswers>, campaign: props.campaign ?? undefined } });
+      const r = await submit({ data: { email, company, category: props.category, answers: parsed as Required<GreenlightAnswers>, campaign: props.campaign ?? undefined } });
       props.onDone(r);
     } catch (err) {
       toast.error(err instanceof Error && err.message.includes("email") ? "Enter a valid work email." : "Something went wrong. Please try again.");
@@ -213,7 +219,7 @@ function Gate(props: { answers: Record<string, string>; campaign: GreenlightCamp
 
   return (
     <section className="space-y-8">
-      <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Assessment complete · 11 of 11 answered</p>
+      <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Assessment complete · 12 of 12 answered</p>
       <div className="rounded-md border border-border p-6">
         <div className="flex items-center gap-6">
           <div>
@@ -253,9 +259,9 @@ function Gate(props: { answers: Record<string, string>; campaign: GreenlightCamp
 }
 
 const HEADLINES = {
-  green_light: "Green Light. Here is the condition that makes it work.",
-  not_yet: "Not yet. Here is what needs to be cleared first.",
-  no: "A microdrama isn't the right format for you right now.",
+  green_light: "Green Light.",
+  not_yet: "Not yet.",
+  no: "Not a fit right now.",
 } as const;
 
 const BADGE = {
@@ -264,7 +270,7 @@ const BADGE = {
   no: "bg-muted text-muted-foreground",
 } as const;
 
-function Result({ result, campaign }: { result: GreenlightResult; campaign: GreenlightCampaign | null }) {
+function Result({ result, campaign, category }: { result: GreenlightResult; campaign: GreenlightCampaign | null; category: Category }) {
   const v = result.verdict;
   const headline = result.reason === "needs_conversation" ? "We need a few answers before we can call it." : HEADLINES[v];
   const soon = campaign?.hasCampaign && campaign.launchWindow === "within_3_months";
@@ -276,8 +282,9 @@ function Result({ result, campaign }: { result: GreenlightResult; campaign: Gree
           {VERDICT_LABELS[v]}
         </span>
         <h1 className="font-serif text-3xl leading-tight md:text-4xl">{headline}</h1>
+        <p className="max-w-2xl text-lg">{result.reason === "needs_conversation" ? "A few of your answers need a conversation before we can make the call." : VERDICT_SUMMARY[v]}</p>
         <p className="text-muted-foreground">
-          Fit score {result.score} / {MAX_SCORE} · Growth model: {result.patternUnknown ? "To be determined" : PATTERN_LABELS[result.patternId]}
+          {CATEGORY_LABELS[category]} · Fit score {result.score} / {MAX_SCORE} · Growth model: {result.patternUnknown ? "To be determined" : PATTERN_LABELS[result.patternId]}
         </p>
         {campaign?.hasCampaign && (
           <p className="text-sm">
@@ -286,6 +293,15 @@ function Result({ result, campaign }: { result: GreenlightResult; campaign: Gree
           </p>
         )}
       </div>
+
+      {!result.patternUnknown && (
+        <div className="space-y-2 border-l-2 border-foreground pl-5">
+          <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+            {CATEGORY_LABELS[category]} × {PATTERN_LABELS[result.patternId]}
+          </p>
+          <p className="font-serif text-xl leading-relaxed">{CATEGORY_DIAGNOSIS[category][result.patternId]}</p>
+        </div>
+      )}
 
       <div className="rounded-md border border-border p-6">
         <div className="mb-2 flex items-center justify-between">
@@ -441,6 +457,40 @@ function CampaignStep(props: {
         </Button>
         <Button disabled={!ready} onClick={props.onNext}>
           See my verdict <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+    </section>
+  );
+}
+
+function CategoryStep(props: { value: Category | null; onChange: (c: Category) => void; onBack: () => void; onNext: () => void }) {
+  return (
+    <section className="space-y-8">
+      <div className="space-y-2">
+        <div className="flex justify-between text-xs uppercase tracking-[0.18em] text-muted-foreground">
+          <span>Question 1 of {TOTAL_STEPS}</span>
+          <span>Category</span>
+        </div>
+        <div className="h-1 w-full bg-muted">
+          <div className="h-1 bg-primary" style={{ width: `${(1 / TOTAL_STEPS) * 100}%` }} />
+        </div>
+      </div>
+      <h2 className="font-serif text-2xl leading-snug md:text-3xl">Which category best describes your brand?</h2>
+      <div className="space-y-3" role="radiogroup" aria-label="Which category best describes your brand?">
+        {CATEGORIES.map((c) => (
+          <button key={c} type="button" role="radio" aria-checked={props.value === c} onClick={() => props.onChange(c)}
+            className={cn("w-full rounded-md border p-4 text-left transition-colors",
+              props.value === c ? "border-primary bg-secondary" : "border-border hover:border-foreground/40")}>
+            <span className="block font-medium">{CATEGORY_LABELS[c]}</span>
+          </button>
+        ))}
+      </div>
+      <div className="flex justify-between">
+        <Button variant="ghost" onClick={props.onBack}>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        </Button>
+        <Button disabled={!props.value} onClick={props.onNext}>
+          Next <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
     </section>

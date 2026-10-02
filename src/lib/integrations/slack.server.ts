@@ -66,9 +66,11 @@ export async function notifyGreenlightLead(input: {
   company: string;
   result: import("@/lib/microdrama/greenlight").GreenlightResult;
   campaign?: import("@/lib/microdrama/greenlight").GreenlightCampaign | undefined;
+  category?: import("@/lib/microdrama/categories").Category;
 }): Promise<void> {
   try {
     const { VERDICT_LABELS, PATTERN_LABELS, MAX_SCORE, LAUNCH_WINDOW_LABELS } = await import("@/lib/microdrama/greenlight");
+    const { CATEGORY_LABELS } = await import("@/lib/microdrama/categories");
     const r = input.result;
     const c = input.campaign;
     const condition = r.conditionStatus === "met" ? "met" : r.conditionStatus === "unconfirmed" ? "to confirm" : "not met";
@@ -77,7 +79,7 @@ export async function notifyGreenlightLead(input: {
       : "";
     const unsure = r.unsureKeys.length ? ` · Not sure on ${r.unsureKeys.length}: ${r.unsureKeys.join(", ")}` : "";
     const text =
-      `🎬 Microdrama Greenlight: ${VERDICT_LABELS[r.verdict].toUpperCase()} · ${input.company} · ` +
+      `🎬 Microdrama Greenlight: ${VERDICT_LABELS[r.verdict].toUpperCase()} · ${input.company}${input.category ? ` (${CATEGORY_LABELS[input.category]})` : ""} · ` +
       `Score ${r.score}/${MAX_SCORE} · ${r.patternUnknown ? "Growth model TBD" : PATTERN_LABELS[r.patternId]} · ` +
       `Condition ${condition}${r.enterpriseReferral ? " · Enterprise referral" : ""}${campaign}${unsure} · ${input.email}`;
     await postSlackMessage(LEADS_CHANNEL, text);
