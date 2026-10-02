@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
 const URL = "https://blueprint.jeffhallstead.com/microdrama-greenlight";
 const TITLE = "Microdrama Greenlight: Is your brand ready for a vertical scripted series?";
 const DESC =
-  "A 3-minute assessment of your format fit, economics, and distribution readiness. Get a Green Light, Not Yet, or No.";
+  "A 3-minute assessment of your format fit, economics, and distribution readiness. Get a Green Light, Not Yet, or Not a Fit.";
 
 export const Route = createFileRoute("/microdrama-greenlight")({
   head: () => ({
