@@ -118,6 +118,15 @@ function Landing() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Link
+        to="/microdrama-greenlight"
+        className="block border-b border-border bg-surface px-6 py-2.5 text-center text-xs text-foreground transition-colors hover:bg-muted sm:text-sm"
+      >
+        <span className="text-muted-foreground">Considering vertical video fiction?</span>{" "}
+        <span className="inline-flex items-center gap-1 font-medium underline-offset-4 hover:underline">
+          Try Microdrama Greenlight <ArrowRight className="size-3.5" />
+        </span>
+      </Link>
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <Logo />
         <div className="flex items-center gap-2">
