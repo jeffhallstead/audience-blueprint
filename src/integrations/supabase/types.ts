@@ -352,6 +352,63 @@ export type Database = {
           },
         ]
       }
+      brand_teardowns: {
+        Row: {
+          brand_name: string
+          created_at: string
+          created_by: string
+          dimension_scores: Json
+          email_body: string
+          email_subject: string
+          id: string
+          inputs: Json
+          model: string | null
+          overall_score: number
+          pattern_id: string
+          pattern_reason: string
+          priorities: Json
+          updated_at: string
+          vertical: string
+          website: string | null
+        }
+        Insert: {
+          brand_name: string
+          created_at?: string
+          created_by: string
+          dimension_scores: Json
+          email_body: string
+          email_subject: string
+          id?: string
+          inputs?: Json
+          model?: string | null
+          overall_score: number
+          pattern_id: string
+          pattern_reason: string
+          priorities?: Json
+          updated_at?: string
+          vertical?: string
+          website?: string | null
+        }
+        Update: {
+          brand_name?: string
+          created_at?: string
+          created_by?: string
+          dimension_scores?: Json
+          email_body?: string
+          email_subject?: string
+          id?: string
+          inputs?: Json
+          model?: string | null
+          overall_score?: number
+          pattern_id?: string
+          pattern_reason?: string
+          priorities?: Json
+          updated_at?: string
+          vertical?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       customer_events: {
         Row: {
           amount_cents: number | null
