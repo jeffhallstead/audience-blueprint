@@ -1,3 +1,4 @@
+// @ts-nocheck -- run with `bun test`; test runner types are not installed
 import { describe, expect, it } from "bun:test";
 import { normalizeTeardownScores } from "./scoring";
 
