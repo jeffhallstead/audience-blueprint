@@ -12,6 +12,7 @@ import { EventsPanel } from "@/components/admin/events-panel";
 import { LeadsPanel } from "@/components/admin/leads-panel";
 import { IntegrationsHealth } from "@/components/admin/integrations-health";
 import { FeedbackPanel } from "@/components/admin/feedback-panel";
+import { BrandScoutPanel } from "@/components/admin/brand-scout-panel";
 import { GreenlightPanel } from "@/components/admin/greenlight-panel";
 import { GrantAccessDialog } from "@/components/admin/grant-access-dialog";
 import { DeleteUserDialog } from "@/components/admin/delete-user-dialog";
@@ -178,6 +179,7 @@ function AdminConsole() {
         <TabsList>
           <TabsTrigger value="users">Accounts</TabsTrigger>
           <TabsTrigger value="leads">Leads</TabsTrigger>
+          <TabsTrigger value="scout">Brand Scout</TabsTrigger>
           <TabsTrigger value="greenlight">Microdrama</TabsTrigger>
           <TabsTrigger value="organizations">Organizations</TabsTrigger>
           <TabsTrigger value="events">Events</TabsTrigger>
@@ -190,6 +192,10 @@ function AdminConsole() {
 
         <TabsContent value="feedback" className="mt-6">
           <FeedbackPanel />
+        </TabsContent>
+
+        <TabsContent value="scout" className="mt-6">
+          <BrandScoutPanel />
         </TabsContent>
 
         <TabsContent value="greenlight" className="mt-6">
