@@ -81,7 +81,7 @@ export function BrandScoutPanel() {
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {["beauty", "fashion", "food", "wellness", "other"].map((v) => (
-                      <SelectItem key={v} value={v} className="capitalize">{v[0].toUpperCase() + v.slice(1)}</SelectItem>))}
+                      <SelectItem key={v} value={v} className="capitalize">{v.charAt(0).toUpperCase() + v.slice(1)}</SelectItem>))}
                   </SelectContent>
                 </Select></div>
             </div>
