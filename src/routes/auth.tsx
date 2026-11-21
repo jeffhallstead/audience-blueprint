@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { resolvePostAuthPath } from "@/lib/auth/post-auth";
+import { oauthReturnPath } from "@/lib/oauth-return-path";
 import {
   beginOAuthFlow,
   recordOAuthStage,
@@ -19,6 +20,8 @@ const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional(),
   /** "test" pre-selects the free Publisher Test entry point. */
   plan: z.string().optional(),
+  /** Same-origin path to return to after sign-in (e.g. OAuth consent). */
+  next: z.string().optional(),
 });
 
 const credentialsSchema = z.object({
@@ -45,7 +48,8 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { mode, plan } = Route.useSearch();
+  const { mode, plan, next } = Route.useSearch();
+  const returnPath = oauthReturnPath(next);
   const freeTier = plan === "test";
   const navigate = useNavigate();
   const [isSignUp, setIsSignUp] = useState(mode === "signup" || plan === "test");
@@ -71,8 +75,12 @@ function AuthPage() {
       throw new Error("Your Google session could not be confirmed. Please try again.");
     }
     navigatedRef.current = true;
+    if (returnPath !== "/") {
+      window.location.replace(returnPath);
+      return;
+    }
     navigate({ to: await resolvePostAuthPath(), replace: true });
-  }, [navigate]);
+  }, [navigate, returnPath]);
 
   // Navigate off this page whenever a session actually exists — on mount, and
   // whenever one arrives later (OAuth popup completing, token exchange, etc.).
@@ -139,7 +147,7 @@ function AuthPage() {
           email: parsed.data.email,
           password: parsed.data.password,
           options: {
-            emailRedirectTo: `${window.location.origin}/welcome`,
+            emailRedirectTo: returnPath !== "/" ? new URL(returnPath, window.location.origin).href : `${window.location.origin}/welcome`,
             data: { full_name: parsed.data.fullName ?? "" },
           },
         });
@@ -168,6 +176,7 @@ function AuthPage() {
 
   async function handleGoogle() {
     beginOAuthFlow();
+    if (returnPath !== "/") sessionStorage.setItem("oauth_next", returnPath);
     oauthActiveRef.current = true;
     setShowStandaloneRecovery(false);
     setGooglePending(true);

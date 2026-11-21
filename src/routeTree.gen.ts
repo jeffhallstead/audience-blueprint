@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MicrodramaBrandAssessmentRouteImport } from './routes/microdrama-brand-assessment'
 import { Route as MicrodramaFitRouteImport } from './routes/microdrama-fit'
 import { Route as MicrodramaGreenlightRouteImport } from './routes/microdrama-greenlight'
@@ -21,6 +22,7 @@ import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TestRouteImport } from './routes/test'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedBlueprintRouteImport } from './routes/_authenticated/blueprint'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -34,6 +36,7 @@ import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedWizardRouteImport } from './routes/_authenticated/wizard'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as OauthCallbackRouteImport } from './routes/oauth.callback'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedCheckoutSuccessRouteImport } from './routes/_authenticated/checkout.success'
 import { Route as AuthenticatedCopilotIndexRouteImport } from './routes/_authenticated/copilot.index'
 import { Route as AuthenticatedCopilotPromptsRouteImport } from './routes/_authenticated/copilot.prompts'
@@ -57,6 +60,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MicrodramaBrandAssessmentRoute =
@@ -105,6 +113,12 @@ const TestRoute = TestRouteImport.update({
   path: '/test',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -168,6 +182,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
 const OauthCallbackRoute = OauthCallbackRouteImport.update({
   id: '/oauth/callback',
   path: '/oauth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedCheckoutSuccessRoute =
@@ -234,6 +253,7 @@ const LovableEmailTransactionalPreviewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/mcp': typeof McpRoute
   '/microdrama-brand-assessment': typeof MicrodramaBrandAssessmentRoute
   '/microdrama-fit': typeof MicrodramaFitRoute
   '/microdrama-greenlight': typeof MicrodramaGreenlightRoute
@@ -243,6 +263,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/test': typeof TestRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/blueprint': typeof AuthenticatedBlueprintRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -256,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
   '/oauth/callback': typeof OauthCallbackRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
@@ -270,6 +292,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/mcp': typeof McpRoute
   '/microdrama-brand-assessment': typeof MicrodramaBrandAssessmentRoute
   '/microdrama-fit': typeof MicrodramaFitRoute
   '/microdrama-greenlight': typeof MicrodramaGreenlightRoute
@@ -279,6 +302,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/test': typeof TestRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/blueprint': typeof AuthenticatedBlueprintRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -292,6 +316,7 @@ export interface FileRoutesByTo {
   '/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
   '/oauth/callback': typeof OauthCallbackRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
@@ -308,6 +333,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/mcp': typeof McpRoute
   '/microdrama-brand-assessment': typeof MicrodramaBrandAssessmentRoute
   '/microdrama-fit': typeof MicrodramaFitRoute
   '/microdrama-greenlight': typeof MicrodramaGreenlightRoute
@@ -317,6 +343,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/test': typeof TestRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/blueprint': typeof AuthenticatedBlueprintRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -330,6 +357,7 @@ export interface FileRoutesById {
   '/_authenticated/wizard': typeof AuthenticatedWizardRoute
   '/api/chat': typeof ApiChatRoute
   '/oauth/callback': typeof OauthCallbackRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/_authenticated/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/_authenticated/copilot/prompts': typeof AuthenticatedCopilotPromptsRoute
   '/_authenticated/copilot/simulator': typeof AuthenticatedCopilotSimulatorRoute
@@ -346,6 +374,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/mcp'
     | '/microdrama-brand-assessment'
     | '/microdrama-fit'
     | '/microdrama-greenlight'
@@ -355,6 +384,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/test'
+    | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/blueprint'
     | '/dashboard'
@@ -368,6 +398,7 @@ export interface FileRouteTypes {
     | '/wizard'
     | '/api/chat'
     | '/oauth/callback'
+    | '/.lovable/oauth/consent'
     | '/checkout/success'
     | '/copilot/prompts'
     | '/copilot/simulator'
@@ -382,6 +413,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/mcp'
     | '/microdrama-brand-assessment'
     | '/microdrama-fit'
     | '/microdrama-greenlight'
@@ -391,6 +423,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/test'
+    | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/blueprint'
     | '/dashboard'
@@ -404,6 +437,7 @@ export interface FileRouteTypes {
     | '/wizard'
     | '/api/chat'
     | '/oauth/callback'
+    | '/.lovable/oauth/consent'
     | '/checkout/success'
     | '/copilot/prompts'
     | '/copilot/simulator'
@@ -419,6 +453,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/mcp'
     | '/microdrama-brand-assessment'
     | '/microdrama-fit'
     | '/microdrama-greenlight'
@@ -428,6 +463,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/test'
+    | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/_authenticated/blueprint'
     | '/_authenticated/dashboard'
@@ -441,6 +477,7 @@ export interface FileRouteTypes {
     | '/_authenticated/wizard'
     | '/api/chat'
     | '/oauth/callback'
+    | '/.lovable/oauth/consent'
     | '/_authenticated/checkout/success'
     | '/_authenticated/copilot/prompts'
     | '/_authenticated/copilot/simulator'
@@ -457,6 +494,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  McpRoute: typeof McpRoute
   MicrodramaBrandAssessmentRoute: typeof MicrodramaBrandAssessmentRoute
   MicrodramaFitRoute: typeof MicrodramaFitRoute
   MicrodramaGreenlightRoute: typeof MicrodramaGreenlightRoute
@@ -466,8 +504,10 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   TestRoute: typeof TestRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiChatRoute: typeof ApiChatRoute
   OauthCallbackRoute: typeof OauthCallbackRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   ApiPublicIntegrationsDispatchRoute: typeof ApiPublicIntegrationsDispatchRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -494,6 +534,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/microdrama-brand-assessment': {
@@ -557,6 +604,13 @@ declare module '@tanstack/react-router' {
       path: '/test'
       fullPath: '/test'
       preLoaderRoute: typeof TestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -648,6 +702,13 @@ declare module '@tanstack/react-router' {
       path: '/oauth/callback'
       fullPath: '/oauth/callback'
       preLoaderRoute: typeof OauthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/checkout/success': {
@@ -775,6 +836,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  McpRoute: McpRoute,
   MicrodramaBrandAssessmentRoute: MicrodramaBrandAssessmentRoute,
   MicrodramaFitRoute: MicrodramaFitRoute,
   MicrodramaGreenlightRoute: MicrodramaGreenlightRoute,
@@ -784,8 +846,11 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   TestRoute: TestRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ApiChatRoute: ApiChatRoute,
   OauthCallbackRoute: OauthCallbackRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   ApiPublicIntegrationsDispatchRoute: ApiPublicIntegrationsDispatchRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,

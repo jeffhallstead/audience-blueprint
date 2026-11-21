@@ -1,3 +1,4 @@
+import { oauthReturnPath } from "@/lib/oauth-return-path";
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { LoaderCircle } from "lucide-react";
@@ -71,6 +72,12 @@ function AuthCallbackPage() {
           if (!error && userData.user && active && !completedRef.current) {
             completedRef.current = true;
             recordOAuthStage("callback_user_validated");
+            const stored = oauthReturnPath(sessionStorage.getItem("oauth_next"));
+            sessionStorage.removeItem("oauth_next");
+            if (stored !== "/") {
+              window.location.replace(stored);
+              return;
+            }
             const destination = await resolvePostAuthPath();
             navigate({ to: destination, replace: true });
             return;

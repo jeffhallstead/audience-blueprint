@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "sdk_version": "3.6.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://iohjobzicpwmjjlwgwbi.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "audience-blueprint",
+      "version": "0.1.0",
+      "title": "Audience Blueprint"
+    },
+    "tools": [
+      {
+        "name": "run_brand_scout",
+        "title": "Run Brand Scout teardown",
+        "description": "Estimate a brand's Publisher Index, diagnose its Publisher Pattern, and draft an outreach email teardown. Saves it to Brand Scout history.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "brandName": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "description": "Brand name"
+            },
+            "website": {
+              "default": "",
+              "description": "Brand website URL",
+              "type": "string",
+              "maxLength": 500
+            },
+            "handles": {
+              "default": "",
+              "description": "Social handles and reach, e.g. '@brand IG 250k, TikTok 80k'",
+              "type": "string",
+              "maxLength": 1000
+            },
+            "vertical": {
+              "type": "string",
+              "enum": [
+                "beauty",
+                "fashion",
+                "food",
+                "wellness",
+                "other"
+              ],
+              "description": "Brand vertical"
+            },
+            "editorialNewsletter": {
+              "type": "boolean",
+              "description": "Has an editorial newsletter (not just a discount popup)"
+            },
+            "recurringSeries": {
+              "type": "boolean",
+              "description": "Publishes recurring series / franchise content"
+            },
+            "heavyPaid": {
+              "type": "boolean",
+              "description": "Relies heavily on paid ads"
+            },
+            "activeCommunity": {
+              "type": "boolean",
+              "description": "Has an active community"
+            },
+            "notes": {
+              "default": "",
+              "description": "Your observations about the brand",
+              "type": "string",
+              "maxLength": 4000
+            }
+          },
+          "required": [
+            "brandName",
+            "vertical",
+            "editorialNewsletter",
+            "recurringSeries",
+            "heavyPaid",
+            "activeCommunity"
+          ],
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_brand_scouts",
+        "title": "List Brand Scout teardowns",
+        "description": "List recent saved Brand Scout teardowns (admin/analyst only).",
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

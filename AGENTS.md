@@ -9,3 +9,6 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 - Microdrama Greenlight: lives at /microdrama-greenlight; public verdict recomputed server-side, stored via service role in microdrama_greenlight_checks (admin/analyst read only).
+
+- Brand Scout logic lives in src/lib/brand-scout/engine.ts, shared by the admin server function and the MCP tool — one teardown implementation.
+- MCP server (src/lib/mcp) uses Lovable Cloud OAuth; tools act as the caller under RLS and require admin/analyst role.
